@@ -36,10 +36,10 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--background-color);
-            background-image: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 100%);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
         }
         .sidebar-icon {
             stroke-width: 1.5;
@@ -146,10 +146,10 @@
 </head>
 <body class="text-slate-700">
     <!-- Login Container -->
-    <div id="login-container" class="flex items-center justify-center h-screen">
+    <div id="login-container" class="flex items-center justify-center h-screen bg-slate-100">
         <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg m-4">
             <div class="text-center">
-                <img src="https://placehold.co/60x60/1e293b/ffffff?text=ME" alt="Mozzart Education Logo" class="mx-auto h-14 w-14 rounded-xl">
+                <img id="login-logo" src="https://placehold.co/60x60/1e293b/ffffff?text=ME" alt="Mozzart Education Logo" class="mx-auto h-14 w-14 rounded-xl">
                 <h2 class="mt-6 text-3xl font-bold text-slate-900" data-lang="appTitle">Mozzart Education</h2>
                 <p class="mt-2 text-sm text-slate-600">Silakan masuk untuk melanjutkan</p>
             </div>
@@ -157,11 +157,11 @@
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>
                         <label for="email-address" class="sr-only">Email address</label>
-                        <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm form-input" placeholder="Email address" value="admin@gmail.com">
+                        <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm form-input" placeholder="Email address" value="">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm form-input" placeholder="Password" value="admin">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm form-input" placeholder="Password" value="">
                     </div>
                 </div>
                  <div id="login-error" class="text-red-500 text-sm text-center hidden">Email atau kata sandi salah.</div>
@@ -177,49 +177,63 @@
     
     <!-- Main App Container -->
     <div id="app-container" class="hidden">
-        <div class="flex h-screen">
+        <div class="relative min-h-screen md:flex backdrop-blur-xl bg-slate-100/30">
+            <!-- Sidebar Overlay -->
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+            
             <!-- Sidebar -->
-            <aside class="w-20 md:w-64 bg-white flex flex-col transition-all duration-300 border-r border-slate-200">
-                <div class="flex items-center justify-center h-20 border-b border-slate-200">
-                    <img id="app-logo" src="https://placehold.co/40x40/1e293b/ffffff?text=ME" class="h-10 w-10 rounded-lg" alt="App Logo">
-                    <h1 data-lang="appTitle" class="text-lg font-bold ml-3 hidden md:block text-slate-800">Mozzart Education</h1>
+            <aside id="main-sidebar" class="fixed inset-y-0 left-0 bg-white/80 w-64 flex-col transition-transform duration-300 border-r border-slate-200 z-30 transform -translate-x-full md:translate-x-0 md:flex">
+                <div class="flex items-center h-20 border-b border-slate-200 px-4 app-logo-container">
+                    <img id="app-logo" src="https://placehold.co/40x40/1e293b/ffffff?text=ME" class="h-10 w-10 rounded-lg flex-shrink-0" alt="App Logo">
+                    <h1 data-lang="appTitle" class="text-lg font-bold ml-3 text-slate-800 app-title-text">Mozzart Education</h1>
                 </div>
                 <nav class="flex-1 p-4 space-y-2">
                     <a href="#" class="nav-link active flex items-center p-3 rounded-lg text-white" data-view="dashboard" style="background-color: var(--primary-color);">
                         <i data-lucide="layout-dashboard" class="sidebar-icon"></i>
-                        <span data-lang="dashboard" class="ml-4 hidden md:block">Dasbor Kelas</span>
+                        <span data-lang="dashboard" class="ml-4 nav-text">Dasbor Kelas</span>
                     </a>
                      <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rating">
                         <i data-lucide="award" class="sidebar-icon"></i>
-                        <span data-lang="rating" class="ml-4 hidden md:block">Peringkat Siswa</span>
+                        <span data-lang="rating" class="ml-4 nav-text">Peringkat Siswa</span>
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="student-progress">
                         <i data-lucide="trending-up" class="sidebar-icon"></i>
-                        <span data-lang="studentProgress" class="ml-4 hidden md:block">Progres Siswa</span>
+                        <span data-lang="studentProgress" class="ml-4 nav-text">Progres Siswa</span>
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="data-input">
                         <i data-lucide="edit-3" class="sidebar-icon"></i>
-                        <span data-lang="dataInput" class="ml-4 hidden md:block">Input Data</span>
+                        <span data-lang="dataInput" class="ml-4 nav-text">Input Data</span>
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="input-management">
                         <i data-lucide="folder-plus" class="sidebar-icon"></i>
-                        <span data-lang="inputManagement" class="ml-4 hidden md:block">Manajemen Input</span>
+                        <span data-lang="inputManagement" class="ml-4 nav-text">Manajemen Input</span>
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="settings">
                         <i data-lucide="settings" class="sidebar-icon"></i>
-                        <span data-lang="settings" class="ml-4 hidden md:block">Pengaturan</span>
+                        <span data-lang="settings" class="ml-4 nav-text">Pengaturan</span>
                     </a>
                      <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="guide">
                         <i data-lucide="book-open" class="sidebar-icon"></i>
-                        <span data-lang="guide" class="ml-4 hidden md:block">Panduan</span>
+                        <span data-lang="guide" class="ml-4 nav-text">Panduan</span>
                     </a>
                 </nav>
+                <div class="p-4 border-t border-slate-200">
+                    <a href="#" id="logout-btn" class="nav-link flex items-center p-3 rounded-lg text-slate-600 hover:bg-red-100 hover:text-red-600">
+                        <i data-lucide="log-out" class="sidebar-icon"></i>
+                        <span data-lang="logout" class="ml-4 nav-text">Keluar</span>
+                    </a>
+                </div>
             </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 flex flex-col overflow-hidden">
-                <header class="h-20 flex items-center justify-between px-4 md:px-8 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-                    <h2 id="view-title" data-lang="dashboard" class="text-xl sm:text-2xl font-semibold text-slate-800">Dasbor Kelas</h2>
+            <main id="main-content" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 md:ml-64">
+                <header class="h-20 flex items-center justify-between px-4 md:px-8 border-b border-slate-200 bg-white/60 backdrop-blur-sm">
+                    <div class="flex items-center">
+                        <button id="menu-toggle" class="md:hidden p-2 mr-2 rounded-md text-slate-600 hover:bg-slate-100">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                        <h2 id="view-title" data-lang="dashboard" class="text-xl sm:text-2xl font-semibold text-slate-800">Dasbor Kelas</h2>
+                    </div>
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center">
                             <span class="mr-2 text-sm font-medium text-slate-600" data-lang="language">Bahasa:</span>
@@ -312,7 +326,13 @@
                     <!-- Rating View -->
                     <div id="rating-view" class="view hidden">
                         <div class="card">
-                            <h3 class="card-title" data-lang="scoreRating">Rating Nilai Siswa</h3>
+                            <div class="flex flex-col sm:flex-row gap-4 mb-4 justify-between items-center">
+                                <h3 class="card-title mb-0" data-lang="scoreRating">Rating Nilai Siswa</h3>
+                                <button id="export-rating-btn" class="w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                    <span data-lang="exportExcel">Export ke Excel</span>
+                                </button>
+                            </div>
                             <div class="flex flex-col sm:flex-row gap-4 mb-4">
                                 <select id="rating-class-filter-full" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
                                    <!-- Options populated by JS -->
@@ -397,8 +417,14 @@
                         <div class="flex flex-col gap-8">
                             <!-- Attendance Input -->
                             <div class="card">
-                                <h3 class="card-title" data-lang="inputAttendance">Input Kehadiran</h3>
-                                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                                <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+                                    <h3 class="card-title" data-lang="inputAttendance">Input Kehadiran</h3>
+                                    <button id="import-attendance-btn" class="mb-4 sm:mb-0 w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                        <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                        <span data-lang="importAttendanceExcel">Import Kehadiran (Excel)</span>
+                                    </button>
+                                </div>
+                                 <div class="flex flex-col sm:flex-row gap-4 my-4">
                                     <select id="input-attendance-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
                                         <!-- Options populated by JS -->
                                     </select>
@@ -424,8 +450,14 @@
                             </div>
                             <!-- Score Input -->
                             <div class="card">
-                                <h3 class="card-title" data-lang="inputScore">Input Nilai</h3>
-                                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                                <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+                                    <h3 class="card-title" data-lang="inputScore">Input Nilai</h3>
+                                    <button id="import-scores-btn" class="mb-4 sm:mb-0 w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                        <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                        <span data-lang="importScoresExcel">Import Nilai (Excel)</span>
+                                    </button>
+                                </div>
+                                 <div class="flex flex-col sm:flex-row gap-4 my-4">
                                     <select id="input-score-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
                                         <!-- Options populated by JS -->
                                     </select>
@@ -503,15 +535,24 @@
                                     <!-- Options populated by JS -->
                                 </select>
                             </div>
-                            <div class="flex mb-4">
-                                <input type="text" id="new-group-name" class="p-2 border rounded-l-md w-full form-input" placeholder="Nama Kelompok Baru">
-                                <button id="add-group-btn" class="px-4 py-2 btn-primary rounded-r-md flex items-center">
-                                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                                    <span data-lang="addGroup">Tambah</span>
-                                </button>
-                            </div>
-                            <div id="groups-list-container" class="space-y-4 max-h-96 overflow-y-auto pr-2">
-                                <!-- Groups populated by JS -->
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-lg font-semibold mb-2 text-slate-700" data-lang="availableStudents">Siswa Tersedia</h4>
+                                    <div id="available-students-container" class="space-y-2 max-h-96 overflow-y-auto pr-2 border rounded-md p-2 bg-slate-50">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex mb-4">
+                                        <input type="text" id="new-group-name" class="p-2 border rounded-l-md w-full form-input" placeholder="Nama Kelompok Baru">
+                                        <button id="add-group-btn" class="px-4 py-2 btn-primary rounded-r-md flex items-center">
+                                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                                            <span data-lang="addGroup">Tambah</span>
+                                        </button>
+                                    </div>
+                                    <div id="groups-list-container" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                        <!-- Groups populated by JS -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -546,12 +587,12 @@
                             <div class="card">
                                 <h3 class="card-title" data-lang="adminManagement">Manajemen Admin</h3>
                                 <ul id="admin-list" class="space-y-2 mb-4">
-                                    <li class="flex justify-between items-center bg-slate-100 p-2 rounded-md"><span>admin@sekolah.id</span> <button class="text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="h-4 w-4"></i></button></li>
-                                    <li class="flex justify-between items-center bg-slate-100 p-2 rounded-md"><span>guru.budi@sekolah.id</span> <button class="text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="h-4 w-4"></i></button></li>
+                                    <!-- Admin list generated by JS -->
                                 </ul>
-                                <div class="flex">
-                                    <input type="email" placeholder="Email admin baru" class="p-2 border rounded-l-md w-full form-input">
-                                    <button class="px-4 py-2 rounded-r-md btn-primary" data-lang="add">Tambah</button>
+                                <div class="space-y-3">
+                                    <input type="email" id="new-admin-email" placeholder="Email admin baru" class="p-2 border rounded-md w-full form-input">
+                                    <input type="password" id="new-admin-password" placeholder="Password baru" class="p-2 border rounded-md w-full form-input">
+                                    <button id="add-admin-btn" class="px-4 py-2 rounded-md w-full btn-primary" data-lang="add">Tambah</button>
                                 </div>
                             </div>
                             <!-- Data Reset -->
@@ -613,22 +654,16 @@
             <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full progress-bar"></div>
         </div>
     </div>
+    
+    <input type="file" id="generic-file-input" class="hidden" accept=".xlsx, .xls, .csv">
+
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
         // --- SUPABASE SETUP ---
         // GANTI DENGAN URL DAN KUNCI ANON SUPABASE ANDA
         const SUPABASE_URL = 'https://taeodevmwvalajqjbpaq.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhZW9kZXZtd3ZhbGFqcWpicGFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NDYxNjUsImV4cCI6MjA3MjAyMjE2NX0.-IX9xVUlrkKow0CKUahPCEx2fGUHqnNpkcpoFxBW4G4';
-
-        // Periksa apakah URL dan Kunci sudah diisi
-        if (SUPABASE_URL === 'https://URL_PROYEK_ANDA.supabase.co' || SUPABASE_ANON_KEY === 'KUNCI_ANON_ANDA') {
-            document.body.innerHTML = `<div class="p-8 text-center bg-red-100 text-red-800">
-                <h1 class="text-2xl font-bold">Konfigurasi Diperlukan</h1>
-                <p class="mt-4">Silakan buka file HTML ini, cari bagian 'SUPABASE SETUP', dan ganti placeholder <strong>SUPABASE_URL</strong> dan <strong>SUPABASE_ANON_KEY</strong> dengan kredensial dari proyek Supabase Anda.</p>
-            </div>`;
-            return;
-        }
 
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -636,20 +671,27 @@
 
         // --- APP DATA STATE ---
         let appData = {};
+        
+        let fileImportCallback = null;
 
-        // --- AUTHENTICATION ---
+        // --- AUTHENTICATION & INITIALIZATION ---
         const loginForm = document.getElementById('login-form');
         const loginContainer = document.getElementById('login-container');
         const appContainer = document.getElementById('app-container');
         const loginError = document.getElementById('login-error');
+        
+        // Initial load for login check
+        await loadData();
+        applyLoginScreenSettings();
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = e.target.email.value;
             const password = e.target.password.value;
+            
+            const admin = appData.admins.find(a => a.email === email && a.password === password);
 
-            // Simple placeholder login
-            if (email === 'admin@gmail.com' && password === 'admin') {
+            if (admin) {
                 loginContainer.classList.add('hidden');
                 appContainer.classList.remove('hidden');
                 await initApp();
@@ -657,6 +699,60 @@
                 loginError.classList.remove('hidden');
             }
         });
+        
+        async function addAdmin() {
+            const emailInput = document.getElementById('new-admin-email');
+            const passwordInput = document.getElementById('new-admin-password');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (email && password) {
+                if (appData.admins.some(admin => admin.email === email)) {
+                    alert('Admin dengan email ini sudah ada.');
+                    return;
+                }
+                appData.admins.push({ email, password });
+                await saveData();
+                emailInput.value = '';
+                passwordInput.value = '';
+                renderAdminList();
+                alert('Admin baru berhasil ditambahkan.');
+            } else {
+                alert('Email dan password harus diisi.');
+            }
+        }
+
+        async function deleteAdmin(email) {
+            if (confirm(`Apakah Anda yakin ingin menghapus admin ${email}?`)) {
+                appData.admins = appData.admins.filter(admin => admin.email !== email);
+                await saveData();
+                renderAdminList();
+            }
+        }
+        
+        function renderAdminList() {
+            const listEl = document.getElementById('admin-list');
+            listEl.innerHTML = '';
+            if (!appData.admins) return;
+
+            appData.admins.forEach(admin => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center bg-slate-100 p-2 rounded-md';
+                let deleteButton = '';
+                if (!admin.protected) {
+                    deleteButton = `<button class="delete-admin-btn text-red-500 hover:text-red-700" data-email="${admin.email}"><i data-lucide="trash-2" class="h-4 w-4"></i></button>`;
+                }
+                li.innerHTML = `<span>${admin.email}</span> ${deleteButton}`;
+                listEl.appendChild(li);
+            });
+            lucide.createIcons();
+            
+            document.querySelectorAll('.delete-admin-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    deleteAdmin(e.currentTarget.dataset.email);
+                });
+            });
+        }
 
         // --- DATA HANDLING (SUPABASE) ---
         async function checkSupabaseRLS() {
@@ -692,8 +788,20 @@
                     </div>`;
                     return false; // Stop initialization
                 } else {
+                     document.body.innerHTML = `<div class="p-8 text-center bg-red-100 text-red-800 h-screen flex flex-col justify-center items-center">
+                        <h1 class="text-2xl font-bold">Gagal Terhubung ke Database</h1>
+                        <div class="text-left max-w-2xl mx-auto mt-4 space-y-2">
+                           <p>Aplikasi tidak dapat menghubungi server Supabase. Ini bisa disebabkan oleh beberapa hal:</p>
+                           <ul class="list-decimal list-inside bg-white p-4 rounded-md shadow text-gray-800 space-y-2">
+                               <li><strong>Koneksi Internet:</strong> Pastikan Anda terhubung ke internet.</li>
+                               <li><strong>URL Supabase:</strong> Periksa kembali apakah <code>SUPABASE_URL</code> di dalam kode sudah benar.</li>
+                               <li><strong>Ad Blocker:</strong> Coba matikan pemblokir iklan (ad blocker) Anda, karena terkadang bisa mengganggu koneksi.</li>
+                               <li><strong>Proyek Supabase Paused:</strong> Proyek gratis di Supabase bisa nonaktif jika tidak digunakan. Cek dasbor Supabase Anda untuk memastikannya aktif.</li>
+                           </ul>
+                           <p class="mt-4">Detail error: <code>${insertError.message}</code></p>
+                        </div>
+                    </div>`;
                     console.error('Supabase connection error:', insertError);
-                    alert('Gagal terhubung ke database Supabase. Periksa konsol untuk detailnya.');
                     return false; // Stop initialization
                 }
             }
@@ -714,7 +822,6 @@
 
 
         async function loadData() {
-            showProgress('Memuat data dari database...');
             const { data, error } = await supabaseClient
                 .from('class_management_data')
                 .select('app_data')
@@ -723,18 +830,32 @@
 
             if (error && error.code !== 'PGRST116') { // PGRST116 = row not found
                 console.error('Error loading data:', error);
-                alert('Gagal memuat data dari database.');
-                hideProgress();
+                 if (error.message.includes('Failed to fetch')) {
+                    loginContainer.innerHTML = `<div class="p-8 text-center bg-red-100 text-red-800 rounded-lg">
+                        <h1 class="text-xl font-bold">Gagal Terhubung ke Database</h1>
+                        <div class="text-left max-w-2xl mx-auto mt-4 space-y-2 text-sm">
+                           <p>Aplikasi tidak dapat menghubungi server Supabase saat memuat data awal. Ini bisa disebabkan oleh:</p>
+                           <ul class="list-decimal list-inside mt-2">
+                               <li>Koneksi internet yang tidak stabil.</li>
+                               <li>URL Supabase yang salah di dalam kode.</li>
+                               <li>Pemblokir iklan (Ad Blocker) yang aktif.</li>
+                               <li>Proyek Supabase Anda mungkin sedang nonaktif (paused).</li>
+                           </ul>
+                           <p class="mt-2">Silakan periksa hal-hal di atas dan segarkan halaman.</p>
+                        </div>
+                    </div>`;
+                }
                 return;
             }
 
             if (data && data.app_data) {
                 appData = data.app_data;
+                 if (!appData.admins || appData.admins.length === 0) {
+                    appData.admins = getInitialDataStructure().admins;
+                }
             } else {
-                // Initialize with default structure if no data found
                 appData = getInitialDataStructure();
             }
-            hideProgress();
         }
 
         async function saveData() {
@@ -756,6 +877,7 @@
                 attendance: {},
                 studentProgress: {},
                 groups: {},
+                admins: [{ email: 'admin@gmail.com', password: 'admin', protected: true }],
                 settings: {
                     logoUrl: 'https://placehold.co/40x40/1e293b/ffffff?text=ME',
                     backgroundUrl: '', 
@@ -854,6 +976,15 @@
                 attendance: "Kehadiran",
                 averageScore: "Rata-rata Nilai",
                 totalScore: "Nilai Total",
+                logout: "Keluar",
+                password: "Password",
+                newAdminEmail: "Email admin baru",
+                newAdminPassword: "Password baru",
+                exportExcel: "Export ke Excel",
+                importAttendanceExcel: "Import Kehadiran (Excel)",
+                importScoresExcel: "Import Nilai (Excel)",
+                availableStudents: "Siswa Tersedia",
+                collapseMenu: "Ciutkan menu"
             },
             en: {
                 appTitle: "Mozzart Education",
@@ -940,6 +1071,15 @@
                 attendance: "Attendance",
                 averageScore: "Average Score",
                 totalScore: "Total Score",
+                logout: "Logout",
+                password: "Password",
+                newAdminEmail: "New admin email",
+                newAdminPassword: "New password",
+                exportExcel: "Export to Excel",
+                importAttendanceExcel: "Import Attendance (Excel)",
+                importScoresExcel: "Import Scores (Excel)",
+                availableStudents: "Available Students",
+                collapseMenu: "Collapse menu",
             }
         };
 
@@ -954,7 +1094,7 @@
             const rlsOk = await checkSupabaseRLS();
             if (!rlsOk) return; // Stop if RLS check fails
 
-            await loadData();
+            // Data is already loaded from login, so we just apply settings and render
             applySettings();
             setupEventListeners();
             document.getElementById('attendance-date-summary').valueAsDate = new Date();
@@ -986,10 +1126,23 @@
         function setupEventListeners() {
             // Navigation
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navigateTo(link.dataset.view);
-                });
+                if (link.id !== 'logout-btn') {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if(link.dataset.view) {
+                           navigateTo(link.dataset.view);
+                        }
+                    });
+                }
+            });
+            
+            // Logout Button
+            document.getElementById('logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                appContainer.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
+                document.getElementById('password').value = '';
+                loginError.classList.add('hidden');
             });
 
             // Language toggle
@@ -1046,14 +1199,15 @@
             document.getElementById('group-mg-class-filter').addEventListener('change', (e) => {
                 const projectSelect = document.getElementById('group-mg-project-filter');
                 populateProjectFilters(projectSelect, e.target.value);
-                renderGroupList();
+                renderGroupManagementUI();
             });
-            document.getElementById('group-mg-project-filter').addEventListener('change', renderGroupList);
+            document.getElementById('group-mg-project-filter').addEventListener('change', renderGroupManagementUI);
 
             // Settings
             document.getElementById('logo-upload').addEventListener('change', handleImageUpload);
             document.getElementById('background-upload').addEventListener('change', handleImageUpload);
             document.querySelectorAll('.color-swatch').forEach(swatch => swatch.addEventListener('click', changeThemeColor));
+            document.getElementById('add-admin-btn').addEventListener('click', addAdmin);
             
             // Import and Reset Buttons
             document.getElementById('import-btn').addEventListener('click', handleImport);
@@ -1067,8 +1221,11 @@
         }
 
         function switchView(viewId) {
+            const viewElement = document.getElementById(`${viewId}-view`);
+            if (!viewElement) return;
+
             document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
-            document.getElementById(`${viewId}-view`).classList.remove('hidden');
+            viewElement.classList.remove('hidden');
             const titleKey = document.querySelector(`.nav-link[data-view="${viewId}"] span`).dataset.lang;
             document.getElementById('view-title').textContent = translations[currentLang][titleKey] || "Title";
             document.getElementById('view-title').dataset.lang = titleKey;
@@ -1769,59 +1926,94 @@
             appData.groups[className][projectId].push(newGroup);
             await saveData();
             groupNameInput.value = '';
-            renderGroupList();
+            renderGroupManagementUI();
         }
         
-        function renderGroupList() {
-            const container = document.getElementById('groups-list-container');
-            container.innerHTML = '';
+        function renderGroupManagementUI() {
+            const availableContainer = document.getElementById('available-students-container');
+            const groupsContainer = document.getElementById('groups-list-container');
+            availableContainer.innerHTML = '';
+            groupsContainer.innerHTML = '';
+
             const className = document.getElementById('group-mg-class-filter').value;
             const projectId = document.getElementById('group-mg-project-filter').value;
 
             if (!className || !projectId) return;
 
+            const allStudents = appData.students[className] || [];
             const groups = (appData.groups && appData.groups[className] && appData.groups[className][projectId]) ? appData.groups[className][projectId] : [];
-            
-            if (groups.length === 0) {
-                container.innerHTML = `<p class="text-center text-slate-500 py-4">Belum ada kelompok.</p>`;
-                return;
+            const assignedStudentIds = new Set(groups.flatMap(g => g.members));
+            const availableStudents = allStudents.filter(s => !assignedStudentIds.has(s.id));
+
+            // Render Available Students
+            if (availableStudents.length === 0) {
+                availableContainer.innerHTML = `<p class="text-center text-slate-500 p-4">Semua siswa sudah masuk kelompok.</p>`;
+            } else {
+                availableStudents.forEach(student => {
+                    const studentEl = document.createElement('div');
+                    studentEl.className = 'flex items-center justify-between p-2 hover:bg-slate-200 rounded-md';
+                    studentEl.innerHTML = `
+                        <span class="text-sm">${student.name}</span>
+                        <button class="add-to-group-btn p-1 text-slate-500 hover:text-indigo-600" data-student-id="${student.id}"><i data-lucide="plus-circle" class="w-4 h-4"></i></button>
+                    `;
+                    availableContainer.appendChild(studentEl);
+                });
             }
 
-            const studentList = appData.students[className] || [];
+            // Render Groups
+            if (groups.length === 0) {
+                groupsContainer.innerHTML = `<p class="text-center text-slate-500 py-4">Belum ada kelompok.</p>`;
+            } else {
+                groups.forEach(group => {
+                    const groupEl = document.createElement('div');
+                    groupEl.className = 'bg-slate-100 p-3 rounded-md';
+                    
+                    let membersHtml = group.members.map(memberId => {
+                        const student = allStudents.find(s => s.id === memberId);
+                        if (!student) return '';
+                        return `<div class="tag"><span>${student.name}</span><button class="remove-member-btn" data-group-id="${group.id}" data-student-id="${student.id}"><i data-lucide="x" class="h-3 w-3"></i></button></div>`;
+                    }).join('');
 
-            groups.forEach(group => {
-                const groupEl = document.createElement('div');
-                groupEl.className = 'bg-slate-100 p-3 rounded-md';
-                
-                let membersHtml = group.members.map(memberId => {
-                    const student = studentList.find(s => s.id === memberId);
-                    if (!student) return ''; // Safely skip if student not found
-                    return `<div class="tag"><span>${student.name}</span><button class="remove-member-btn" data-group-id="${group.id}" data-student-id="${student.id}"><i data-lucide="x" class="h-3 w-3"></i></button></div>`;
-                }).join('');
-
-                groupEl.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <h5 class="font-semibold text-slate-800" data-group-id-display="${group.id}">${group.name}</h5>
-                        <div class="flex items-center gap-2">
-                           <button class="rename-group-btn text-slate-500 hover:text-slate-700" data-group-id="${group.id}" data-group-name="${group.name}"><i data-lucide="edit" class="h-4 w-4"></i></button>
-                           <button class="delete-group-btn text-red-500 hover:text-red-700" data-group-id="${group.id}"><i data-lucide="trash-2" class="h-4 w-4"></i></button>
+                    groupEl.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <h5 class="font-semibold text-slate-800" data-group-id-display="${group.id}">${group.name}</h5>
+                            <div class="flex items-center gap-2">
+                               <button class="rename-group-btn text-slate-500 hover:text-slate-700" data-group-id="${group.id}" data-group-name="${group.name}"><i data-lucide="edit" class="h-4 w-4"></i></button>
+                               <button class="delete-group-btn text-red-500 hover:text-red-700" data-group-id="${group.id}"><i data-lucide="trash-2" class="h-4 w-4"></i></button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2 min-h-[2.5rem]">${membersHtml}</div>
-                    <div class="relative mt-2">
-                        <input type="text" class="student-search-input p-2 border rounded-md w-full form-input" placeholder="${translations[currentLang].searchStudent}" data-group-id="${group.id}">
-                        <div class="student-search-results absolute z-10 w-full bg-white border rounded-md mt-1 hidden max-h-40 overflow-y-auto shadow-lg"></div>
-                    </div>
-                `;
-                container.appendChild(groupEl);
-            });
+                        <div class="flex flex-wrap gap-2 min-h-[2.5rem]">${membersHtml}</div>
+                    `;
+                    groupsContainer.appendChild(groupEl);
+                });
+            }
             lucide.createIcons();
-            addStudentSearchListeners();
+            addGroupActionListeners();
+        }
+        
+        function addGroupActionListeners() {
+            // Add student to group
+            document.querySelectorAll('.add-to-group-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const studentId = parseInt(e.currentTarget.dataset.studentId);
+                    const groups = (appData.groups[document.getElementById('group-mg-class-filter').value]?.[document.getElementById('group-mg-project-filter').value] || []);
+                    if (groups.length === 0) {
+                        alert('Silakan buat kelompok terlebih dahulu.');
+                        return;
+                    }
+                    const groupNames = groups.map((g, i) => `${i + 1}: ${g.name}`).join('\n');
+                    const groupIndex = parseInt(prompt(`Masukkan nomor kelompok untuk menambahkan siswa:\n${groupNames}`)) - 1;
+                    
+                    if (!isNaN(groupIndex) && groups[groupIndex]) {
+                        addStudentToGroup(studentId, groups[groupIndex].id);
+                    }
+                });
+            });
             addGroupMemberRemoveListeners();
             addGroupDeleteListeners();
             addGroupRenameListeners();
         }
-        
+
         async function renameGroup(groupId, newName) {
             const className = document.getElementById('group-mg-class-filter').value;
             const projectId = document.getElementById('group-mg-project-filter').value;
@@ -1831,7 +2023,7 @@
                 if (group) {
                     group.name = newName;
                     await saveData();
-                    renderGroupList();
+                    renderGroupManagementUI();
                 }
             }
         }
@@ -1856,14 +2048,14 @@
                         if (newName && newName !== currentName) {
                             await renameGroup(parseInt(groupId), newName);
                         } else {
-                            renderGroupList();
+                            renderGroupManagementUI();
                         }
                     };
 
                     input.addEventListener('blur', saveRename);
                     input.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') input.blur();
-                        else if (e.key === 'Escape') renderGroupList();
+                        else if (e.key === 'Escape') renderGroupManagementUI();
                     });
                     
                     h5.textContent = '';
@@ -1871,56 +2063,6 @@
                     input.focus();
                     input.select();
                 });
-            });
-        }
-        
-        function addStudentSearchListeners() {
-            document.querySelectorAll('.student-search-input').forEach(input => {
-                input.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const groupId = parseInt(e.target.dataset.groupId);
-                    const resultsContainer = e.target.nextElementSibling;
-                    const className = document.getElementById('group-mg-class-filter').value;
-                    const projectId = document.getElementById('group-mg-project-filter').value;
-                    
-                    if (searchTerm.length < 1) {
-                        resultsContainer.innerHTML = '';
-                        resultsContainer.classList.add('hidden');
-                        return;
-                    }
-
-                    const allStudentsInClass = appData.students[className] || [];
-                    const allGroupsForProject = (appData.groups && appData.groups[className] && appData.groups[className][projectId]) ? appData.groups[className][projectId] : [];
-                    const assignedStudentIds = new Set(allGroupsForProject.flatMap(g => g.members));
-
-                    const availableStudents = allStudentsInClass.filter(s => !assignedStudentIds.has(s.id));
-                    const filteredStudents = availableStudents.filter(s => s.name.toLowerCase().includes(searchTerm));
-
-                    resultsContainer.innerHTML = '';
-                    if (filteredStudents.length > 0) {
-                        filteredStudents.forEach(student => {
-                            const resultItem = document.createElement('div');
-                            resultItem.className = 'p-2 hover:bg-slate-100 cursor-pointer';
-                            resultItem.textContent = student.name;
-                            resultItem.onclick = () => {
-                                addStudentToGroup(student.id, groupId);
-                                e.target.value = '';
-                                resultsContainer.innerHTML = '';
-                                resultsContainer.classList.add('hidden');
-                            };
-                            resultsContainer.appendChild(resultItem);
-                        });
-                        resultsContainer.classList.remove('hidden');
-                    } else {
-                        resultsContainer.classList.add('hidden');
-                    }
-                });
-
-                document.body.addEventListener('click', (e) => {
-                    if (!e.target.closest('.relative')) {
-                        document.querySelectorAll('.student-search-results').forEach(res => res.classList.add('hidden'));
-                    }
-                }, true);
             });
         }
         
@@ -1950,7 +2092,7 @@
                 if (appData.groups && appData.groups[className] && appData.groups[className][projectId]) {
                     appData.groups[className][projectId] = appData.groups[className][projectId].filter(g => g.id !== groupId);
                     await saveData();
-                    renderGroupList();
+                    renderGroupManagementUI();
                 }
             }
         }
@@ -1962,7 +2104,7 @@
             if (group && !group.members.includes(studentId)) {
                 group.members.push(studentId);
                 await saveData();
-                renderGroupList();
+                renderGroupManagementUI();
             }
         }
         
@@ -1973,7 +2115,7 @@
             if (group) {
                 group.members = group.members.filter(id => id !== studentId);
                 await saveData();
-                renderGroupList();
+                renderGroupManagementUI();
             }
         }
 
@@ -2007,12 +2149,11 @@
                 if (!appData.settings) appData.settings = {};
                 if (event.target.id === 'logo-upload') {
                     appData.settings.logoUrl = e.target.result;
-                    document.getElementById('app-logo').src = e.target.result;
                 } else if (event.target.id === 'background-upload') {
                     appData.settings.backgroundUrl = e.target.result;
-                    document.body.style.backgroundImage = `url(${e.target.result})`;
                 }
                 await saveData();
+                applySettings();
             };
             reader.readAsDataURL(file);
         }
@@ -2117,11 +2258,19 @@
             if (activeLink) activeLink.style.backgroundColor = primary;
         }
 
+        function applyLoginScreenSettings() {
+            const settings = appData.settings || getInitialDataStructure().settings;
+            if(settings.logoUrl) {
+                document.getElementById('login-logo').src = settings.logoUrl;
+            }
+        }
+        
         function applySettings() {
             const settings = appData.settings || getInitialDataStructure().settings;
             
             if (settings.logoUrl) {
                 document.getElementById('app-logo').src = settings.logoUrl;
+                document.getElementById('login-logo').src = settings.logoUrl;
             }
             if (settings.backgroundUrl) {
                 document.body.style.backgroundImage = `url(${settings.backgroundUrl})`;
@@ -2223,7 +2372,8 @@
             populateAttendanceInputTable('');
             populateScoreInputTable();
             renderProjectList();
-            renderGroupList();
+            renderGroupManagementUI();
+            renderAdminList();
         }
 
         // --- START THE APP ---
