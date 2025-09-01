@@ -1255,13 +1255,23 @@
             document.getElementById('attendance-student-search').addEventListener('keyup', (e) => {
                 populateAttendanceInputTable(e.target.value);
             });
-            document.getElementById('input-score-class').addEventListener('change', (e) => {
-                 const projectSelect = document.getElementById('input-score-project');
-                 populateProjectFilters(projectSelect, e.target.value);
-                 populateScoreInputTable();
-            });
-            document.getElementById('input-score-project').addEventListener('change', populateScoreInputTable);
-            document.getElementById('input-score-type').addEventListener('change', populateScoreInputTable);
+            
+            // New event listeners for Score Input section
+            const scoreClassSelect = document.getElementById('input-score-class');
+            const scoreProjectSelect = document.getElementById('input-score-project');
+            const scoreTypeSelect = document.getElementById('input-score-type');
+
+            function updateScoreProjectFilterAndTable() {
+                const className = scoreClassSelect.value;
+                const scoreType = scoreTypeSelect.value;
+                // Pass a flag to indicate the source of the call and the selected type
+                populateProjectFilters(scoreProjectSelect, className, { source: 'scoreInput', scoreType: scoreType });
+                populateScoreInputTable();
+            }
+            scoreClassSelect.addEventListener('change', updateScoreProjectFilterAndTable);
+            scoreTypeSelect.addEventListener('change', updateScoreProjectFilterAndTable);
+            scoreProjectSelect.addEventListener('change', populateScoreInputTable);
+
 
             // Input Management
             document.getElementById('add-project-criteria-btn').addEventListener('click', addTempCriteria);
@@ -1770,7 +1780,7 @@
 
             const project = appData.projects ? appData.projects.find(p => p.id === projectId) : null;
             if (!project) {
-                 tbody.innerHTML = `<tr><td colspan="100%" class="text-center p-4 text-slate-500">Projek tidak ditemukan.</td></tr>`;
+                 tbody.innerHTML = `<tr><td colspan="100%" class="text-center p-4 text-slate-500">Projek tidak ditemukan atau tidak ada kelompok yang dibuat untuk projek ini.</td></tr>`;
                 return;
             }
 
@@ -2479,7 +2489,8 @@
             return null;
         }
 
-        function populateProjectFilters(targetSelect, className) {
+        function populateProjectFilters(targetSelect, className, options = {}) {
+            const { source, scoreType } = options;
             const allProjects = appData.projects || [];
             let filteredProjects = allProjects;
 
@@ -2488,6 +2499,13 @@
                 if (classLevel) {
                     filteredProjects = allProjects.filter(p => p.level === classLevel || p.level === 'Semua');
                 }
+            }
+            
+            // If called from score input and type is group, only show projects with existing groups for that class.
+            if (source === 'scoreInput' && scoreType === 'group' && className) {
+                filteredProjects = filteredProjects.filter(p => {
+                    return appData.groups && appData.groups[className] && appData.groups[className][p.id] && appData.groups[className][p.id].length > 0;
+                });
             }
 
             const currentVal = targetSelect.value;
@@ -2504,8 +2522,9 @@
             } else if (targetSelect.options.length > 0) {
                 targetSelect.value = targetSelect.options[0].value;
             }
-            targetSelect.dispatchEvent(new Event('change'));
+            // Do not dispatch change event here to prevent loops. The calling function will handle the next step.
         }
+
 
         function populateClassFilters() {
             const classNames = appData.students ? Object.keys(appData.students).sort() : [];
@@ -2539,7 +2558,10 @@
                 const classSelect = document.getElementById(classId);
                 const projectSelect = document.getElementById(projectId);
                 if (classSelect && projectSelect) {
-                    populateProjectFilters(projectSelect, classSelect.value);
+                    const options = classId === 'input-score-class' 
+                        ? { source: 'scoreInput', scoreType: document.getElementById('input-score-type').value }
+                        : {};
+                    populateProjectFilters(projectSelect, classSelect.value, options);
                 }
             });
             
