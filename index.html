@@ -137,6 +137,23 @@
             transform: translateX(4px);
             background-color: #f1f5f9;
         }
+        .group-card.selected-group {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+        .input-menu-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .input-menu-card:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+        }
         @media (min-width: 640px) {
             .card-title {
                 font-size: 1.25rem; /* 20px */
@@ -412,77 +429,119 @@
                         </div>
                     </div>
 
-                    <!-- Data Input View -->
+                    <!-- Data Input View (Menu) -->
                     <div id="data-input-view" class="view hidden">
-                        <div class="flex flex-col gap-8">
-                            <!-- Attendance Input -->
-                            <div class="card">
-                                <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
-                                    <h3 class="card-title" data-lang="inputAttendance">Input Kehadiran</h3>
-                                    <button id="import-attendance-btn" class="mb-4 sm:mb-0 w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
-                                        <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
-                                        <span data-lang="importAttendanceExcel">Import Kehadiran (Excel)</span>
-                                    </button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Attendance Card -->
+                            <div id="go-to-attendance-input" class="card input-menu-card">
+                                <div>
+                                    <div class="flex items-center text-indigo-600 mb-4">
+                                        <i data-lucide="user-check" class="w-8 h-8"></i>
+                                        <h3 class="ml-4 text-xl font-semibold text-slate-800" data-lang="inputAttendance">Input Kehadiran</h3>
+                                    </div>
+                                    <p id="attendance-summary-text" class="text-slate-600 text-sm mb-4">Memuat ringkasan...</p>
                                 </div>
-                                 <div class="flex flex-col sm:flex-row gap-4 my-4">
-                                    <select id="input-attendance-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
-                                        <!-- Options populated by JS -->
-                                    </select>
-                                    <input type="date" id="input-attendance-date" class="p-2 border rounded-md bg-white form-input w-full sm:w-auto">
+                                <div class="flex justify-end items-center text-indigo-600 font-semibold">
+                                    <span>Buka</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
                                 </div>
-                                <div class="mb-4">
-                                    <input type="text" id="attendance-student-search" class="p-2 border rounded-md w-full form-input" placeholder="Cari nama siswa...">
+                            </div>
+                            <!-- Score Card -->
+                            <div id="go-to-score-input" class="card input-menu-card">
+                                <div>
+                                    <div class="flex items-center text-amber-600 mb-4">
+                                        <i data-lucide="award" class="w-8 h-8"></i>
+                                        <h3 class="ml-4 text-xl font-semibold text-slate-800" data-lang="inputScore">Input Nilai</h3>
+                                    </div>
+                                    <p id="score-summary-text" class="text-slate-600 text-sm mb-4">Memuat ringkasan...</p>
                                 </div>
-                                <div class="max-h-80 overflow-y-auto pr-2">
+                                 <div class="flex justify-end items-center text-amber-600 font-semibold">
+                                    <span>Buka</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Input View (Full Page) -->
+                    <div id="attendance-input-view" class="view hidden">
+                         <button id="back-to-data-input-from-attendance" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100">
+                             <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                             Kembali ke Menu Input
+                         </button>
+                         <div class="card">
+                            <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+                                <h3 class="card-title" data-lang="inputAttendance">Input Kehadiran</h3>
+                                <button id="import-attendance-btn" class="mb-4 sm:mb-0 w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                    <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                    <span data-lang="importAttendanceExcel">Import Kehadiran (Excel)</span>
+                                </button>
+                            </div>
+                             <div class="flex flex-col sm:flex-row gap-4 my-4">
+                                <select id="input-attendance-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
+                                    <!-- Options populated by JS -->
+                                </select>
+                                <input type="date" id="input-attendance-date" class="p-2 border rounded-md bg-white form-input w-full sm:w-auto">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" id="attendance-student-search" class="p-2 border rounded-md w-full form-input" placeholder="Cari nama siswa...">
+                            </div>
+                            <div class="max-h-80 overflow-y-auto pr-2">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-slate-200">
+                                            <th class="p-2 text-slate-600" data-lang="studentName">Nama Siswa</th>
+                                            <th class="p-2 text-slate-600" data-lang="status">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="attendance-input-table">
+                                        <!-- Rows populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button id="save-attendance" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
+                        </div>
+                    </div>
+
+                    <!-- Score Input View (Full Page) -->
+                    <div id="score-input-view" class="view hidden">
+                        <button id="back-to-data-input-from-score" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100">
+                             <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                             Kembali ke Menu Input
+                         </button>
+                         <div class="card">
+                            <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+                                <h3 class="card-title" data-lang="inputScore">Input Nilai</h3>
+                                <button id="import-scores-btn" class="mb-4 sm:mb-0 w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                    <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                    <span data-lang="importScoresExcel">Import Nilai (Excel)</span>
+                                </button>
+                            </div>
+                             <div class="flex flex-col sm:flex-row gap-4 my-4">
+                                <select id="input-score-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
+                                    <!-- Options populated by JS -->
+                                </select>
+                                <select id="input-score-project" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
+                                     <!-- Options populated by JS -->
+                                </select>
+                                <select id="input-score-type" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
+                                    <option value="personal" data-lang="personal">Personal</option>
+                                    <option value="group" data-lang="group">Kelompok</option>
+                                </select>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <div class="max-h-96 overflow-y-auto pr-2">
                                     <table class="w-full text-left">
-                                        <thead>
-                                            <tr class="border-b border-slate-200">
-                                                <th class="p-2 text-slate-600" data-lang="studentName">Nama Siswa</th>
-                                                <th class="p-2 text-slate-600" data-lang="status">Status</th>
-                                            </tr>
+                                        <thead id="score-input-table-head" class="border-b border-slate-200">
+                                            <!-- Header populated by JS -->
                                         </thead>
-                                        <tbody id="attendance-input-table">
-                                            <!-- Rows populated by JS -->
+                                        <tbody id="score-input-table-body">
+                                            <!-- Body populated by JS -->
                                         </tbody>
                                     </table>
                                 </div>
-                                <button id="save-attendance" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
                             </div>
-                            <!-- Score Input -->
-                            <div class="card">
-                                <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
-                                    <h3 class="card-title" data-lang="inputScore">Input Nilai</h3>
-                                    <button id="import-scores-btn" class="mb-4 sm:mb-0 w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
-                                        <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
-                                        <span data-lang="importScoresExcel">Import Nilai (Excel)</span>
-                                    </button>
-                                </div>
-                                 <div class="flex flex-col sm:flex-row gap-4 my-4">
-                                    <select id="input-score-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
-                                        <!-- Options populated by JS -->
-                                    </select>
-                                    <select id="input-score-project" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
-                                         <!-- Options populated by JS -->
-                                    </select>
-                                    <select id="input-score-type" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
-                                        <option value="personal" data-lang="personal">Personal</option>
-                                        <option value="group" data-lang="group">Kelompok</option>
-                                    </select>
-                                </div>
-                                <div class="overflow-x-auto">
-                                    <div class="max-h-96 overflow-y-auto pr-2">
-                                        <table class="w-full text-left whitespace-nowrap">
-                                            <thead id="score-input-table-head" class="border-b border-slate-200">
-                                                <!-- Header populated by JS -->
-                                            </thead>
-                                            <tbody id="score-input-table-body">
-                                                <!-- Body populated by JS -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <button id="save-scores" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
-                            </div>
+                            <button id="save-scores" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
                         </div>
                     </div>
 
@@ -538,6 +597,7 @@
                             <div class="grid md:grid-cols-2 gap-8">
                                 <div>
                                     <h4 class="text-lg font-semibold mb-2 text-slate-700" data-lang="availableStudents">Siswa Tersedia</h4>
+                                    <input type="text" id="available-student-search" placeholder="Cari nama siswa..." class="p-2 border rounded-md w-full form-input mb-2">
                                     <div id="available-students-container" class="space-y-2 max-h-96 overflow-y-auto pr-2 border rounded-md p-2 bg-slate-50">
                                     </div>
                                 </div>
@@ -617,7 +677,7 @@
                             <p data-lang="guide1Text">Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa dari file Excel (format: no, nis, nama, kelas). Anda juga bisa mengubah logo, background, dan warna tema aplikasi agar sesuai selera.</p>
 
                             <h3 data-lang="guide2Title">Langkah 2: Membuat Projek dan Kelompok</h3>
-                            <p data-lang="guide2TextNew">Buka menu 'Manajemen Input'. Di sini Anda bisa menambahkan atau menghapus projek beserta kriteria penilaiannya. Setelah projek dibuat, Anda dapat membuat kelompok untuk kelas dan projek tersebut, lalu tambahkan siswa ke dalam kelompok dengan mencari nama mereka.</p>
+                            <p data-lang="guide2TextNew">Buka menu 'Manajemen Input'. Di sini Anda bisa menambahkan atau menghapus projek beserta kriteria penilaiannya. Setelah projek dibuat, Anda dapat membuat kelompok untuk kelas dan projek tersebut, lalu tambahkan siswa ke dalam kelompok dengan memilih kelompoknya terlebih dahulu, kemudian cari dan klik siswa yang tersedia.</p>
 
                             <h3 data-lang="guide3Title">Langkah 3: Mencatat Kehadiran Harian</h3>
                             <p data-lang="guide3TextNew">Masuk ke 'Input Data' -> 'Input Kehadiran'. Pilih kelas, lalu gunakan kolom pencarian untuk menemukan siswa dengan cepat. Tandai status setiap siswa (Hadir, Sakit, Izin, Alpa), lalu klik 'Simpan'.</p>
@@ -671,6 +731,7 @@
 
         // --- APP DATA STATE ---
         let appData = {};
+        let selectedGroupId = null;
         
         let fileImportCallback = null;
 
@@ -937,7 +998,7 @@
                 guide1Title: "Langkah 1: Pengaturan Awal",
                 guide1Text: "Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa dari file Excel (format: no, nis, nama, kelas). Anda juga bisa mengubah logo, background, dan warna tema aplikasi agar sesuai selera.",
                 guide2Title: "Langkah 2: Membuat Projek dan Kelompok",
-                guide2TextNew: "Buka menu 'Manajemen Input'. Di sini Anda bisa menambahkan atau menghapus projek beserta kriteria penilaiannya. Setelah projek dibuat, Anda dapat membuat kelompok untuk kelas dan projek tersebut, lalu tambahkan siswa ke dalam kelompok dengan mencari nama mereka.",
+                guide2TextNew: "Buka menu 'Manajemen Input'. Di sini Anda bisa menambahkan atau menghapus projek beserta kriteria penilaiannya. Setelah projek dibuat, Anda dapat membuat kelompok untuk kelas dan projek tersebut, lalu tambahkan siswa ke dalam kelompok dengan memilih kelompoknya terlebih dahulu, kemudian cari dan klik siswa yang tersedia.",
                 guide3Title: "Langkah 3: Mencatat Kehadiran Harian",
                 guide3TextNew: "Masuk ke 'Input Data' -> 'Input Kehadiran'. Pilih kelas, lalu gunakan kolom pencarian untuk menemukan siswa dengan cepat. Tandai status setiap siswa (Hadir, Sakit, Izin, Alpa), lalu klik 'Simpan'.",
                 guide4Title: "Langkah 4: Menginput Nilai",
@@ -1032,7 +1093,7 @@
                 guide1Title: "Step 1: Initial Setup",
                 guide1Text: "First, open the 'Settings' menu. Use 'Import Student Data' to upload your student list from an Excel file (format: no, nis, name, class). You can also change the app's logo, background, and theme color.",
                 guide2Title: "Step 2: Create Projects and Groups",
-                guide2TextNew: "Go to the 'Input Management' menu. Here you can add or delete projects along with their scoring criteria. Once a project is created, you can create groups for that class and project, then add students to them by searching their names.",
+                guide2TextNew: "Go to the 'Input Management' menu. Here you can add or delete projects along with their scoring criteria. Once a project is created, you can create groups for that class and project, then add students to them by selecting a group first, then searching for and clicking on an available student.",
                 guide3Title: "Step 3: Recording Daily Attendance",
                 guide3TextNew: "Go to 'Data Input' -> 'Input Attendance'. Select the class, then use the search field to quickly find a student. Mark the status for each student (Present, Sick, Permit, Absent), then click 'Save'.",
                 guide4Title: "Step 4: Inputting Scores",
@@ -1104,6 +1165,11 @@
 
         // --- UI & NAVIGATION ---
         function navigateTo(viewId) {
+             let sidebarViewId = viewId;
+            if (viewId === 'attendance-input' || viewId === 'score-input') {
+                sidebarViewId = 'data-input';
+            }
+            
             // Deactivate all links
             document.querySelectorAll('.nav-link').forEach(l => {
                 l.classList.remove('active', 'text-white', 'font-semibold');
@@ -1112,7 +1178,7 @@
             });
 
             // Activate the target link
-            const targetLink = document.querySelector(`.nav-link[data-view="${viewId}"]`);
+            const targetLink = document.querySelector(`.nav-link[data-view="${sidebarViewId}"]`);
             if (targetLink) {
                 targetLink.classList.add('active', 'text-white', 'font-semibold');
                 targetLink.classList.remove('text-slate-600');
@@ -1179,7 +1245,12 @@
             document.getElementById('progress-student-filter').addEventListener('change', updateStudentProgressCharts);
             document.getElementById('class-progress-class-filter').addEventListener('change', updateClassProgressCharts);
             
-            // Data Input
+            // Data Input (Menu and Sub-pages)
+            document.getElementById('go-to-attendance-input').addEventListener('click', () => navigateTo('attendance-input'));
+            document.getElementById('go-to-score-input').addEventListener('click', () => navigateTo('score-input'));
+            document.getElementById('back-to-data-input-from-attendance').addEventListener('click', () => navigateTo('data-input'));
+            document.getElementById('back-to-data-input-from-score').addEventListener('click', () => navigateTo('data-input'));
+
             document.getElementById('input-attendance-class').addEventListener('change', () => populateAttendanceInputTable(''));
             document.getElementById('attendance-student-search').addEventListener('keyup', (e) => {
                 populateAttendanceInputTable(e.target.value);
@@ -1202,6 +1273,7 @@
                 renderGroupManagementUI();
             });
             document.getElementById('group-mg-project-filter').addEventListener('change', renderGroupManagementUI);
+            document.getElementById('available-student-search').addEventListener('keyup', renderGroupManagementUI);
 
             // Settings
             document.getElementById('logo-upload').addEventListener('change', handleImageUpload);
@@ -1226,7 +1298,19 @@
 
             document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
             viewElement.classList.remove('hidden');
-            const titleKey = document.querySelector(`.nav-link[data-view="${viewId}"] span`).dataset.lang;
+
+            let titleKey = 'dashboard'; // Default title
+            
+            // Determine the correct title based on the view
+            if (viewId === 'attendance-input') {
+                titleKey = 'inputAttendance';
+            } else if (viewId === 'score-input') {
+                titleKey = 'inputScore';
+            } else {
+                 const link = document.querySelector(`.nav-link[data-view="${viewId}"] span`);
+                 if (link) titleKey = link.dataset.lang;
+            }
+
             document.getElementById('view-title').textContent = translations[currentLang][titleKey] || "Title";
             document.getElementById('view-title').dataset.lang = titleKey;
         }
@@ -1664,6 +1748,7 @@
             await saveData();
             alert('Data kehadiran berhasil disimpan!');
             updateAttendanceSummaryChart();
+            updateDataInputSummaries();
         }
 
         document.getElementById('save-attendance').addEventListener('click', saveAttendance);
@@ -1697,7 +1782,7 @@
 
             project.criteria.forEach(criterion => {
                 const th = document.createElement('th');
-                th.className = 'p-2 text-slate-600';
+                th.className = 'p-2 text-slate-600 text-center';
                 th.textContent = criterion;
                 headerRow.appendChild(th);
             });
@@ -1715,7 +1800,7 @@
                     row.dataset.studentId = student.id;
                     let rowHtml = `<td class="p-2">${student.name}</td>`;
                     project.criteria.forEach((criterion) => {
-                        rowHtml += `<td class="p-2"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 form-input" data-criterion="${criterion}"></td>`;
+                        rowHtml += `<td class="p-2"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 text-center form-input" data-criterion="${criterion}"></td>`;
                     });
                     row.innerHTML = rowHtml;
                     tbody.appendChild(row);
@@ -1733,16 +1818,64 @@
                     
                     const members = group.members.map(memberId => {
                         return appData.students[className]?.find(s => s.id === memberId)?.name || 'Siswa Dihapus';
-                    }).join(', ');
+                    }).join('<br>');
 
-                    let rowHtml = `<td class="p-2"><div class="font-semibold text-slate-800">${group.name}</div><div class="text-xs text-slate-600">${members || 'Belum ada anggota'}</div></td>`;
+                    let rowHtml = `<td class="p-2 align-top"><div class="font-semibold text-slate-800">${group.name}</div><div class="text-xs text-slate-600 mt-1">${members || 'Belum ada anggota'}</div></td>`;
                     project.criteria.forEach((criterion) => {
-                        rowHtml += `<td class="p-2"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 form-input" data-criterion="${criterion}"></td>`;
+                        rowHtml += `<td class="p-2 align-middle"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 text-center form-input" data-criterion="${criterion}"></td>`;
                     });
                     row.innerHTML = rowHtml;
                     tbody.appendChild(row);
                 });
             }
+            setupScoreInputNavigation();
+        }
+        
+        function setupScoreInputNavigation() {
+            const inputs = document.querySelectorAll('#score-input-table-body input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('keydown', (e) => {
+                    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) return;
+                    
+                    const currentCell = e.target.parentElement;
+                    const currentRow = currentCell.parentElement;
+                    const cellIndex = Array.from(currentRow.children).indexOf(currentCell);
+                    const rowIndex = Array.from(currentRow.parentElement.children).indexOf(currentRow);
+                    const table = currentRow.parentElement;
+
+                    let targetInput = null;
+
+                    switch(e.key) {
+                        case 'ArrowDown':
+                        case 'Tab': // Treat Tab as ArrowDown for simplicity here, though default behavior might be better
+                            if (table.children[rowIndex + 1]) {
+                                targetInput = table.children[rowIndex + 1].children[cellIndex]?.querySelector('input');
+                            }
+                            break;
+                        case 'ArrowUp':
+                            if (table.children[rowIndex - 1]) {
+                                targetInput = table.children[rowIndex - 1].children[cellIndex]?.querySelector('input');
+                            }
+                            break;
+                        case 'ArrowLeft':
+                            if (currentRow.children[cellIndex - 1]) {
+                                targetInput = currentRow.children[cellIndex - 1]?.querySelector('input');
+                            }
+                            break;
+                        case 'ArrowRight':
+                            if (currentRow.children[cellIndex + 1]) {
+                                targetInput = currentRow.children[cellIndex + 1]?.querySelector('input');
+                            }
+                            break;
+                    }
+                    
+                    if (targetInput) {
+                        e.preventDefault();
+                        targetInput.focus();
+                        targetInput.select();
+                    }
+                });
+            });
         }
         
         async function saveScores() {
@@ -1798,6 +1931,7 @@
             alert('Nilai berhasil disimpan!');
             updateScoreRatingTable();
             updateScoreRatingSummary();
+            updateDataInputSummaries();
         }
 
         document.getElementById('save-scores').addEventListener('click', saveScores);
@@ -1932,6 +2066,7 @@
         function renderGroupManagementUI() {
             const availableContainer = document.getElementById('available-students-container');
             const groupsContainer = document.getElementById('groups-list-container');
+            const searchInput = document.getElementById('available-student-search');
             availableContainer.innerHTML = '';
             groupsContainer.innerHTML = '';
 
@@ -1943,11 +2078,15 @@
             const allStudents = appData.students[className] || [];
             const groups = (appData.groups && appData.groups[className] && appData.groups[className][projectId]) ? appData.groups[className][projectId] : [];
             const assignedStudentIds = new Set(groups.flatMap(g => g.members));
-            const availableStudents = allStudents.filter(s => !assignedStudentIds.has(s.id));
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const availableStudents = allStudents.filter(s => 
+                !assignedStudentIds.has(s.id) && s.name.toLowerCase().includes(searchTerm)
+            );
 
             // Render Available Students
             if (availableStudents.length === 0) {
-                availableContainer.innerHTML = `<p class="text-center text-slate-500 p-4">Semua siswa sudah masuk kelompok.</p>`;
+                availableContainer.innerHTML = `<p class="text-center text-slate-500 p-4">Tidak ada siswa yang cocok atau semua sudah masuk kelompok.</p>`;
             } else {
                 availableStudents.forEach(student => {
                     const studentEl = document.createElement('div');
@@ -1966,7 +2105,9 @@
             } else {
                 groups.forEach(group => {
                     const groupEl = document.createElement('div');
-                    groupEl.className = 'bg-slate-100 p-3 rounded-md';
+                    const isSelected = group.id === selectedGroupId;
+                    groupEl.className = `bg-slate-100 p-3 rounded-md border-2 group-card ${isSelected ? 'selected-group' : 'border-transparent'}`;
+                    groupEl.dataset.groupId = group.id;
                     
                     let membersHtml = group.members.map(memberId => {
                         const student = allStudents.find(s => s.id === memberId);
@@ -1992,23 +2133,30 @@
         }
         
         function addGroupActionListeners() {
-            // Add student to group
+             // Select a group
+            document.querySelectorAll('.group-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    // Prevent group selection when clicking on a button inside it
+                    if (e.target.closest('button')) return;
+                    
+                    const groupId = parseInt(card.dataset.groupId);
+                    selectedGroupId = (selectedGroupId === groupId) ? null : groupId; // Toggle selection
+                    renderGroupManagementUI(); // Re-render to show selection
+                });
+            });
+
+            // Add student to the selected group
             document.querySelectorAll('.add-to-group-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const studentId = parseInt(e.currentTarget.dataset.studentId);
-                    const groups = (appData.groups[document.getElementById('group-mg-class-filter').value]?.[document.getElementById('group-mg-project-filter').value] || []);
-                    if (groups.length === 0) {
-                        alert('Silakan buat kelompok terlebih dahulu.');
+                    if (!selectedGroupId) {
+                        alert('Pilih kelompok terlebih dahulu dengan mengklik kartu kelompok.');
                         return;
                     }
-                    const groupNames = groups.map((g, i) => `${i + 1}: ${g.name}`).join('\n');
-                    const groupIndex = parseInt(prompt(`Masukkan nomor kelompok untuk menambahkan siswa:\n${groupNames}`)) - 1;
-                    
-                    if (!isNaN(groupIndex) && groups[groupIndex]) {
-                        addStudentToGroup(studentId, groups[groupIndex].id);
-                    }
+                    addStudentToGroup(studentId, selectedGroupId);
                 });
             });
+
             addGroupMemberRemoveListeners();
             addGroupDeleteListeners();
             addGroupRenameListeners();
@@ -2091,6 +2239,7 @@
                 const projectId = document.getElementById('group-mg-project-filter').value;
                 if (appData.groups && appData.groups[className] && appData.groups[className][projectId]) {
                     appData.groups[className][projectId] = appData.groups[className][projectId].filter(g => g.id !== groupId);
+                    if (selectedGroupId === groupId) selectedGroupId = null; // Unselect if deleted
                     await saveData();
                     renderGroupManagementUI();
                 }
@@ -2251,6 +2400,45 @@
         }
         
         // --- UTILITY & REFRESH FUNCTIONS ---
+        function updateDataInputSummaries() {
+            const attendanceSummaryEl = document.getElementById('attendance-summary-text');
+            const scoreSummaryEl = document.getElementById('score-summary-text');
+
+            // Attendance Summary
+            let lastAttendanceDate = null;
+            if (appData.attendance) {
+                const allDates = Object.values(appData.attendance).flatMap(classData => Object.keys(classData.daily || {}));
+                if (allDates.length > 0) {
+                    lastAttendanceDate = allDates.sort().pop();
+                }
+            }
+            if (lastAttendanceDate) {
+                attendanceSummaryEl.textContent = `Data terakhir diinput pada tanggal ${new Date(lastAttendanceDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}.`;
+            } else {
+                attendanceSummaryEl.textContent = 'Belum ada data kehadiran yang diinput.';
+            }
+
+            // Score Summary
+            let lastScoredProject = null;
+            let projectsWithScores = new Set();
+            if(appData.scores){
+                projectsWithScores = new Set(Object.keys(appData.scores));
+            }
+            if (projectsWithScores.size > 0 && appData.projects && appData.projects.length > 0) {
+                for (let i = appData.projects.length - 1; i >= 0; i--) {
+                    if (projectsWithScores.has(appData.projects[i].id)) {
+                        lastScoredProject = appData.projects[i];
+                        break;
+                    }
+                }
+            }
+             if (lastScoredProject) {
+                scoreSummaryEl.textContent = `Projek terbaru yang dinilai adalah "${lastScoredProject.name}".`;
+            } else {
+                scoreSummaryEl.textContent = 'Belum ada nilai yang diinput.';
+            }
+        }
+        
         function applyTheme(primary, secondary) {
             document.documentElement.style.setProperty('--primary-color', primary);
             document.documentElement.style.setProperty('--secondary-color', secondary);
@@ -2364,6 +2552,7 @@
             updateDashboardInformation();
             updateScoreRatingSummary();
             updateAttendanceSummaryChart();
+            updateDataInputSummaries();
             
             // Other Views
             updateScoreRatingTable();
