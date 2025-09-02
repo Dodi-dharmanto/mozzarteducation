@@ -615,7 +615,13 @@
                         </div>
                         <!-- Group Management -->
                         <div class="card">
-                            <h3 class="card-title" data-lang="groupManagement">Manajemen Kelompok</h3>
+                             <div class="flex flex-col sm:flex-row gap-4 mb-4 justify-between items-center">
+                                <h3 class="card-title mb-0" data-lang="groupManagement">Manajemen Kelompok</h3>
+                                <button id="import-groups-btn" class="w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                    <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                    <span data-lang="importGroupsExcel">Import Kelompok (Excel)</span>
+                                </button>
+                            </div>
                              <div class="flex flex-col sm:flex-row gap-4 mb-4">
                                 <select id="group-mg-class-filter" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
                                     <!-- Options populated by JS -->
@@ -693,7 +699,7 @@
                             <div class="card">
                                 <h3 class="card-title" data-lang="dataManagement">Manajemen Data</h3>
                                 <div class="space-y-3">
-                                    <input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls, .csv">
+                                    
                                     <button id="import-btn" class="w-full text-left p-3 bg-amber-100 text-amber-800 rounded-md hover:bg-amber-200 flex items-center"> <i data-lucide="upload" class="w-4 h-4 mr-2"></i> <span data-lang="importStudentData">Import Data Siswa (Excel)</span></button>
                                     <p class="text-xs text-slate-500 px-3" data-lang="importFormat">Format: no, nis, nama, kelas</p>
                                     <button class="reset-btn w-full text-left p-3 bg-red-100 text-red-800 rounded-md hover:bg-red-200 flex items-center" data-type="all"> <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> <span data-lang="resetAllData">Reset Semua Data Aplikasi</span></button>
@@ -735,8 +741,35 @@
             <h3 id="modal-title" class="text-lg font-bold mb-4 text-slate-800">Konfirmasi</h3>
             <p id="modal-text" class="mb-6 text-slate-600">Apakah Anda yakin?</p>
             <div class="flex justify-end space-x-3">
-                <button id="modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300" data-lang="cancel">Batal</button>
+                <button id="modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button>
                 <button id="modal-confirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700" data-lang="confirm">Yakin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Project Modal -->
+    <div id="edit-project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg">
+            <h3 id="edit-project-modal-title" class="text-lg font-bold mb-4 text-slate-800">Edit Projek</h3>
+            <div>
+                <h4 class="text-sm font-semibold mb-2 text-slate-600">Kriteria Saat Ini:</h4>
+                <div id="edit-project-existing-criteria" class="flex flex-wrap gap-2 mb-4 p-2 bg-slate-100 rounded-md">
+                    <!-- Existing criteria tags will be populated here -->
+                </div>
+            </div>
+            <div class="space-y-4">
+                 <div>
+                    <label for="edit-project-new-criteria-input" class="block text-sm font-medium mb-1 text-slate-600">Tambah Kriteria Baru</label>
+                    <div class="flex">
+                        <input type="text" id="edit-project-new-criteria-input" class="p-2 border rounded-l-md w-full form-input" placeholder="Contoh: Presentasi">
+                        <button id="edit-project-add-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button>
+                    </div>
+                    <div id="edit-project-new-criteria-list" class="mt-2 flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="edit-project-modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button>
+                <button id="edit-project-modal-save" class="px-4 py-2 btn-primary text-white rounded-md">Simpan Perubahan</button>
             </div>
         </div>
     </div>
@@ -766,7 +799,7 @@
         // --- APP DATA STATE ---
         let appData = {};
         let selectedGroupId = null;
-        
+        let tempNewCriteriaForEdit = [];
         let fileImportCallback = null;
 
         // --- AUTHENTICATION & INITIALIZATION ---
@@ -980,6 +1013,12 @@
             };
         }
 
+        function normalizeStringForComparison(str) {
+            if (typeof str !== 'string' && typeof str !== 'number') return '';
+            // Trim, replace multiple spaces with one, and convert to lowercase
+            return String(str).trim().replace(/\s\s+/g, ' ').toLowerCase();
+        }
+
         // --- LANGUAGE TRANSLATIONS ---
         const translations = {
             id: {
@@ -1028,7 +1067,7 @@
                 guide1Title: "Langkah 1: Pengaturan Awal",
                 guide1Text: "Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa dari file Excel (format: no, nis, nama, kelas). Anda juga bisa mengubah logo, background, dan warna tema aplikasi agar sesuai selera.",
                 guide2Title: "Langkah 2: Membuat Projek dan Kelompok",
-                guide2TextNew: "Buka menu 'Manajemen Input'. Di sini Anda bisa menambahkan atau menghapus projek beserta kriteria penilaiannya. Setelah projek dibuat, Anda dapat membuat kelompok untuk kelas dan projek tersebut, lalu tambahkan siswa ke dalam kelompok dengan memilih kelompoknya terlebih dahulu, kemudian cari dan klik siswa yang tersedia.",
+                guide2TextNew: "Buka menu 'Manajemen Input'. Di sini Anda bisa menambahkan atau menghapus projek beserta kriteria penilaiannya. Setelah projek dibuat, Anda dapat membuat kelompok untuk kelas dan projek tersebut, lalu tambahkan siswa ke dalam kelompok dengan memilih kelompoknya terlebih dahulu, kemudian cari dan klik siswa yang tersedia. Anda juga bisa mengimpor data kelompok secara massal menggunakan file Excel.",
                 guide3Title: "Langkah 3: Mencatat Kehadiran Harian",
                 guide3TextNew: "Masuk ke 'Input Data' -> 'Input Kehadiran'. Pilih kelas, lalu gunakan kolom pencarian untuk menemukan siswa dengan cepat. Tandai status setiap siswa (Hadir, Sakit, Izin, Alpa), lalu klik 'Simpan'.",
                 guide4Title: "Langkah 4: Menginput Nilai",
@@ -1074,6 +1113,8 @@
                 exportExcel: "Export ke Excel",
                 importAttendanceExcel: "Import Kehadiran (Excel)",
                 importScoresExcel: "Import Nilai (Excel)",
+                importGroupsExcel: "Import Kelompok (Excel)",
+                importingGroups: "Mengimpor data kelompok...",
                 availableStudents: "Siswa Tersedia",
                 collapseMenu: "Ciutkan menu",
                 teacherInsight: "Insight Siswa",
@@ -1126,7 +1167,7 @@
                 guide1Title: "Step 1: Initial Setup",
                 guide1Text: "First, open the 'Settings' menu. Use 'Import Student Data' to upload your student list from an Excel file (format: no, nis, name, class). You can also change the app's logo, background, and theme color.",
                 guide2Title: "Step 2: Create Projects and Groups",
-                guide2TextNew: "Go to the 'Input Management' menu. Here you can add or delete projects along with their scoring criteria. Once a project is created, you can create groups for that class and project, then add students to them by selecting a group first, then searching for and clicking on an available student.",
+                guide2TextNew: "Go to the 'Input Management' menu. Here you can add or delete projects along with their scoring criteria. Once a project is created, you can create groups for that class and project, then add students to them by selecting a group first, then searching for and clicking on an available student. You can also bulk import group data using an Excel file.",
                 guide3Title: "Step 3: Recording Daily Attendance",
                 guide3TextNew: "Go to 'Data Input' -> 'Input Attendance'. Select the class, then use the search field to quickly find a student. Mark the status for each student (Present, Sick, Permit, Absent), then click 'Save'.",
                 guide4Title: "Step 4: Inputting Scores",
@@ -1172,6 +1213,8 @@
                 exportExcel: "Export to Excel",
                 importAttendanceExcel: "Import Attendance (Excel)",
                 importScoresExcel: "Import Scores (Excel)",
+                importGroupsExcel: "Import Groups (Excel)",
+                importingGroups: "Importing group data...",
                 availableStudents: "Available Students",
                 collapseMenu: "Collapse menu",
                 teacherInsight: "Student Insights",
@@ -1250,6 +1293,34 @@
             // Language toggle
             document.getElementById('lang-id').addEventListener('click', () => changeLanguage('id'));
             document.getElementById('lang-en').addEventListener('click', () => changeLanguage('en'));
+
+            // Mobile Sidebar Toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('main-sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            };
+
+            menuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleSidebar();
+            });
+
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when a link is clicked on mobile
+            document.querySelectorAll('#main-sidebar .nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) { // Tailwind's md breakpoint
+                        if (!sidebar.classList.contains('-translate-x-full')) {
+                            toggleSidebar();
+                        }
+                    }
+                });
+            });
 
             // Dashboard buttons & filters
             document.getElementById('detail-rating-btn').addEventListener('click', () => navigateTo('rating'));
@@ -1330,14 +1401,26 @@
             document.getElementById('add-admin-btn').addEventListener('click', addAdmin);
             
             // Import and Reset Buttons
-            document.getElementById('import-btn').addEventListener('click', handleImport);
-            document.getElementById('import-excel-input').addEventListener('change', processImportedFile);
+            document.getElementById('import-btn').addEventListener('click', handleStudentImport);
+            document.getElementById('import-groups-btn').addEventListener('click', handleGroupImport);
+            document.getElementById('generic-file-input').addEventListener('change', (e) => {
+                if (fileImportCallback) {
+                    fileImportCallback(e);
+                }
+            });
             document.querySelectorAll('.reset-btn').forEach(button => {
                 button.addEventListener('click', handleReset);
             });
 
             // Modal
             document.getElementById('modal-cancel').addEventListener('click', () => document.getElementById('confirmation-modal').classList.add('hidden'));
+
+            // Edit Project Modal Buttons
+            document.getElementById('edit-project-add-criteria-btn').addEventListener('click', addTempCriteriaForEdit);
+            document.getElementById('edit-project-modal-cancel').addEventListener('click', () => {
+                document.getElementById('edit-project-modal').classList.add('hidden');
+            });
+            document.getElementById('edit-project-modal-save').addEventListener('click', saveEditedProject);
         }
 
         function switchView(viewId) {
@@ -2171,7 +2254,7 @@
         function renderProjectList() {
             const listEl = document.getElementById('project-list-display');
             listEl.innerHTML = '';
-            if (!appData.projects) {
+            if (!appData.projects || appData.projects.length === 0) {
                 listEl.innerHTML = `<p class="text-slate-500 text-center py-4">Belum ada projek.</p>`;
                 return;
             };
@@ -2186,14 +2269,25 @@
                         </h5>
                         <p class="text-sm text-slate-600 mt-1">Kriteria: ${p.criteria.join(', ')}</p>
                     </div> 
-                    <button class="delete-project-btn text-red-500 hover:text-red-700" data-project-id="${p.id}"><i data-lucide="trash-2" class="h-4 w-4"></i></button>`;
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button class="edit-project-btn text-slate-500 hover:text-indigo-600 p-1" data-project-id="${p.id}" title="Edit Kriteria"><i data-lucide="file-pen-line" class="h-4 w-4"></i></button>
+                        <button class="delete-project-btn text-red-500 hover:text-red-700 p-1" data-project-id="${p.id}" title="Hapus Projek"><i data-lucide="trash-2" class="h-4 w-4"></i></button>
+                    </div>`;
                 listEl.appendChild(li);
             });
             lucide.createIcons();
+
             document.querySelectorAll('.delete-project-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const projectId = e.currentTarget.dataset.projectId;
                     deleteProject(projectId);
+                });
+            });
+
+            document.querySelectorAll('.edit-project-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const projectId = e.currentTarget.dataset.projectId;
+                    openEditProjectModal(projectId);
                 });
             });
         }
@@ -2209,6 +2303,78 @@
                 }
                 await saveData();
                 refreshAllViews();
+            }
+        }
+        
+        function addTempCriteriaForEdit() {
+            const criteriaInput = document.getElementById('edit-project-new-criteria-input');
+            const criteriaText = criteriaInput.value.trim();
+            const project = appData.projects.find(p => p.id === document.getElementById('edit-project-modal').dataset.editingProjectId);
+            if (!project) return;
+            
+            const allCriteria = [...project.criteria, ...tempNewCriteriaForEdit];
+
+            if (criteriaText && !allCriteria.includes(criteriaText)) {
+                tempNewCriteriaForEdit.push(criteriaText);
+                renderTempCriteriaForEdit();
+                criteriaInput.value = '';
+                criteriaInput.focus();
+            }
+        }
+
+        function renderTempCriteriaForEdit() {
+            const listEl = document.getElementById('edit-project-new-criteria-list');
+            listEl.innerHTML = '';
+            tempNewCriteriaForEdit.forEach((criteria, index) => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `<span>${criteria}</span><button data-index="${index}" class="remove-temp-edit-criteria"><i data-lucide="x" class="h-3 w-3"></i></button>`;
+                listEl.appendChild(tag);
+            });
+            lucide.createIcons();
+            listEl.querySelectorAll('.remove-temp-edit-criteria').forEach(btn => btn.addEventListener('click', (e) => {
+                const indexToRemove = e.currentTarget.dataset.index;
+                tempNewCriteriaForEdit.splice(indexToRemove, 1);
+                renderTempCriteriaForEdit();
+            }));
+        }
+
+        function openEditProjectModal(projectId) {
+            const modal = document.getElementById('edit-project-modal');
+            const project = appData.projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            modal.dataset.editingProjectId = projectId;
+            tempNewCriteriaForEdit = [];
+
+            document.getElementById('edit-project-modal-title').textContent = `Edit Projek: ${project.name}`;
+            
+            const existingCriteriaContainer = document.getElementById('edit-project-existing-criteria');
+            existingCriteriaContainer.innerHTML = '';
+            project.criteria.forEach(c => {
+                existingCriteriaContainer.innerHTML += `<span class="tag bg-slate-200 text-slate-700 border-slate-300">${c}</span>`;
+            });
+
+            renderTempCriteriaForEdit();
+            document.getElementById('edit-project-new-criteria-input').value = '';
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        async function saveEditedProject() {
+            const modal = document.getElementById('edit-project-modal');
+            const projectId = modal.dataset.editingProjectId;
+            const projectIndex = appData.projects.findIndex(p => p.id === projectId);
+
+            if (projectIndex > -1 && tempNewCriteriaForEdit.length > 0) {
+                appData.projects[projectIndex].criteria.push(...tempNewCriteriaForEdit);
+                await saveData();
+                modal.classList.add('hidden');
+                refreshAllViews();
+                alert('Kriteria berhasil ditambahkan ke projek.');
+            } else {
+                modal.classList.add('hidden'); // Close even if no changes
             }
         }
 
@@ -2485,11 +2651,17 @@
             reader.readAsDataURL(file);
         }
 
-        function handleImport() {
-            document.getElementById('import-excel-input').click();
+        function handleStudentImport() {
+            fileImportCallback = processStudentImportFile;
+            document.getElementById('generic-file-input').click();
         }
 
-        function processImportedFile(event) {
+        function handleGroupImport() {
+            fileImportCallback = processGroupImportFile;
+            document.getElementById('generic-file-input').click();
+        }
+
+        function processStudentImportFile(event) {
             const file = event.target.files[0];
             if (!file) return;
             
@@ -2517,7 +2689,7 @@
                             if (!appData.students[className]) {
                                 appData.students[className] = [];
                             }
-                            appData.students[className].push({ id: newStudentId++, name: name, nis: nis });
+                            appData.students[className].push({ id: newStudentId++, name: String(name).trim(), nis: nis });
                         }
                     }
                     
@@ -2537,6 +2709,106 @@
             };
             reader.readAsArrayBuffer(file);
             event.target.value = ''; // Reset input
+        }
+        
+        function processGroupImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            showProgress(translations[currentLang].importingGroups);
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    let successfulImports = 0;
+                    let failedImports = 0;
+                    const errors = [];
+
+                    for (let i = 1; i < json.length; i++) {
+                        const row = json[i];
+                        const groupName = String(row[0] || '').trim();
+                        const studentName = String(row[1] || '').trim();
+                        const className = String(row[2] || '').trim();
+                        const projectName = String(row[3] || '').trim();
+
+
+                        if (!groupName || !studentName || !className || !projectName) {
+                            failedImports++;
+                            errors.push(`Baris ${i + 1}: Data tidak lengkap.`);
+                            continue;
+                        }
+                        
+                        const normalizedStudentName = normalizeStringForComparison(studentName);
+                        const student = appData.students[className]?.find(s => normalizeStringForComparison(s.name) === normalizedStudentName);
+
+                        if (!student) {
+                            failedImports++;
+                            errors.push(`Baris ${i + 1}: Siswa "${studentName}" di kelas "${className}" tidak ditemukan.`);
+                            continue;
+                        }
+
+                        const normalizedProjectName = normalizeStringForComparison(projectName);
+                        const project = appData.projects.find(p => normalizeStringForComparison(p.name) === normalizedProjectName);
+                        
+                        if (!project) {
+                            failedImports++;
+                            errors.push(`Baris ${i + 1}: Projek "${projectName}" tidak ditemukan.`);
+                            continue;
+                        }
+
+                        if (!appData.groups) appData.groups = {};
+                        if (!appData.groups[className]) appData.groups[className] = {};
+                        if (!appData.groups[className][project.id]) appData.groups[className][project.id] = [];
+                        
+                        let group = appData.groups[className][project.id].find(g => g.name === groupName);
+                        if (!group) {
+                            group = {
+                                id: Date.now() + i,
+                                name: groupName,
+                                members: []
+                            };
+                            appData.groups[className][project.id].push(group);
+                        }
+
+                        if (!group.members.includes(student.id)) {
+                            const isAlreadyAssigned = appData.groups[className][project.id].some(g => g.members.includes(student.id));
+                            if(isAlreadyAssigned) {
+                                failedImports++;
+                                errors.push(`Baris ${i + 1}: Siswa "${studentName}" sudah ada di kelompok lain untuk projek ini.`);
+                                continue;
+                            }
+                            group.members.push(student.id);
+                        }
+                        successfulImports++;
+                    }
+                    
+                    await saveData();
+
+                    setTimeout(() => {
+                        hideProgress();
+                        let summaryMessage = `Impor selesai! Berhasil: ${successfulImports}, Gagal: ${failedImports}.`;
+                        if(errors.length > 0) {
+                            console.error("Kesalahan impor kelompok:", errors);
+                            summaryMessage += `\n\nBeberapa data gagal diimpor. Periksa konsol (F12) untuk detail.`;
+                        }
+                        alert(summaryMessage);
+                        refreshAllViews();
+                    }, 1800);
+
+                } catch (error) {
+                    hideProgress();
+                    alert('Gagal memproses file. Pastikan format file benar.');
+                    console.error("Group import error:", error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
         }
         
         let colorChangeTimeout;
