@@ -1953,23 +1953,80 @@
             const students = appData.students[className];
             const projects = appData.projects || [];
             const scores = appData.scores || {};
+            const classLevel = getLevelFromClassName(className);
             
-            // Identify Semester projects based on common naming conventions
-            const pts1Project = projects.find(p => p.name.toUpperCase().includes('PTS 1') || p.name.toUpperCase().includes('PTS SEMESTER 1'));
-            const pas1Project = projects.find(p => p.name.toUpperCase().includes('PAS 1') || p.name.toUpperCase().includes('PAS SEMESTER 1'));
+            // --- Logic Identification for Semester & Daily Projects ---
+            
+            // Standard Semester 2 projects
             const pts2Project = projects.find(p => p.name.toUpperCase().includes('PTS 2') || p.name.toUpperCase().includes('PTS SEMESTER 2'));
             const pas2Project = projects.find(p => p.name.toUpperCase().includes('PAS 2') || p.name.toUpperCase().includes('PAS SEMESTER 2'));
+            
+            // Standard PAS 1 project
+            const pas1Project = projects.find(p => p.name.toUpperCase().includes('PAS 1') || p.name.toUpperCase().includes('PAS SEMESTER 1'));
 
-            const semesterProjectIds = [pts1Project?.id, pas1Project?.id, pts2Project?.id, pas2Project?.id].filter(Boolean);
+            // Collect all project IDs that are considered for semester scores to exclude them from "daily" projects
+            let semesterProjectIds = [pts2Project?.id, pas2Project?.id, pas1Project?.id].filter(Boolean);
+
+            // Add custom project IDs for PTS 1 based on class level
+            if (classLevel === 'X') {
+                const projectAI = projects.find(p => p.name.toLowerCase().includes('membuat aplikasi dengan ai'));
+                if (projectAI) semesterProjectIds.push(projectAI.id);
+            } else if (classLevel === 'XII') {
+                const projectWebinar = projects.find(p => p.name.toLowerCase().includes('pelaksanaan webnar'));
+                const projectWebsite = projects.find(p => p.name.toLowerCase().includes('membuat aplikasi berbasis website'));
+                if (projectWebinar) semesterProjectIds.push(projectWebinar.id);
+                if (projectWebsite) semesterProjectIds.push(projectWebsite.id);
+            } else {
+                // Fallback for other classes (e.g., XI)
+                const pts1Project = projects.find(p => p.name.toUpperCase().includes('PTS 1') || p.name.toUpperCase().includes('PTS SEMESTER 1'));
+                if (pts1Project) semesterProjectIds.push(pts1Project.id);
+            }
+
             const dailyProjects = projects.filter(p => !semesterProjectIds.includes(p.id));
 
-            // Populate Semester 1 Table
+            // --- Populate Semester 1 Table ---
             if (students.length === 0) {
                 sem1Table.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-slate-500">Tidak ada siswa.</td></tr>`;
             } else {
                 students.forEach(student => {
-                    const ptsScore = (pts1Project && scores[pts1Project.id] && scores[pts1Project.id][student.id]) ? scores[pts1Project.id][student.id].total : '-';
-                    const pasScore = (pas1Project && scores[pas1Project.id] && scores[pas1Project.id][student.id]) ? scores[pas1Project.id][student.id].total : '-';
+                    let ptsScore = '-';
+                    let pasScore = (pas1Project && scores[pas1Project.id] && scores[pas1Project.id][student.id]) ? scores[pas1Project.id][student.id].total : '-';
+
+                    // Custom PTS Score Logic
+                    if (classLevel === 'X') {
+                        const projectAI = projects.find(p => p.name.toLowerCase().includes('membuat aplikasi dengan ai'));
+                        if (projectAI && scores[projectAI.id] && scores[projectAI.id][student.id]) {
+                            ptsScore = scores[projectAI.id][student.id].total;
+                        }
+                    } else if (classLevel === 'XII') {
+                        const projectWebinar = projects.find(p => p.name.toLowerCase().includes('pelaksanaan webnar'));
+                        const projectWebsite = projects.find(p => p.name.toLowerCase().includes('membuat aplikasi berbasis website'));
+                        
+                        let scoreWebinar = null;
+                        let scoreWebsite = null;
+                        let scoreCount = 0;
+
+                        if (projectWebinar && scores[projectWebinar.id] && scores[projectWebinar.id][student.id]) {
+                            scoreWebinar = scores[projectWebinar.id][student.id].total;
+                            scoreCount++;
+                        }
+                        if (projectWebsite && scores[projectWebsite.id] && scores[projectWebsite.id][student.id]) {
+                            scoreWebsite = scores[projectWebsite.id][student.id].total;
+                            scoreCount++;
+                        }
+
+                        if (scoreCount > 0) {
+                            const totalScore = (scoreWebinar || 0) + (scoreWebsite || 0);
+                            ptsScore = Math.round(totalScore / scoreCount);
+                        }
+                    } else {
+                        // Fallback to old logic for other classes (e.g., XI)
+                        const pts1Project = projects.find(p => p.name.toUpperCase().includes('PTS 1') || p.name.toUpperCase().includes('PTS SEMESTER 1'));
+                        if (pts1Project && scores[pts1Project.id] && scores[pts1Project.id][student.id]) {
+                            ptsScore = scores[pts1Project.id][student.id].total;
+                        }
+                    }
+                    
                     const row = `
                         <tr class="border-b border-slate-200">
                             <td class="p-2">${student.name}</td>
@@ -1981,7 +2038,7 @@
                 });
             }
 
-            // Populate Semester 2 Table
+            // --- Populate Semester 2 Table (Logic remains unchanged) ---
             if (students.length === 0) {
                 sem2Table.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-slate-500">Tidak ada siswa.</td></tr>`;
             } else {
@@ -1999,7 +2056,7 @@
                 });
             }
 
-            // Populate Daily Projects Table
+            // --- Populate Daily Projects Table ---
             if (dailyProjects.length === 0) {
                 projekContainer.innerHTML = `<p class="text-center p-4 text-slate-500">Tidak ada projek harian.</p>`;
             } else {
@@ -2369,6 +2426,8 @@
             const projectId = document.getElementById('input-score-project').value;
             const scoreType = document.getElementById('input-score-type').value;
 
+            const projectScores = (appData.scores && appData.scores[projectId]) ? appData.scores[projectId] : {};
+
             // Clear table content only, not specific filter unless needed
             thead.innerHTML = '';
             tbody.innerHTML = '';
@@ -2432,8 +2491,10 @@
                         row.className = 'border-b border-slate-200';
                         row.dataset.studentId = student.id;
                         let rowHtml = `<td class="p-2">${student.name}</td>`;
+                        const studentScoreData = projectScores[student.id] || { details: {} };
                         project.criteria.forEach((criterion) => {
-                            rowHtml += `<td class="p-2"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 text-center form-input" data-criterion="${criterion}"></td>`;
+                            const currentScore = studentScoreData.details[criterion] || '';
+                            rowHtml += `<td class="p-2"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 text-center form-input" data-criterion="${criterion}" value="${currentScore}"></td>`;
                         });
                         row.innerHTML = rowHtml;
                         tbody.appendChild(row);
@@ -2476,9 +2537,13 @@
                             return appData.students[className]?.find(s => s.id === memberId)?.name || 'Siswa Dihapus';
                         }).join('<br>');
 
+                        const firstMemberId = group.members.length > 0 ? group.members[0] : null;
+                        const groupScoreData = firstMemberId ? (projectScores[firstMemberId] || { details: {} }) : { details: {} };
+
                         let rowHtml = `<td class="p-2 align-top"><div class="font-semibold text-slate-800">${group.name}</div><div class="text-xs text-slate-600 mt-1">${members || 'Belum ada anggota'}</div></td>`;
                         project.criteria.forEach((criterion) => {
-                            rowHtml += `<td class="p-2 align-middle"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 text-center form-input" data-criterion="${criterion}"></td>`;
+                             const currentScore = groupScoreData.details[criterion] || '';
+                            rowHtml += `<td class="p-2 align-middle"><input type="number" min="0" max="100" class="p-1 border rounded-md w-20 text-center form-input" data-criterion="${criterion}" value="${currentScore}"></td>`;
                         });
                         row.innerHTML = rowHtml;
                         tbody.appendChild(row);
