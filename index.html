@@ -608,17 +608,11 @@
                          </button>
                          <div class="card">
                             <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
-                                <h3 class="card-title" data-lang="inputAttendance">Input Kehadiran</h3>
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <button id="import-attendance-btn" class="w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
-                                        <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
-                                        <span data-lang="importAttendanceExcel">Import (Excel)</span>
-                                    </button>
-                                    <button id="export-attendance-btn" class="w-full sm:w-auto py-2 px-4 rounded-md btn-primary text-sm font-semibold flex items-center justify-center">
-                                        <i data-lucide="download" class="w-4 h-4 mr-2"></i>
-                                        <span data-lang="exportAttendanceExcel">Export (Excel)</span>
-                                    </button>
-                                </div>
+                                <h3 class="card-title mb-0" data-lang="inputAttendance">Input Kehadiran</h3>
+                                <button id="import-attendance-btn" class="w-full sm:w-auto py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center">
+                                    <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                    <span data-lang="importAttendanceExcel">Import (Excel)</span>
+                                </button>
                             </div>
                              <div class="flex flex-col sm:flex-row gap-4 my-4">
                                 <select id="input-attendance-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto">
@@ -643,6 +637,25 @@
                                 </table>
                             </div>
                             <button id="save-attendance" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
+
+                            <div class="mt-8 pt-6 border-t border-slate-200">
+                                <h4 class="text-lg font-semibold mb-2 text-slate-700" data-lang="exportAttendanceRange">Export Rekap Kehadiran</h4>
+                                <p class="text-sm text-slate-500 mb-4" data-lang="exportAttendanceDesc">Pilih rentang tanggal untuk diekspor (maksimal 1 bulan).</p>
+                                <div class="flex flex-col sm:flex-row gap-4 items-end">
+                                    <div class="flex-1">
+                                        <label for="export-start-date" class="block text-sm font-medium text-slate-600 mb-1">Tanggal Mulai</label>
+                                        <input type="date" id="export-start-date" class="p-2 border rounded-md bg-white form-input w-full">
+                                    </div>
+                                    <div class="flex-1">
+                                        <label for="export-end-date" class="block text-sm font-medium text-slate-600 mb-1">Tanggal Akhir</label>
+                                        <input type="date" id="export-end-date" class="p-2 border rounded-md bg-white form-input w-full">
+                                    </div>
+                                    <button id="export-attendance-range-btn" class="py-2 px-4 rounded-md btn-primary text-sm font-semibold flex items-center justify-center">
+                                        <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                        <span data-lang="exportExcel">Export ke Excel</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -1262,6 +1275,8 @@
                 exportExcel: "Export ke Excel",
                 importAttendanceExcel: "Import (Excel)",
                 exportAttendanceExcel: "Export (Excel)",
+                exportAttendanceRange: "Export Rekap Kehadiran",
+                exportAttendanceDesc: "Pilih rentang tanggal untuk diekspor (maksimal 1 bulan).",
                 importScoresExcel: "Import Nilai (Excel)",
                 importGroupsExcel: "Import Kelompok (Excel)",
                 importingGroups: "Mengimpor data kelompok...",
@@ -1368,6 +1383,8 @@
                 exportExcel: "Export to Excel",
                 importAttendanceExcel: "Import (Excel)",
                 exportAttendanceExcel: "Export (Excel)",
+                exportAttendanceRange: "Export Attendance Recap",
+                exportAttendanceDesc: "Select a date range to export (max 1 month).",
                 importScoresExcel: "Import Scores (Excel)",
                 importGroupsExcel: "Import Groups (Excel)",
                 importingGroups: "Importing group data...",
@@ -1531,7 +1548,7 @@
             document.getElementById('attendance-student-search').addEventListener('keyup', (e) => {
                 populateAttendanceInputTable(e.target.value);
             });
-            document.getElementById('export-attendance-btn').addEventListener('click', exportAttendanceToExcel);
+            document.getElementById('export-attendance-range-btn').addEventListener('click', exportAttendanceByDateRange);
 
             
             // Activity input listener
@@ -2515,10 +2532,33 @@
 
         document.getElementById('save-attendance').addEventListener('click', saveAttendance);
         
-        function exportAttendanceToExcel() {
+        function exportAttendanceByDateRange() {
             const className = document.getElementById('input-attendance-class').value;
+            const startDateString = document.getElementById('export-start-date').value;
+            const endDateString = document.getElementById('export-end-date').value;
+
             if (!className) {
-                alert('Silakan pilih kelas untuk mengekspor data.');
+                alert('Silakan pilih kelas terlebih dahulu.');
+                return;
+            }
+            if (!startDateString || !endDateString) {
+                alert('Silakan pilih tanggal mulai dan tanggal akhir.');
+                return;
+            }
+
+            const startDate = new Date(startDateString);
+            const endDate = new Date(endDateString);
+
+            if (endDate < startDate) {
+                alert('Tanggal akhir tidak boleh sebelum tanggal mulai.');
+                return;
+            }
+
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            if (diffDays > 31) {
+                alert('Rentang waktu tidak boleh lebih dari 31 hari.');
                 return;
             }
 
@@ -2530,16 +2570,25 @@
                 return;
             }
 
-            const sortedDates = Object.keys(attendanceData).sort();
+            const allDates = Object.keys(attendanceData).sort();
+            const datesInRange = allDates.filter(date => {
+                const currentDateStr = new Date(date).toISOString().split('T')[0];
+                return currentDateStr >= startDateString && currentDateStr <= endDateString;
+            });
+
+            if (datesInRange.length === 0) {
+                alert('Tidak ada data kehadiran yang tercatat dalam rentang tanggal yang dipilih.');
+                return;
+            }
 
             const dataForExcel = [];
-            const headers = ['Nama Siswa', 'NIS', ...sortedDates];
+            const headers = ['Nama Siswa', 'NIS', ...datesInRange];
             dataForExcel.push(headers);
 
             students.forEach(student => {
                 const row = [student.name, student.nis || '-'];
-                sortedDates.forEach(date => {
-                    const status = attendanceData[date][student.id] || '-';
+                datesInRange.forEach(date => {
+                    const status = attendanceData[date]?.[student.id] || '-';
                     row.push(status);
                 });
                 dataForExcel.push(row);
@@ -2549,15 +2598,14 @@
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, `Kehadiran ${className}`);
 
-            // Set column widths
-            const colWidths = headers.map((header, i) => {
-                 if (i === 0) return { wch: 30 }; // Name column
-                 if (i === 1) return { wch: 15 }; // NIS column
-                 return { wch: 12 }; // Date columns
+            const colWidths = headers.map((_, i) => {
+                 if (i === 0) return { wch: 30 };
+                 if (i === 1) return { wch: 15 };
+                 return { wch: 12 };
             });
             worksheet['!cols'] = colWidths;
 
-            const fileName = `Rekap Kehadiran - Kelas ${className}.xlsx`;
+            const fileName = `Rekap Kehadiran - ${className} - ${startDateString} hingga ${endDateString}.xlsx`;
             XLSX.writeFile(workbook, fileName);
         }
 
@@ -3537,173 +3585,156 @@
                 projectsWithScores = new Set(Object.keys(appData.scores));
             }
             if (projectsWithScores.size > 0 && appData.projects && appData.projects.length > 0) {
-                for (let i = appData.projects.length - 1; i >= 0; i--) {
-                    if (projectsWithScores.has(appData.projects[i].id)) {
-                        lastScoredProject = appData.projects[i];
-                        break;
-                    }
+                 const scoredProjectIds = Array.from(projectsWithScores);
+                const lastScoredProjectId = scoredProjectIds.sort().pop();
+                lastScoredProject = appData.projects.find(p => p.id === lastScoredProjectId);
+
+                if (lastScoredProject) {
+                     scoreSummaryEl.textContent = `Terdapat nilai untuk ${projectsWithScores.size} projek. Terakhir diinput: ${lastScoredProject.name}.`;
+                } else {
+                     scoreSummaryEl.textContent = `Terdapat nilai untuk ${projectsWithScores.size} projek.`;
                 }
-            }
-             if (lastScoredProject) {
-                scoreSummaryEl.textContent = `Projek terbaru yang dinilai adalah "${lastScoredProject.name}".`;
             } else {
-                scoreSummaryEl.textContent = 'Belum ada nilai yang diinput.';
+                scoreSummaryEl.textContent = 'Belum ada data nilai yang diinput.';
             }
-
-            // Activity Summary
-            if (appData.activityScores && Object.keys(appData.activityScores).length > 0) {
-                 const lastUpdatedClass = Object.keys(appData.activityScores).pop();
-                 activitySummaryEl.textContent = `Skor keaktifan untuk kelas ${lastUpdatedClass} telah diinput.`;
-            } else {
-                activitySummaryEl.textContent = 'Belum ada skor keaktifan yang diinput.';
-            }
-        }
-        
-        function applyTheme(primary, secondary) {
-            document.documentElement.style.setProperty('--primary-color', primary);
-            document.documentElement.style.setProperty('--secondary-color', secondary);
-            const activeLink = document.querySelector('.nav-link.active');
-            if (activeLink) activeLink.style.backgroundColor = primary;
-        }
-
-        function applyLoginScreenSettings() {
-            const settings = appData.settings || getInitialDataStructure().settings;
-            if(settings.logoUrl) {
-                document.getElementById('login-logo').src = settings.logoUrl;
-            }
-        }
-        
-        function applySettings() {
-            const settings = appData.settings || getInitialDataStructure().settings;
             
-            if (settings.logoUrl) {
-                document.getElementById('app-logo').src = settings.logoUrl;
-                document.getElementById('login-logo').src = settings.logoUrl;
+            // Activity Summary
+            let activityInputCount = 0;
+            if (appData.activityScores) {
+                activityInputCount = Object.values(appData.activityScores).flatMap(classScores => Object.keys(classScores)).length;
             }
-            if (settings.backgroundUrl) {
-                document.body.style.backgroundImage = `url(${settings.backgroundUrl})`;
+
+            if (activityInputCount > 0) {
+                 activitySummaryEl.textContent = `Terdapat ${activityInputCount} data keaktifan siswa yang sudah diinput.`;
             } else {
-                 document.body.style.backgroundImage = 'linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 100%)';
-            }
-            if(settings.theme) {
-                applyTheme(settings.theme.primary, settings.theme.secondary);
-                document.getElementById('primary-color-picker').value = settings.theme.primary;
-                document.getElementById('secondary-color-picker').value = settings.theme.secondary;
+                activitySummaryEl.textContent = 'Belum ada data keaktifan yang diinput.';
             }
         }
-
+        
         function getLevelFromClassName(className) {
-            if (!className) return null;
-            const upperClassName = className.toUpperCase();
-            if (upperClassName.startsWith('XII')) return 'XII';
-            if (upperClassName.startsWith('XI')) return 'XI';
-            if (upperClassName.startsWith('X')) return 'X';
+            if (typeof className !== 'string') return null;
+            className = className.toUpperCase();
+            if (className.startsWith('XII')) return 'XII';
+            if (className.startsWith('XI')) return 'XI';
+            if (className.startsWith('X')) return 'X';
             return null;
         }
 
-        function populateProjectFilters(targetSelect, className, options = {}) {
-            const { source, scoreType } = options;
-            const allProjects = appData.projects || [];
-            let filteredProjects = allProjects;
+        function populateProjectFilters(selectEl, className, options = {}) {
+            selectEl.innerHTML = '';
+            const originalValue = selectEl.value;
+            if (!className || !appData.projects) {
+                selectEl.innerHTML = `<option value="">Pilih Projek</option>`;
+                return;
+            };
 
-            if (className) {
-                const classLevel = getLevelFromClassName(className);
-                if (classLevel) {
-                    filteredProjects = allProjects.filter(p => p.level === classLevel || p.level === 'Semua');
-                }
-            }
+            const classLevel = getLevelFromClassName(className);
+            const relevantProjects = appData.projects.filter(p => p.level === 'Semua' || p.level === classLevel);
             
-            // If called from score input and type is group, only show projects with existing groups for that class.
-            if (source === 'scoreInput' && scoreType === 'group' && className) {
-                filteredProjects = filteredProjects.filter(p => {
-                    return appData.groups && appData.groups[className] && appData.groups[className][p.id] && appData.groups[className][p.id].length > 0;
-                });
+            if (relevantProjects.length === 0) {
+                 selectEl.innerHTML = `<option value="">Tidak ada projek untuk jenjang ini</option>`;
+            } else {
+                 selectEl.innerHTML = `<option value="">Pilih Projek</option>`;
+                 relevantProjects.forEach(p => {
+                    selectEl.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                 });
+            }
+            selectEl.value = originalValue;
+        }
+
+        function applyTheme(primary, secondary) {
+            const root = document.documentElement;
+            root.style.setProperty('--primary-color', primary);
+            root.style.setProperty('--secondary-color', secondary);
+            
+            const activeLink = document.querySelector('.nav-link.active');
+            if (activeLink) {
+                 activeLink.style.backgroundColor = primary;
             }
 
-            const currentVal = targetSelect.value;
-            targetSelect.innerHTML = '';
-            filteredProjects.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = p.name;
-                targetSelect.appendChild(option);
-            });
-
-            if (filteredProjects.find(p => p.id === currentVal)) {
-                targetSelect.value = currentVal;
-            } else if (targetSelect.options.length > 0) {
-                targetSelect.value = targetSelect.options[0].value;
+            document.getElementById('primary-color-picker').value = primary;
+            document.getElementById('secondary-color-picker').value = secondary;
+            
+            if(charts.studentScoreProgressChart || charts.classScoreProgressChart) {
+                updateStudentProgressCharts();
+                updateClassProgressCharts();
             }
         }
 
-
-        function populateClassFilters() {
-            const classNames = appData.students ? Object.keys(appData.students).sort() : [];
-            const selects = document.querySelectorAll('#rating-class-filter-summary, #rating-class-filter-full, #attendance-class-filter-summary, #progress-class-filter, #input-attendance-class, #input-score-class, #group-mg-class-filter, #class-progress-class-filter, #insight-class-filter-dashboard, #rekap-class-filter, #input-activity-class, #attendance-insight-class-filter');
-            selects.forEach(select => {
-                const currentVal = select.value;
-                select.innerHTML = '';
-                classNames.forEach(name => {
-                    const option = document.createElement('option');
-                    option.value = name;
-                    option.textContent = `Kelas ${name}`;
-                    select.appendChild(option);
-                });
-                if (classNames.includes(currentVal)) {
-                    select.value = currentVal;
-                }
-            });
+        function applySettings() {
+            if (!appData.settings) return;
+            const { primary, secondary } = appData.settings.theme || { primary: '#1e293b', secondary: '#4f46e5' };
+            applyTheme(primary, secondary);
+            
+            if(appData.settings.logoUrl) {
+                document.querySelectorAll('#app-logo, #login-logo').forEach(el => el.src = appData.settings.logoUrl);
+            }
+            if(appData.settings.backgroundUrl) {
+                document.body.style.backgroundImage = `url(${appData.settings.backgroundUrl})`;
+            } else {
+                 document.body.style.backgroundImage = 'none';
+            }
+        }
+        
+        function applyLoginScreenSettings() {
+             if (!appData.settings) return;
+            if(appData.settings.logoUrl) {
+                document.getElementById('login-logo').src = appData.settings.logoUrl;
+            }
+            if(appData.settings.backgroundUrl) {
+                document.getElementById('login-container').style.backgroundImage = `url(${appData.settings.backgroundUrl})`;
+                document.getElementById('login-container').style.backgroundSize = 'cover';
+            }
         }
 
         function refreshAllViews() {
-            populateClassFilters();
+            const allClassNames = appData.students ? Object.keys(appData.students).sort() : [];
+            const allSelects = document.querySelectorAll('select[id$="-class-filter"], select[id$="-class-filter-summary"], select[id$="-class-filter-full"], #input-attendance-class, #input-activity-class, #input-score-class, #group-mg-class-filter, #rekap-class-filter, #attendance-insight-class-filter, #insight-class-filter-dashboard');
             
-            const filterPairs = [
-                ['rating-class-filter-summary', 'rating-project-filter-summary'],
-                ['rating-class-filter-full', 'rating-project-filter-full'],
-                ['input-score-class', 'input-score-project'],
-                ['group-mg-class-filter', 'group-mg-project-filter']
-            ];
-
-            filterPairs.forEach(([classId, projectId]) => {
-                const classSelect = document.getElementById(classId);
-                const projectSelect = document.getElementById(projectId);
-                if (classSelect && projectSelect) {
-                    const options = classId === 'input-score-class' 
-                        ? { source: 'scoreInput', scoreType: document.getElementById('input-score-type').value }
-                        : {};
-                    populateProjectFilters(projectSelect, classSelect.value, options);
+            allSelects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '';
+                if(allClassNames.length === 0) {
+                    select.innerHTML = `<option value="">Tidak Ada Kelas</option>`;
+                } else {
+                    select.innerHTML = `<option value="">Pilih Kelas</option>`;
+                    allClassNames.forEach(className => {
+                        const option = document.createElement('option');
+                        option.value = className;
+                        option.textContent = className;
+                        select.appendChild(option);
+                    });
+                }
+                if (allClassNames.includes(currentValue)) {
+                    select.value = currentValue;
                 }
             });
             
-            const firstClass = appData.students ? Object.keys(appData.students)[0] || '' : '';
-            if (firstClass) {
-                populateStudentFilter('progress-student-filter', firstClass);
+            const firstClass = allClassNames[0];
+            if(firstClass) {
+                allSelects.forEach(select => {
+                    if(!select.value) {
+                        select.value = firstClass;
+                    }
+                });
             }
 
-            // Dashboard
             updateDashboardInformation();
-            updateScoreRatingSummary();
-            updateAttendanceSummaryChart();
-            updateDataInputSummaries();
             renderStudentInsightsDashboard();
             renderAttendanceInsightDashboard();
-            
-            // Other Views
+            updateAttendanceSummaryChart();
+            updateScoreRatingSummary();
             updateScoreRatingTable();
             renderRekapitulasiView();
-            updateStudentProgressCharts();
-            updateClassProgressCharts();
-            populateAttendanceInputTable('');
-            populateActivityInputTable();
-            populateScoreInputTable();
+            switchProgressView(); // This will call the appropriate chart update
+            updateDataInputSummaries();
             renderProjectList();
             renderGroupManagementUI();
             renderAdminList();
+            
+            // Trigger change events to populate dependent elements
+            allSelects.forEach(select => select.dispatchEvent(new Event('change')));
         }
-
-        // --- START THE APP ---
-        // initApp is now called after successful login
     });
     </script>
 </body>
