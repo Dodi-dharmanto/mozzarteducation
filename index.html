@@ -217,6 +217,12 @@
                         <i data-lucide="file-spreadsheet" class="sidebar-icon"></i>
                         <span data-lang="rekapNilai" class="ml-4 nav-text">Rekapitulasi Nilai</span>
                     </a>
+                    <!-- NEW MENU ADDED HERE -->
+                    <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rapor-semester-1">
+                        <i data-lucide="book-open-check" class="sidebar-icon"></i>
+                        <span data-lang="raporSemester1" class="ml-4 nav-text">Rapor Semester 1</span>
+                    </a>
+                    <!-- END NEW MENU -->
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="student-progress">
                         <i data-lucide="trending-up" class="sidebar-icon"></i>
                         <span data-lang="studentProgress" class="ml-4 nav-text">Progres Siswa</span>
@@ -489,6 +495,47 @@
                         </div>
                     </div>
 
+                    <!-- NEW VIEW: Rapor Semester 1 -->
+                    <div id="rapor-semester-1-view" class="view hidden">
+                        <div class="card">
+                            <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
+                                <div>
+                                    <h3 class="card-title mb-1" data-lang="raporSemester1">Rapor Semester 1</h3>
+                                    <p class="text-sm text-slate-500">Kalkulasi rata-rata otomatis dari seluruh projek (Personal & Kelompok)</p>
+                                </div>
+                                <div class="flex gap-2 w-full sm:w-auto">
+                                    <select id="rapor-class-filter" class="p-2 border rounded-md bg-white form-select flex-1 sm:w-auto text-sm">
+                                        <!-- Options populated by JS -->
+                                    </select>
+                                    <button id="export-rapor-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center whitespace-nowrap">
+                                        <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                                        <span data-lang="exportExcel">Export</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm border-collapse">
+                                    <thead class="bg-slate-50 border-b border-slate-200">
+                                        <tr>
+                                            <th class="p-3 font-semibold text-slate-700">No</th>
+                                            <th class="p-3 font-semibold text-slate-700">NIS</th>
+                                            <th class="p-3 font-semibold text-slate-700">Nama Siswa</th>
+                                            <th class="p-3 font-semibold text-slate-700 text-center">Jumlah Projek</th>
+                                            <th class="p-3 font-semibold text-slate-700 text-center">Rata-Rata Akhir</th>
+                                            <th class="p-3 font-semibold text-slate-700 text-center">Predikat</th>
+                                            <th class="p-3 font-semibold text-slate-700">Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rapor-table-body" class="divide-y divide-slate-100">
+                                        <!-- Data populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END NEW VIEW -->
+
 
                     <!-- Student Progress View -->
                     <div id="student-progress-view" class="view hidden">
@@ -640,7 +687,7 @@
 
                             <div class="mt-8 pt-6 border-t border-slate-200">
                                 <h4 class="text-lg font-semibold mb-2 text-slate-700" data-lang="exportAttendanceRange">Export Rekap Kehadiran</h4>
-                                <p class="text-sm text-slate-500 mb-4" data-lang="exportAttendanceDesc">Pilih rentang tanggal untuk diekspor (maksimal 1 bulan).</p>
+                                <p class="text-sm text-slate-500 mb-4" data-lang="exportAttendanceDesc">Pilih rentang tanggal untuk diekspor (maksimal 6 bulan).</p>
                                 <div class="flex flex-col sm:flex-row gap-4 items-end">
                                     <div class="flex-1">
                                         <label for="export-start-date" class="block text-sm font-medium text-slate-600 mb-1">Tanggal Mulai</label>
@@ -1276,7 +1323,7 @@
                 importAttendanceExcel: "Import (Excel)",
                 exportAttendanceExcel: "Export (Excel)",
                 exportAttendanceRange: "Export Rekap Kehadiran",
-                exportAttendanceDesc: "Pilih rentang tanggal untuk diekspor (maksimal 1 bulan).",
+                exportAttendanceDesc: "Pilih rentang tanggal untuk diekspor (maksimal 6 bulan).",
                 importScoresExcel: "Import Nilai (Excel)",
                 importGroupsExcel: "Import Kelompok (Excel)",
                 importingGroups: "Mengimpor data kelompok...",
@@ -1287,7 +1334,11 @@
                 needsAttentionStudents: "Siswa Perlu Perhatian",
                 attendanceInsight: "Insight Kehadiran",
                 attendanceImprovement: "Peningkatan Kehadiran",
-                attendanceDecline: "Penurunan Kehadiran"
+                attendanceDecline: "Penurunan Kehadiran",
+                raporSemester1: "Rapor Semester 1",
+                finalGrade: "Nilai Akhir",
+                predicate: "Predikat",
+                description: "Keterangan"
             },
             en: {
                 appTitle: "Mozzart Education",
@@ -1384,7 +1435,7 @@
                 importAttendanceExcel: "Import (Excel)",
                 exportAttendanceExcel: "Export (Excel)",
                 exportAttendanceRange: "Export Attendance Recap",
-                exportAttendanceDesc: "Select a date range to export (max 1 month).",
+                exportAttendanceDesc: "Select a date range to export (max 6 months).",
                 importScoresExcel: "Import Scores (Excel)",
                 importGroupsExcel: "Import Groups (Excel)",
                 importingGroups: "Importing group data...",
@@ -1395,7 +1446,11 @@
                 needsAttentionStudents: "Students Needing Attention",
                 attendanceInsight: "Attendance Insight",
                 attendanceImprovement: "Attendance Improvement",
-                attendanceDecline: "Attendance Decline"
+                attendanceDecline: "Attendance Decline",
+                raporSemester1: "Semester 1 Report",
+                finalGrade: "Final Grade",
+                predicate: "Predicate",
+                description: "Description"
             }
         };
 
@@ -1526,6 +1581,10 @@
             // Rekapitulasi Page filters
             document.getElementById('rekap-class-filter').addEventListener('change', renderRekapitulasiView);
             
+            // NEW EVENT LISTENERS FOR RAPOR
+            document.getElementById('rapor-class-filter').addEventListener('change', renderRaporSemester1);
+            document.getElementById('export-rapor-btn').addEventListener('click', exportRaporToExcel);
+
             // Student Progress filters
             document.getElementById('progress-view-type').addEventListener('change', switchProgressView);
             document.getElementById('progress-class-filter').addEventListener('change', (e) => {
@@ -1995,6 +2054,136 @@
             const fileName = `Peringkat - ${project.name} - Kelas ${selectedClass}.xlsx`;
             XLSX.writeFile(workbook, fileName);
         }
+
+        // --- NEW FUNCTIONS FOR RAPOR SEMESTER 1 ---
+
+        function getPredicate(score) {
+            if (score >= 92) return { grade: 'A', desc: 'Sangat Baik' };
+            if (score >= 83) return { grade: 'B', desc: 'Baik' };
+            if (score >= 75) return { grade: 'C', desc: 'Cukup' };
+            return { grade: 'D', desc: 'Perlu Bimbingan' };
+        }
+
+        function calculateRaporData(className) {
+            if (!className || !appData.students || !appData.students[className]) return [];
+
+            const students = appData.students[className];
+            const projects = appData.projects || [];
+            
+            // Filter projects strictly for Semester 1 logic
+            // We include all projects EXCEPT those explicitly marked as "Semester 2", "Sem 2", "Genap"
+            const sem1Projects = projects.filter(p => {
+                const name = p.name.toUpperCase();
+                return !(name.includes('SEMESTER 2') || name.includes('SEM 2') || name.includes('GENAP') || name.includes('PAS 2') || name.includes('PTS 2'));
+            });
+
+            return students.map(student => {
+                let totalScoreSum = 0;
+                let projectCount = 0;
+
+                sem1Projects.forEach(project => {
+                    const scoreData = appData.scores && appData.scores[project.id] ? appData.scores[project.id][student.id] : null;
+                    if (scoreData && typeof scoreData.total === 'number') {
+                        totalScoreSum += scoreData.total;
+                        projectCount++;
+                    }
+                });
+
+                const average = projectCount > 0 ? Math.round(totalScoreSum / projectCount) : 0;
+                const predicateInfo = getPredicate(average);
+
+                return {
+                    no: 0, // Assigned later
+                    nis: student.nis || '-',
+                    name: student.name,
+                    projectCount: projectCount,
+                    average: average,
+                    grade: predicateInfo.grade,
+                    desc: predicateInfo.desc
+                };
+            }); // Keep original sort or sort by name? Let's keep original student list order usually
+        }
+
+        function renderRaporSemester1() {
+            const className = document.getElementById('rapor-class-filter').value;
+            const tbody = document.getElementById('rapor-table-body');
+            tbody.innerHTML = '';
+
+            if (!className) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-slate-500">Pilih kelas terlebih dahulu.</td></tr>`;
+                return;
+            }
+
+            const data = calculateRaporData(className);
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-slate-500">Tidak ada data siswa atau nilai.</td></tr>`;
+                return;
+            }
+
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors';
+                
+                let gradeColor = 'text-slate-600';
+                if(row.grade === 'A') gradeColor = 'text-emerald-600 font-bold';
+                if(row.grade === 'B') gradeColor = 'text-blue-600 font-bold';
+                if(row.grade === 'D') gradeColor = 'text-red-500';
+
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-600">${index + 1}</td>
+                    <td class="p-3 text-slate-600">${row.nis}</td>
+                    <td class="p-3 font-medium text-slate-800">${row.name}</td>
+                    <td class="p-3 text-center text-slate-600">${row.projectCount}</td>
+                    <td class="p-3 text-center font-bold text-slate-800">${row.average}</td>
+                    <td class="p-3 text-center ${gradeColor}">${row.grade}</td>
+                    <td class="p-3 text-slate-600 text-sm">${row.desc}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function exportRaporToExcel() {
+            const className = document.getElementById('rapor-class-filter').value;
+            if (!className) {
+                alert('Pilih kelas terlebih dahulu.');
+                return;
+            }
+
+            const data = calculateRaporData(className);
+            if (data.length === 0) {
+                alert('Tidak ada data untuk diekspor.');
+                return;
+            }
+
+            const exportData = [['No', 'NIS', 'Nama Siswa', 'Jml Projek Dinilai', 'Nilai Rata-rata', 'Predikat', 'Keterangan']];
+            
+            data.forEach((row, index) => {
+                exportData.push([
+                    index + 1,
+                    row.nis,
+                    row.name,
+                    row.projectCount,
+                    row.average,
+                    row.grade,
+                    row.desc
+                ]);
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, `Rapor Sem 1 - ${className}`);
+
+            // Formatting width
+            const wscols = [
+                {wch: 5}, {wch: 15}, {wch: 30}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 25}
+            ];
+            worksheet['!cols'] = wscols;
+
+            XLSX.writeFile(workbook, `Rapor_Semester_1_${className}.xlsx`);
+        }
+
+        // --- END NEW FUNCTIONS ---
 
         function renderRekapitulasiView() {
             const className = document.getElementById('rekap-class-filter').value;
@@ -2557,8 +2746,8 @@
             const diffTime = Math.abs(endDate - startDate);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-            if (diffDays > 31) {
-                alert('Rentang waktu tidak boleh lebih dari 31 hari.');
+            if (diffDays > 186) { // Updated to approx 6 months
+                alert('Rentang waktu tidak boleh lebih dari 6 bulan.');
                 return;
             }
 
@@ -2582,15 +2771,29 @@
             }
 
             const dataForExcel = [];
-            const headers = ['Nama Siswa', 'NIS', ...datesInRange];
+            // Added Summary Headers
+            const headers = ['Nama Siswa', 'NIS', ...datesInRange, 'Total Hadir', 'Total Sakit', 'Total Izin', 'Total Alpa'];
             dataForExcel.push(headers);
 
             students.forEach(student => {
                 const row = [student.name, student.nis || '-'];
+                
+                // Initialize counters
+                let h = 0, s = 0, i = 0, a = 0;
+
                 datesInRange.forEach(date => {
                     const status = attendanceData[date]?.[student.id] || '-';
                     row.push(status);
+
+                    // Calculate totals
+                    if (status === 'hadir') h++;
+                    else if (status === 'sakit') s++;
+                    else if (status === 'izin') i++;
+                    else if (status === 'alpa') a++;
                 });
+
+                // Append totals to the row
+                row.push(h, s, i, a);
                 dataForExcel.push(row);
             });
 
@@ -2599,9 +2802,9 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, `Kehadiran ${className}`);
 
             const colWidths = headers.map((_, i) => {
-                 if (i === 0) return { wch: 30 };
-                 if (i === 1) return { wch: 15 };
-                 return { wch: 12 };
+                 if (i === 0) return { wch: 30 }; // Name
+                 if (i === 1) return { wch: 15 }; // NIS
+                 return { wch: 12 }; // Dates and totals
             });
             worksheet['!cols'] = colWidths;
 
@@ -3689,7 +3892,7 @@
 
         function refreshAllViews() {
             const allClassNames = appData.students ? Object.keys(appData.students).sort() : [];
-            const allSelects = document.querySelectorAll('select[id$="-class-filter"], select[id$="-class-filter-summary"], select[id$="-class-filter-full"], #input-attendance-class, #input-activity-class, #input-score-class, #group-mg-class-filter, #rekap-class-filter, #attendance-insight-class-filter, #insight-class-filter-dashboard');
+            const allSelects = document.querySelectorAll('select[id$="-class-filter"], select[id$="-class-filter-summary"], select[id$="-class-filter-full"], #input-attendance-class, #input-activity-class, #input-score-class, #group-mg-class-filter, #rekap-class-filter, #attendance-insight-class-filter, #insight-class-filter-dashboard, #rapor-class-filter');
             
             allSelects.forEach(select => {
                 const currentValue = select.value;
@@ -3726,6 +3929,7 @@
             updateScoreRatingSummary();
             updateScoreRatingTable();
             renderRekapitulasiView();
+            renderRaporSemester1(); // Added to refresh loop
             switchProgressView(); // This will call the appropriate chart update
             updateDataInputSummaries();
             renderProjectList();
