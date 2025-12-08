@@ -684,7 +684,7 @@
                     <!-- Settings View -->
                     <div id="settings-view" class="view hidden">
                         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <!-- Appearance -->
+                            <!-- Appearance (UPDATED with SAVE Button) -->
                             <div class="card">
                                 <h3 class="card-title" data-lang="appearance">Tampilan</h3>
                                 <div class="space-y-4">
@@ -709,25 +709,51 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <button id="save-appearance-btn" class="mt-4 px-4 py-2 rounded-md w-full btn-primary text-sm font-semibold flex items-center justify-center">
+                                        <i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan Tampilan
+                                    </button>
                                 </div>
                             </div>
+                            
                             <!-- Admin Management -->
                             <div class="card">
-                                <h3 class="card-title" data-lang="adminManagement">Manajemen Admin</h3>
-                                <ul id="admin-list" class="space-y-2 mb-4"></ul>
-                                <div class="space-y-3">
-                                    <input type="email" id="new-admin-email" placeholder="Email admin baru" class="p-2 border rounded-md w-full form-input">
-                                    <input type="password" id="new-admin-password" placeholder="Password baru" class="p-2 border rounded-md w-full form-input">
-                                    <button id="add-admin-btn" class="px-4 py-2 rounded-md w-full btn-primary" data-lang="add">Tambah</button>
+                                <h3 class="card-title mb-4" data-lang="adminManagement">Manajemen Admin</h3>
+                                <ul id="admin-list" class="space-y-3 mb-6 max-h-60 overflow-y-auto pr-1">
+                                    <!-- Admin list populated here -->
+                                </ul>
+                                <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                    <h4 class="text-sm font-semibold text-slate-700 mb-3">Tambah Admin Baru</h4>
+                                    <div class="space-y-3">
+                                        <input type="email" id="new-admin-email" placeholder="Email admin" class="p-2 border rounded-md w-full form-input text-sm">
+                                        <input type="password" id="new-admin-password" placeholder="Password" class="p-2 border rounded-md w-full form-input text-sm">
+                                        <button id="add-admin-btn" class="px-4 py-2 rounded-md w-full btn-primary text-sm flex items-center justify-center">
+                                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
                             <!-- Data Reset -->
                             <div class="card">
-                                <h3 class="card-title" data-lang="dataManagement">Manajemen Data</h3>
-                                <div class="space-y-3">
-                                    <button id="import-btn" class="w-full text-left p-3 bg-amber-100 text-amber-800 rounded-md hover:bg-amber-200 flex items-center"> <i data-lucide="upload" class="w-4 h-4 mr-2"></i> <span data-lang="importStudentData">Import Data Siswa (Excel)</span></button>
-                                    <p class="text-xs text-slate-500 px-3" data-lang="importFormat">Format: no, nis, nama, kelas</p>
-                                    <button class="reset-btn w-full text-left p-3 bg-red-100 text-red-800 rounded-md hover:bg-red-200 flex items-center" data-type="all"> <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> <span data-lang="resetAllData">Reset Semua Data Aplikasi</span></button>
+                                <h3 class="card-title mb-4" data-lang="dataManagement">Manajemen Data</h3>
+                                <div class="space-y-4">
+                                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                                        <h4 class="text-sm font-bold text-amber-800 mb-2 flex items-center"><i data-lucide="database" class="w-4 h-4 mr-2"></i> Import Data</h4>
+                                        <button id="import-btn" class="w-full text-left p-3 bg-white border border-amber-200 text-amber-900 rounded-md hover:bg-amber-100 transition flex items-center shadow-sm"> 
+                                            <i data-lucide="upload" class="w-4 h-4 mr-2 text-amber-600"></i> 
+                                            <span class="text-sm font-medium" data-lang="importStudentData">Import Data Siswa (Excel)</span>
+                                        </button>
+                                        <p class="text-xs text-amber-700 mt-2 px-1" data-lang="importFormat"><i data-lucide="info" class="w-3 h-3 inline mr-1"></i>Format Excel: No, NIS, Nama, Kelas</p>
+                                    </div>
+                                    
+                                    <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                                        <h4 class="text-sm font-bold text-red-800 mb-2 flex items-center"><i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i> Zona Bahaya</h4>
+                                        <button class="reset-btn w-full text-left p-3 bg-white border border-red-200 text-red-700 rounded-md hover:bg-red-600 hover:text-white transition flex items-center shadow-sm group" onclick="handleReset(event)" data-type="all"> 
+                                            <i data-lucide="refresh-cw" class="w-4 h-4 mr-2 group-hover:text-white text-red-500"></i> 
+                                            <span class="text-sm font-medium" data-lang="resetAllData">Reset Semua Data Aplikasi</span>
+                                        </button>
+                                        <p class="text-xs text-red-700 mt-2 px-1">Menghapus seluruh siswa, nilai, dan absensi.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -769,13 +795,8 @@
     <input type="file" id="generic-file-input" class="hidden" accept=".xlsx, .xls, .csv">
 
     <script>
-    // --- GLOBAL FUNCTIONS ---
-    let currentMissingScoreStudentId = null;
-    let currentMissingScoreProjectId = null;
-    let currentMissingScoreClassName = null;
-    let editingProjectId = null;
-
     document.addEventListener('DOMContentLoaded', async function () {
+        // --- 1. GLOBAL VARIABLES & TRANSLATIONS ---
         const SUPABASE_URL = 'https://taeodevmwvalajqjbpaq.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhZW9kZXZtd3ZhbGFqcWpicGFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NDYxNjUsImV4cCI6MjA3MjAyMjE2NX0.-IX9xVUlrkKow0CKUahPCEx2fGUHqnNpkcpoFxBW4G4';
 
@@ -789,30 +810,28 @@
         let fileImportCallback = null;
         let charts = {}; 
         let tempProjectCriteria = [];
+        let pendingSettings = {};
+        
+        // MOVED TRANSLATIONS TO TOP SCOPE
+        const translations = {
+              id: {
+                appTitle: "Mozzart Education", dashboard: "Dasbor Kelas", rekapNilai: "Rekapitulasi Nilai", dataInput: "Input Data", inputManagement: "Manajemen Input", settings: "Pengaturan", guide: "Panduan", language: "Bahasa:", attendanceRecap: "Rekapitulasi Kehadiran", class: "Per Kelas", individual: "Individual", daily: "Harian", weekly: "Mingguan", monthly: "Bulanan", scoreRating: "Rating Nilai Siswa", topStudents: "Peringkat Teratas", attendanceToday: "Kehadiran Hari Ini", inputAttendance: "Input Kehadiran", inputActivity: "Input Keaktifan", studentName: "Nama Siswa", status: "Status", save: "Simpan", inputScore: "Input Nilai", personal: "Personal", group: "Kelompok", addCriteria: "+ Tambah Kriteria", appearance: "Tampilan", appLogo: "Logo Aplikasi", appBackground: "Background Aplikasi", themeColor: "Warna Tema", adminManagement: "Manajemen Admin", add: "Tambah", dataManagement: "Manajemen Data", importStudentData: "Import Data Siswa (Excel)", importFormat: "Format: no, nis, nama, kelas", resetAllData: "Reset Semua Data Aplikasi", guideTitle: "Panduan Penggunaan Mozzart Education", guide1Title: "Langkah 1: Pengaturan Awal", guide1Text: "Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa dari file Excel.", guide2Title: "Langkah 2: Membuat Projek", guide2TextNew: "Buka menu 'Manajemen Input'. Tambahkan projek beserta kriteria penilaiannya.", guide3Title: "Langkah 3: Mencatat Kehadiran", guide3TextNew: "Masuk ke 'Input Data' -> 'Input Kehadiran'. Anda bisa input manual atau gunakan tombol 'Download Format' untuk mengisi di Excel lalu upload kembali dengan 'Import (Excel)'.", guide4Title: "Langkah 4: Menginput Nilai", guide4Text: "Buka 'Input Data' -> 'Input Nilai'. Pilih projek, lalu gunakan 'Download Format' untuk mendapatkan template Excel yang sesuai kriteria projek. Isi nilai, lalu upload kembali.", guide5Title: "Langkah 5: Memantau Progres", guide5TextNew: "Gunakan 'Dasbor Kelas' untuk melihat rekapitulasi.", cancel: "Batal", confirm: "Yakin", present: "Hadir", sick: "Sakit", permit: "Izin", absent: "Alpa", score: "Nilai", rank: "Peringkat", projectManagement: "Manajemen Projek", projectName: "Nama Projek Baru", projectCriteria: "Scoring Criteria", addProject: "Add Project", projectList: "Project List", projectLevel: "Class Level", groupManagement: "Group Management", addGroup: "Add", searchStudent: "Search & add student...", importingData: "Importing data...", resetingData: "Resetting data...", classStats: "Class Statistics", totalStudents: "Total Students", activeProjects: "Active Projects", viewDetailsProgress: "View Progress Details", viewDetailsRating: "View Full Ratings", viewDetailsAttendance: "Input & Detail Kehadiran", classComparison: "Inter-Class Comparison", bestRankingInfo: "Informasi Peringkat Terbaik", bestClass: "Kelas Terbaik", bestStudent: "Siswa Terbaik", attendance: "Kehadiran", averageScore: "Rata-rata Nilai", totalScore: "Total Score", logout: "Logout", password: "Password", newAdminEmail: "New admin email", newAdminPassword: "New password", exportExcel: "Export to Excel", importAttendanceExcel: "Import (Excel)", exportAttendanceExcel: "Export (Excel)", exportAttendanceRange: "Export Attendance Recap", exportAttendanceDesc: "Select a date range to export (max 6 months).", importScoresExcel: "Import Nilai (Excel)", importGroupsExcel: "Import Groups (Excel)", importingGroups: "Importing group data...", availableStudents: "Available Students", collapseMenu: "Collapse menu", teacherInsight: "Student Activity Insights", mostActiveStudents: "Most Active Students", needsAttentionStudents: "Students Needing Attention", attendanceInsight: "Attendance Insight", attendanceImprovement: "Best Attendance", attendanceDecline: "Needs Attention", raporSemester1: "Semester 1 Report", finalGrade: "Final Grade", predicate: "Predicate", description: "Description", missingScores: "Cek Data Nilai", missingScoresTitle: "Cek Data Nilai"
+            }
+        };
+
+        let currentMissingScoreStudentId = null;
+        let currentMissingScoreProjectId = null;
+        let currentMissingScoreClassName = null;
+        let editingProjectId = null;
 
         const loginForm = document.getElementById('login-form');
         const loginContainer = document.getElementById('login-container');
         const appContainer = document.getElementById('app-container');
         const loginError = document.getElementById('login-error');
-        
-        await loadData();
-        applyLoginScreenSettings();
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = e.target.email.value;
-            const password = e.target.password.value;
-            const admin = appData.admins.find(a => a.email === email && a.password === password);
-            if (admin) {
-                loginContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                await initApp();
-            } else {
-                loginError.classList.remove('hidden');
-            }
-        });
 
-        // --- CORE FUNCTIONS (Load/Save/Settings) ---
+        // --- 2. CORE FUNCTION DEFINITIONS ---
+
         async function checkSupabaseRLS() {
             const TEST_ROW_ID = 999999;
             const { error: insertError } = await supabaseClient
@@ -846,193 +865,6 @@
              return { students: {}, projects: [], scores: {}, attendance: {}, activityScores: {}, groups: {}, admins: [{ email: 'admin@gmail.com', password: 'admin', protected: true }], settings: { logoUrl: 'https://placehold.co/40x40/1e293b/ffffff?text=ME', backgroundUrl: '', theme: { primary: '#1e293b', secondary: '#4f46e5' } } };
         }
 
-        // --- DOWNLOAD TEMPLATE & IMPORT LOGIC (REQUESTED FEATURES) ---
-
-        // 1. Download Template Absensi
-        function downloadAttendanceTemplate() {
-            const selectedClass = document.getElementById('input-attendance-class').value;
-            if (!selectedClass) { alert('Pilih kelas terlebih dahulu.'); return; }
-            
-            const students = appData.students[selectedClass] || [];
-            if (students.length === 0) { alert('Tidak ada siswa di kelas ini.'); return; }
-
-            const data = [];
-            data.push(['No', 'NIS', 'Nama Siswa', 'Status (hadir/sakit/izin/alpa)']); // Header
-            
-            students.forEach((s, index) => {
-                data.push([index + 1, s.nis || '', s.name, '']);
-            });
-
-            const worksheet = XLSX.utils.aoa_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Absensi");
-            worksheet['!cols'] = [{wch: 5}, {wch: 15}, {wch: 30}, {wch: 30}];
-            XLSX.writeFile(workbook, `Template_Absensi_${selectedClass}.xlsx`);
-        }
-
-        // 2. Import Absensi
-        async function processAttendanceImport(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
-                if (jsonData.length > 1) jsonData.shift(); // Skip header
-
-                const selectedClass = document.getElementById('input-attendance-class').value;
-                const selectedDate = document.getElementById('input-attendance-date').value;
-
-                if (!selectedClass || !selectedDate) { alert('Pastikan kelas dan tanggal sudah dipilih.'); return; }
-                
-                if (!appData.attendance) appData.attendance = {};
-                if (!appData.attendance[selectedClass]) appData.attendance[selectedClass] = { daily: {} };
-                if (!appData.attendance[selectedClass].daily) appData.attendance[selectedClass].daily = {};
-                if (!appData.attendance[selectedClass].daily[selectedDate]) appData.attendance[selectedClass].daily[selectedDate] = {};
-
-                let updateCount = 0;
-                const students = appData.students[selectedClass] || [];
-
-                jsonData.forEach(row => {
-                    const nis = row[1] ? String(row[1]).trim() : '';
-                    const name = row[2] ? String(row[2]).trim() : '';
-                    let status = row[3] ? String(row[3]).toLowerCase().trim() : '';
-
-                    if (!['hadir', 'sakit', 'izin', 'alpa'].includes(status)) return;
-
-                    const student = students.find(s => (s.nis && String(s.nis) === nis) || (s.name.toLowerCase() === name.toLowerCase()));
-
-                    if (student) {
-                        appData.attendance[selectedClass].daily[selectedDate][student.id] = status;
-                        updateCount++;
-                    }
-                });
-
-                await saveData();
-                populateAttendanceInputTable(document.getElementById('attendance-student-search').value);
-                alert(`Berhasil mengimpor data kehadiran untuk ${updateCount} siswa.`);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // 3. Download Template Nilai
-        function downloadScoreTemplate() {
-            const selectedClass = document.getElementById('input-score-class').value;
-            const selectedProjectId = document.getElementById('input-score-project').value;
-
-            if (!selectedClass || !selectedProjectId) { alert('Pilih kelas dan projek terlebih dahulu.'); return; }
-
-            const project = appData.projects.find(p => p.id === selectedProjectId);
-            const students = appData.students[selectedClass] || [];
-            
-            if (!project) return;
-            if (students.length === 0) { alert('Tidak ada siswa di kelas ini.'); return; }
-
-            const data = [];
-            const headers = ['No', 'NIS', 'Nama Siswa', ...project.criteria];
-            data.push(headers);
-
-            students.forEach((s, index) => {
-                const row = [index + 1, s.nis || '', s.name];
-                project.criteria.forEach(() => row.push('')); // Empty cells
-                data.push(row);
-            });
-
-            const worksheet = XLSX.utils.aoa_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Nilai");
-            
-            const wscols = [{wch: 5}, {wch: 15}, {wch: 30}];
-            project.criteria.forEach(() => wscols.push({wch: 15}));
-            worksheet['!cols'] = wscols;
-
-            XLSX.writeFile(workbook, `Template_Nilai_${project.name}_${selectedClass}.xlsx`);
-        }
-
-        // 4. Import Nilai
-        async function processScoreImport(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                const headers = jsonData[0]; 
-
-                const selectedClass = document.getElementById('input-score-class').value;
-                const selectedProjectId = document.getElementById('input-score-project').value;
-
-                if (!selectedClass || !selectedProjectId) { alert('Pastikan kelas dan projek sudah dipilih.'); return; }
-                
-                const project = appData.projects.find(p => p.id === selectedProjectId);
-                if(!project) return;
-
-                if (!appData.scores) appData.scores = {};
-                if (!appData.scores[selectedProjectId]) appData.scores[selectedProjectId] = {};
-
-                let updateCount = 0;
-                const students = appData.students[selectedClass] || [];
-
-                const criteriaIndices = {};
-                project.criteria.forEach(crit => {
-                    const idx = headers.findIndex(h => String(h).trim().toLowerCase() === crit.toLowerCase());
-                    if (idx !== -1) criteriaIndices[crit] = idx;
-                });
-
-                for (let i = 1; i < jsonData.length; i++) {
-                    const row = jsonData[i];
-                    if (!row || row.length === 0) continue;
-
-                    const nis = row[1] ? String(row[1]).trim() : '';
-                    const name = row[2] ? String(row[2]).trim() : '';
-                    const student = students.find(s => (s.nis && String(s.nis) === nis) || (s.name.toLowerCase() === name.toLowerCase()));
-
-                    if (student) {
-                        let scoreSum = 0;
-                        let details = {};
-                        let validCriteriaCount = 0;
-
-                        project.criteria.forEach(crit => {
-                            const idx = criteriaIndices[crit];
-                            if (idx !== undefined) {
-                                let val = parseFloat(row[idx]);
-                                if (isNaN(val)) val = 0;
-                                if (val > 100) val = 100;
-                                if (val < 0) val = 0;
-                                details[crit] = val;
-                                scoreSum += val;
-                                validCriteriaCount++;
-                            } else { details[crit] = 0; }
-                        });
-
-                        const total = validCriteriaCount > 0 ? Math.round(scoreSum / validCriteriaCount) : 0;
-                        appData.scores[selectedProjectId][student.id] = { total: total, details: details };
-                        updateCount++;
-                    }
-                }
-
-                await saveData();
-                populateScoreInputTable();
-                alert(`Berhasil mengimpor nilai untuk ${updateCount} siswa.`);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // --- TRANSLATIONS & THEME ---
-        const translations = {
-              id: {
-                appTitle: "Mozzart Education", dashboard: "Dasbor Kelas", rekapNilai: "Rekapitulasi Nilai", dataInput: "Input Data", inputManagement: "Manajemen Input", settings: "Pengaturan", guide: "Panduan", language: "Bahasa:", attendanceRecap: "Rekapitulasi Kehadiran", class: "Per Kelas", individual: "Individual", daily: "Harian", weekly: "Mingguan", monthly: "Bulanan", scoreRating: "Rating Nilai Siswa", topStudents: "Peringkat Teratas", attendanceToday: "Kehadiran Hari Ini", inputAttendance: "Input Kehadiran", inputActivity: "Input Keaktifan", studentName: "Nama Siswa", status: "Status", save: "Simpan", inputScore: "Input Nilai", personal: "Personal", group: "Kelompok", addCriteria: "+ Tambah Kriteria", appearance: "Tampilan", appLogo: "Logo Aplikasi", appBackground: "Background Aplikasi", themeColor: "Warna Tema", adminManagement: "Manajemen Admin", add: "Tambah", dataManagement: "Manajemen Data", importStudentData: "Import Data Siswa (Excel)", importFormat: "Format: no, nis, nama, kelas", resetAllData: "Reset Semua Data Aplikasi", guideTitle: "Panduan Penggunaan Mozzart Education", guide1Title: "Langkah 1: Pengaturan Awal", guide1Text: "Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa.", guide2Title: "Langkah 2: Membuat Projek", guide2TextNew: "Buka menu 'Manajemen Input'. Tambahkan projek beserta kriteria penilaiannya.", guide3Title: "Langkah 3: Mencatat Kehadiran", guide3TextNew: "Masuk ke 'Input Data' -> 'Input Kehadiran'. Anda bisa input manual atau gunakan tombol 'Download Format' untuk mengisi di Excel lalu upload kembali.", guide4Title: "Langkah 4: Menginput Nilai", guide4Text: "Buka 'Input Data' -> 'Input Nilai'. Pilih projek, lalu gunakan 'Download Format'. Isi nilai, lalu upload kembali.", guide5Title: "Langkah 5: Memantau Progres", guide5TextNew: "Gunakan 'Dasbor Kelas' untuk melihat rekapitulasi.", cancel: "Batal", confirm: "Yakin", present: "Hadir", sick: "Sakit", permit: "Izin", absent: "Alpa", score: "Nilai", rank: "Peringkat", projectManagement: "Manajemen Projek", projectName: "Nama Projek Baru", projectCriteria: "Scoring Criteria", addProject: "Add Project", projectList: "Project List", projectLevel: "Class Level", groupManagement: "Group Management", addGroup: "Add", searchStudent: "Search & add student...", importingData: "Importing data...", resetingData: "Resetting data...", classStats: "Class Statistics", totalStudents: "Total Students", activeProjects: "Active Projects", viewDetailsProgress: "View Progress Details", viewDetailsRating: "View Full Ratings", viewDetailsAttendance: "Input & Detail Kehadiran", classComparison: "Inter-Class Comparison", bestRankingInfo: "Informasi Peringkat Terbaik", bestClass: "Kelas Terbaik", bestStudent: "Siswa Terbaik", attendance: "Kehadiran", averageScore: "Rata-rata Nilai", totalScore: "Total Score", logout: "Logout", password: "Password", newAdminEmail: "New admin email", newAdminPassword: "New password", exportExcel: "Export to Excel", importAttendanceExcel: "Import (Excel)", exportAttendanceExcel: "Export (Excel)", exportAttendanceRange: "Export Attendance Recap", exportAttendanceDesc: "Select a date range to export (max 6 months).", importScoresExcel: "Import Nilai (Excel)", importGroupsExcel: "Import Groups (Excel)", importingGroups: "Importing group data...", availableStudents: "Available Students", collapseMenu: "Collapse menu", teacherInsight: "Student Activity Insights", mostActiveStudents: "Most Active Students", needsAttentionStudents: "Students Needing Attention", attendanceInsight: "Attendance Insight", attendanceImprovement: "Best Attendance", attendanceDecline: "Needs Attention", raporSemester1: "Semester 1 Report", finalGrade: "Final Grade", predicate: "Predicate", description: "Description", missingScores: "Check Missing Scores", missingScoresTitle: "Check Missing Scores"
-            }
-        };
-
-        // --- APP INITIALIZATION ---
         async function initApp() {
             lucide.createIcons();
             const rlsOk = await checkSupabaseRLS();
@@ -1040,12 +872,10 @@
             applySettings();
             setupEventListeners();
             refreshAllViews();
-            changeLanguage('id', true);
+            changeLanguage('id'); // Fix: translations is now defined
         }
 
-        // --- SETUP LISTENERS ---
         function setupEventListeners() {
-            // Navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 if (link.id !== 'logout-btn') {
                     link.addEventListener('click', (e) => { e.preventDefault(); if(link.dataset.view) navigateTo(link.dataset.view); });
@@ -1053,20 +883,17 @@
             });
             document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); appContainer.classList.add('hidden'); loginContainer.classList.remove('hidden'); document.getElementById('password').value = ''; loginError.classList.add('hidden'); });
             
-            // Menu toggles
             document.getElementById('lang-id').addEventListener('click', () => changeLanguage('id'));
             document.getElementById('lang-en').addEventListener('click', () => changeLanguage('en'));
             document.getElementById('menu-toggle').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('main-sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebar-overlay').classList.toggle('hidden'); });
             document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('main-sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('hidden'); });
 
-            // View switchers
             document.getElementById('rekap-class-filter').addEventListener('change', renderRekapitulasiView);
             document.getElementById('rapor-class-filter').addEventListener('change', renderRaporSemester1);
             document.getElementById('export-rapor-btn').addEventListener('click', exportRaporToExcel);
             document.getElementById('missing-level-filter').addEventListener('change', populateMissingScoresFilters);
             document.getElementById('check-missing-btn').addEventListener('click', checkMissingScores);
 
-            // Data Input Navigation
             document.getElementById('go-to-attendance-input').addEventListener('click', () => navigateTo('attendance-input'));
             document.getElementById('go-to-score-input').addEventListener('click', () => navigateTo('score-input'));
             document.getElementById('go-to-activity-input').addEventListener('click', () => navigateTo('activity-input'));
@@ -1074,29 +901,24 @@
             document.getElementById('back-to-data-input-from-score').addEventListener('click', () => navigateTo('data-input'));
             document.getElementById('back-to-data-input-from-activity').addEventListener('click', () => navigateTo('data-input'));
 
-            // Attendance Inputs
             document.getElementById('input-attendance-class').addEventListener('change', () => populateAttendanceInputTable(''));
             document.getElementById('attendance-student-search').addEventListener('keyup', (e) => populateAttendanceInputTable(e.target.value));
             document.getElementById('export-attendance-range-btn').addEventListener('click', exportAttendanceByDateRange);
             document.getElementById('save-attendance').addEventListener('click', saveAttendanceData);
             
-            // **IMPORT/EXPORT LISTENERS (Requested Features)**
             document.getElementById('download-attendance-template-btn').addEventListener('click', downloadAttendanceTemplate);
             document.getElementById('import-attendance-btn').addEventListener('click', () => { fileImportCallback = processAttendanceImport; document.getElementById('generic-file-input').click(); });
             document.getElementById('download-score-template-btn').addEventListener('click', downloadScoreTemplate);
             document.getElementById('import-scores-btn').addEventListener('click', () => { fileImportCallback = processScoreImport; document.getElementById('generic-file-input').click(); });
 
-            // Activity Inputs
             document.getElementById('input-activity-class').addEventListener('change', populateActivityInputTable);
             document.getElementById('save-activity').addEventListener('click', saveActivityData);
 
-            // Score Inputs
             document.getElementById('input-score-class').addEventListener('change', updateScoreProjectFilterAndTable);
             document.getElementById('input-score-type').addEventListener('change', updateScoreProjectFilterAndTable);
             document.getElementById('input-score-project').addEventListener('change', () => { document.getElementById('score-input-specific-filter-container').innerHTML = ''; populateScoreInputTable(); });
             document.getElementById('save-scores').addEventListener('click', saveScoreData);
 
-            // Management Inputs
             document.getElementById('add-project-criteria-btn').addEventListener('click', addTempCriteria);
             document.getElementById('save-new-project-btn').addEventListener('click', saveNewProject);
             document.getElementById('add-group-btn').addEventListener('click', addNewGroup);
@@ -1104,27 +926,89 @@
             document.getElementById('group-mg-project-filter').addEventListener('change', renderGroupManagementUI);
             document.getElementById('available-student-search').addEventListener('keyup', renderGroupManagementUI);
 
-            // Settings
-            document.getElementById('logo-upload').addEventListener('change', handleImageUpload);
-            document.getElementById('background-upload').addEventListener('change', handleImageUpload);
-            document.getElementById('primary-color-picker').addEventListener('input', handleColorChange);
-            document.getElementById('secondary-color-picker').addEventListener('input', handleColorChange);
+            document.getElementById('logo-upload').addEventListener('change', (e) => handleImageUpload(e, 'logoUrl'));
+            document.getElementById('background-upload').addEventListener('change', (e) => handleImageUpload(e, 'backgroundUrl'));
+            document.getElementById('primary-color-picker').addEventListener('change', (e) => handleColorChange(e, 'primary'));
+            document.getElementById('secondary-color-picker').addEventListener('change', (e) => handleColorChange(e, 'secondary'));
+            document.getElementById('save-appearance-btn').addEventListener('click', saveAppearanceSettings);
             document.getElementById('add-admin-btn').addEventListener('click', addAdmin);
             document.getElementById('import-btn').addEventListener('click', handleStudentImport);
             document.getElementById('import-groups-btn').addEventListener('click', handleGroupImport);
             
-            // Generic File Input Handler
             document.getElementById('generic-file-input').addEventListener('change', (e) => { if (fileImportCallback) fileImportCallback(e); e.target.value = ''; });
             document.querySelectorAll('.reset-btn').forEach(button => button.addEventListener('click', handleReset));
             document.getElementById('modal-cancel').addEventListener('click', () => document.getElementById('confirmation-modal').classList.add('hidden'));
 
-            // Edit Project
             document.getElementById('edit-project-add-criteria-btn').addEventListener('click', addTempCriteriaForEdit);
             document.getElementById('edit-project-modal-cancel').addEventListener('click', () => { document.getElementById('edit-project-modal').classList.add('hidden'); editingProjectId = null; });
             document.getElementById('edit-project-modal-save').addEventListener('click', saveEditedProject);
         }
 
-        // --- HELPER UI/LOGIC FUNCTIONS ---
+        // --- HELPER FUNCTIONS ---
+
+        function handleImageUpload(event, key) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pendingSettings[key] = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleColorChange(event, key) {
+            const color = event.target.value;
+            if (!pendingSettings.theme) {
+                pendingSettings.theme = appData.settings.theme ? { ...appData.settings.theme } : { primary: '#1e293b', secondary: '#4f46e5' };
+            }
+            pendingSettings.theme[key] = color;
+        }
+
+        async function saveAppearanceSettings() {
+            if (Object.keys(pendingSettings).length === 0) {
+                alert("Tidak ada perubahan untuk disimpan.");
+                return;
+            }
+            appData.settings = {
+                ...appData.settings,
+                ...pendingSettings,
+                theme: {
+                    ...appData.settings.theme,
+                    ...(pendingSettings.theme || {})
+                }
+            };
+            pendingSettings = {};
+            applySettings();
+            await saveData();
+            alert("Tampilan berhasil disimpan dan diterapkan!");
+        }
+
+        function applySettings() {
+             if(appData.settings?.logoUrl) {
+                 document.querySelectorAll('#app-logo, #login-logo').forEach(el => el.src = appData.settings.logoUrl);
+             }
+             if(appData.settings?.backgroundUrl) {
+                 document.body.style.backgroundImage = `url('${appData.settings.backgroundUrl}')`;
+             } else {
+                 document.body.style.backgroundImage = 'none';
+             }
+             if(appData.settings?.theme) {
+                 const root = document.documentElement;
+                 root.style.setProperty('--primary-color', appData.settings.theme.primary);
+                 root.style.setProperty('--secondary-color', appData.settings.theme.secondary);
+                 const activeLink = document.querySelector('.nav-link.active');
+                 if(activeLink) {
+                     activeLink.style.backgroundColor = appData.settings.theme.primary;
+                 }
+                 document.getElementById('primary-color-picker').value = appData.settings.theme.primary;
+                 document.getElementById('secondary-color-picker').value = appData.settings.theme.secondary;
+             }
+        }
+
+        function applyLoginScreenSettings() { 
+            if(appData.settings?.logoUrl) document.getElementById('login-logo').src = appData.settings.logoUrl; 
+        }
 
         function updateScoreProjectFilterAndTable() {
             document.getElementById('score-input-specific-filter-container').innerHTML = '';
@@ -1146,10 +1030,10 @@
 
         function getLevelFromClassName(className) {
             if (typeof className !== 'string') return null;
-            className = className.toUpperCase();
-            if (className.startsWith('XII')) return 'XII';
-            if (className.startsWith('XI')) return 'XI';
-            if (className.startsWith('X')) return 'X';
+            className = className.toUpperCase().trim(); // Improved robust check
+            if (className.startsWith('XII') || className.startsWith('12')) return 'XII';
+            if (className.startsWith('XI') || className.startsWith('11')) return 'XI';
+            if (className.startsWith('X') || className.startsWith('10')) return 'X';
             return null;
         }
 
@@ -1166,7 +1050,12 @@
                 activeLink.classList.remove('text-slate-600');
                 activeLink.style.backgroundColor = appData.settings?.theme?.primary || '#1e293b';
             }
-            document.getElementById('view-title').textContent = (translations['id'][viewId] || translations['id'][document.querySelector(`.nav-link[data-view="${viewId}"] span`)?.dataset.lang] || "Mozzart Education");
+            // Use translations safely
+            const titleKey = viewId;
+            const fallbackKey = document.querySelector(`.nav-link[data-view="${viewId}"] span`)?.dataset.lang;
+            const titleText = translations['id'][titleKey] || translations['id'][fallbackKey] || "Mozzart Education";
+            document.getElementById('view-title').textContent = titleText;
+            
             refreshAllViews();
         }
 
@@ -1191,7 +1080,16 @@
             allSelects.forEach(s => s.dispatchEvent(new Event('change')));
         }
 
-        // --- DASHBOARD CHARTS ---
+        function createOrUpdateChart(id, config) {
+            if(charts[id]) charts[id].destroy();
+            const ctx = document.getElementById(id).getContext('2d');
+            charts[id] = new Chart(ctx, config);
+        }
+        
+        function getEmptyChartConfig() { 
+            return { type: 'doughnut', data: { labels: ["Tidak ada data"], datasets: [{ data: [1], backgroundColor: ['#e2e8f0'], borderWidth: 0 }] }, options: { events: [], responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false }, datalabels: { display: false } }, cutout: '70%' } }; 
+        }
+
         function renderDashboardCharts() {
             ['X', 'XI', 'XII'].forEach(level => {
                 let attCounts = { hadir: 0, sakit: 0, izin: 0, alpa: 0 };
@@ -1243,14 +1141,6 @@
             setTimeout(() => lucide.createIcons(), 100);
         }
 
-        function createOrUpdateChart(id, config) {
-            if(charts[id]) charts[id].destroy();
-            const ctx = document.getElementById(id).getContext('2d');
-            charts[id] = new Chart(ctx, config);
-        }
-        function getEmptyChartConfig() { return { type: 'doughnut', data: { labels: ["Tidak ada data"], datasets: [{ data: [1], backgroundColor: ['#e2e8f0'], borderWidth: 0 }] }, options: { events: [], responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false }, datalabels: { display: false } }, cutout: '70%' } }; }
-
-        // --- OTHER RENDER FUNCTIONS (Rekap, Rapor, Tables, etc.) ---
         function renderRekapitulasiView() {
             const className = document.getElementById('rekap-class-filter').value;
             const container = document.getElementById('rekap-projek-container');
@@ -1291,12 +1181,16 @@
             students.forEach((s, idx) => {
                 let total = 0, count = 0;
                 projects.forEach(p => {
-                    const sc = appData.scores?.[p.id]?.[s.id]?.total;
-                    if(sc) { total+=sc; count++; }
+                    const scoreData = appData.scores?.[p.id]?.[s.id];
+                    // FIX: Check if score data exists and has a total property that is a number (including 0)
+                    if(scoreData && typeof scoreData.total === 'number') { 
+                         total += scoreData.total; 
+                         count++; 
+                    }
                 });
-                const avg = count>0 ? Math.round(total/count) : 0;
+                const avg = count > 0 ? Math.round(total/count) : 0;
                 let pred='-', ket='-';
-                if(count>0) {
+                if(count > 0) {
                     if(avg>=90) { pred='A'; ket='Sangat Baik'; }
                     else if(avg>=80) { pred='B'; ket='Baik'; }
                     else if(avg>=70) { pred='C'; ket='Cukup'; }
@@ -1308,7 +1202,6 @@
             });
         }
 
-        // --- DATA POPULATION HELPERS (For Inputs) ---
         function populateAttendanceInputTable(search) {
             const className = document.getElementById('input-attendance-class').value;
             const tbody = document.getElementById('attendance-input-table');
@@ -1352,7 +1245,6 @@
             });
         }
 
-        // --- PLACEHOLDERS FOR SAVING & MODALS (Brevity) ---
         async function saveAttendanceData() {
             const cls = document.getElementById('input-attendance-class').value;
             const date = document.getElementById('input-attendance-date').value;
@@ -1388,16 +1280,11 @@
             await saveData(); alert('Nilai disimpan.'); renderDashboardCharts();
         }
 
-        // ============================================
-        // === MISSING SCORE LOGIC (FIXED) ===
-        // ============================================
-
         function populateMissingScoresFilters() {
             const level = document.getElementById('missing-level-filter').value;
             const classSelect = document.getElementById('missing-class-filter');
             const projectSelect = document.getElementById('missing-project-filter');
             
-            // Reset
             classSelect.innerHTML = '<option value="">Semua Kelas</option>';
             projectSelect.innerHTML = '<option value="">Semua Projek</option>';
             
@@ -1410,7 +1297,6 @@
             classSelect.disabled = false;
             projectSelect.disabled = false;
 
-            // Populate Classes based on Level
             const allClassNames = Object.keys(appData.students).sort();
             allClassNames.forEach(cls => {
                 if (getLevelFromClassName(cls) === level) {
@@ -1418,7 +1304,6 @@
                 }
             });
 
-            // Populate Projects based on Level
             if (appData.projects) {
                 appData.projects.forEach(p => {
                     if (p.level === level || p.level === 'Semua') {
@@ -1441,7 +1326,6 @@
 
             tbody.innerHTML = '';
             
-            // Determine classes to check
             let classesToCheck = [];
             if (selectedClass) {
                 classesToCheck = [selectedClass];
@@ -1449,7 +1333,6 @@
                 classesToCheck = Object.keys(appData.students).filter(cls => getLevelFromClassName(cls) === level);
             }
 
-            // Determine projects to check
             let projectsToCheck = [];
             if (selectedProject) {
                 const p = appData.projects.find(proj => proj.id === selectedProject);
@@ -1470,14 +1353,10 @@
                 const students = appData.students[cls] || [];
                 students.forEach(student => {
                     projectsToCheck.forEach(project => {
-                        // Check if score exists
                         const hasScore = appData.scores && 
                                        appData.scores[project.id] && 
                                        appData.scores[project.id][student.id];
                         
-                        // Consider missing if entry doesn't exist OR total is 0/undefined
-                        // Adjust logic if 0 is a valid score that shouldn't be "missing"
-                        // Here assuming strictly "no entry"
                         if (!hasScore) {
                             foundMissing = true;
                             const tr = document.createElement('tr');
@@ -1561,7 +1440,6 @@
 
             const total = count > 0 ? Math.round(sum / count) : 0;
 
-            // Save to appData
             if (!appData.scores) appData.scores = {};
             if (!appData.scores[currentMissingScoreProjectId]) appData.scores[currentMissingScoreProjectId] = {};
             
@@ -1571,19 +1449,11 @@
             };
 
             await saveData();
-            
-            // Refresh the missing list to remove this student
             checkMissingScores();
-            
-            // Update Dashboard
             renderDashboardCharts();
-
             closeMissingScoreModal();
-            // Optional: Show simple toast or alert
-            // alert('Nilai berhasil disimpan!'); 
         };
         
-        // Project Detail Modal
         window.openProjectDetail = function(pid, cname) {
             const p = appData.projects.find(x=>x.id===pid); const s = appData.students[cname]||[];
             document.getElementById('detail-modal-title').textContent = p.name;
@@ -1601,31 +1471,126 @@
         function saveActivityData() {}
         function addNewGroup() {}
         function renderGroupManagementUI() {}
-        function handleImageUpload() {}
-        function handleColorChange() {}
-        function addAdmin() {}
-        function handleStudentImport() {}
         function handleGroupImport() {}
-        function handleReset() {}
-        function renderAdminList() {}
-        function exportRaporToExcel() {}
-        function applySettings() {
-             if(appData.settings?.logoUrl) document.querySelectorAll('#app-logo, #login-logo').forEach(el => el.src = appData.settings.logoUrl);
-             if(appData.settings?.theme) {
-                 document.documentElement.style.setProperty('--primary-color', appData.settings.theme.primary);
-                 document.documentElement.style.setProperty('--secondary-color', appData.settings.theme.secondary);
-             }
-        }
-        function applyLoginScreenSettings() { if(appData.settings?.logoUrl) document.getElementById('login-logo').src = appData.settings.logoUrl; }
-        function changeLanguage(lang) {
-            document.querySelectorAll('[data-lang]').forEach(el => { if(translations[lang][el.dataset.lang]) el.textContent = translations[lang][el.dataset.lang]; });
+        
+        function renderAdminList() {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = '';
+            appData.admins.forEach((admin, index) => {
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center p-3 bg-slate-50 rounded-md border border-slate-200 transition hover:shadow-sm";
+                li.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-200">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">${admin.email}</p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${admin.protected ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-600'}">
+                                ${admin.protected ? 'Super Admin' : 'Admin'}
+                            </span>
+                        </div>
+                    </div>
+                    ${!admin.protected ? `<button onclick="deleteAdmin('${admin.email}')" class="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Admin"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                `;
+                list.appendChild(li);
+            });
+            lucide.createIcons();
         }
 
-        // ============================================
-        // === PROJECT MANAGEMENT LOGIC (NEWLY ADDED) ===
-        // ============================================
+        function addAdmin() {
+            const email = document.getElementById('new-admin-email').value;
+            const password = document.getElementById('new-admin-password').value;
+            if(!email || !password) { alert("Email dan Password wajib diisi"); return; }
+            
+            appData.admins.push({ email, password, protected: false });
+            saveData();
+            renderAdminList();
+            document.getElementById('new-admin-email').value = '';
+            document.getElementById('new-admin-password').value = '';
+            alert("Admin berhasil ditambahkan");
+        }
+
+        function deleteAdmin(email) {
+            if(confirm("Hapus admin ini?")) {
+                appData.admins = appData.admins.filter(a => a.email !== email);
+                saveData();
+                renderAdminList();
+            }
+        }
+
+        function handleStudentImport() {
+            fileImportCallback = async (e) => {
+                const file = e.target.files[0];
+                if(!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet); 
+                    
+                    let count = 0;
+                    json.forEach(row => {
+                        const keys = Object.keys(row);
+                        const namaKey = keys.find(k => k.toLowerCase() === 'nama');
+                        const nisKey = keys.find(k => k.toLowerCase() === 'nis');
+                        const kelasKey = keys.find(k => k.toLowerCase() === 'kelas');
+
+                        const nama = row[namaKey];
+                        const nis = row[nisKey];
+                        const kelas = row[kelasKey];
+                        
+                        if(nama && kelas) {
+                            const cleanClass = String(kelas).trim(); 
+                            if(!appData.students[cleanClass]) appData.students[cleanClass] = [];
+                            
+                            const exists = appData.students[cleanClass].some(s => s.name.toLowerCase() === String(nama).toLowerCase());
+                            if(!exists) {
+                                appData.students[cleanClass].push({
+                                    id: Date.now() + Math.random(),
+                                    name: String(nama).trim(),
+                                    nis: nis ? String(nis).trim() : ''
+                                });
+                                count++;
+                            }
+                        }
+                    });
+                    
+                    await saveData();
+                    refreshAllViews();
+                    alert(`Berhasil mengimpor ${count} siswa.`);
+                };
+                reader.readAsArrayBuffer(file);
+            };
+            document.getElementById('generic-file-input').click();
+        }
+
+        function handleReset(e) {
+            // Check if e exists because onclick="handleReset()" might pass undefined
+            const type = e ? e.currentTarget.dataset.type : 'all'; 
+            // In HTML onclick="handleReset(event)" is needed, but we can default
+            if(confirm("PERINGATAN: Ini akan menghapus SELURUH data siswa, nilai, dan absensi. Tindakan ini tidak dapat dibatalkan. Lanjutkan?")) {
+                const admins = appData.admins;
+                const settings = appData.settings;
+                appData = getInitialDataStructure();
+                appData.admins = admins;
+                appData.settings = settings;
+                saveData();
+                refreshAllViews();
+                alert("Semua data telah direset.");
+            }
+        }
+
+        function exportRaporToExcel() {}
         
-        // 1. Render Project List with Edit & Delete Actions
+        function changeLanguage(lang) {
+            document.querySelectorAll('[data-lang]').forEach(el => { 
+                if(translations[lang][el.dataset.lang]) el.textContent = translations[lang][el.dataset.lang]; 
+            });
+        }
+
         function renderProjectList() {
             const list = document.getElementById('project-list-display');
             list.innerHTML = '';
@@ -1638,17 +1603,8 @@
             appData.projects.forEach(project => {
                 const li = document.createElement('li');
                 li.className = "bg-white border border-slate-200 rounded-md p-3 hover:shadow-md transition-shadow group";
-                
-                // Create badge colors
-                const levelColors = {
-                    'X': 'bg-blue-100 text-blue-700',
-                    'XI': 'bg-purple-100 text-purple-700',
-                    'XII': 'bg-emerald-100 text-emerald-700',
-                    'Semua': 'bg-slate-100 text-slate-700'
-                };
+                const levelColors = { 'X': 'bg-blue-100 text-blue-700', 'XI': 'bg-purple-100 text-purple-700', 'XII': 'bg-emerald-100 text-emerald-700', 'Semua': 'bg-slate-100 text-slate-700' };
                 const badgeColor = levelColors[project.level] || 'bg-slate-100 text-slate-700';
-
-                // Format criteria tags
                 const criteriaTags = project.criteria.map(c => `<span class="text-xs bg-slate-50 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">${c}</span>`).join(' ');
 
                 li.innerHTML = `
@@ -1658,17 +1614,11 @@
                                 <span class="text-xs font-bold px-2 py-0.5 rounded ${badgeColor}">${project.level}</span>
                                 <h4 class="font-semibold text-slate-800">${project.name}</h4>
                             </div>
-                            <div class="flex flex-wrap gap-1 mt-2">
-                                ${criteriaTags}
-                            </div>
+                            <div class="flex flex-wrap gap-1 mt-2">${criteriaTags}</div>
                         </div>
                         <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="openEditProject('${project.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition" title="Edit Projek">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="deleteProject('${project.id}')" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Hapus Projek">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                            <button onclick="openEditProject('${project.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition" title="Edit Projek"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                            <button onclick="deleteProject('${project.id}')" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Hapus Projek"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </div>
                 `;
@@ -1677,136 +1627,271 @@
             lucide.createIcons();
         }
 
-        // 2. Add New Project Logic
         function addTempCriteria() {
             const input = document.getElementById('new-project-criteria');
             const val = input.value.trim();
-            if (val) {
-                tempProjectCriteria.push(val);
-                renderTempCriteriaList();
-                input.value = '';
-                input.focus();
-            }
+            if (val) { tempProjectCriteria.push(val); renderTempCriteriaList(); input.value = ''; input.focus(); }
         }
         function renderTempCriteriaList() {
-            const container = document.getElementById('new-project-criteria-list');
-            container.innerHTML = tempProjectCriteria.map((c, i) => 
-                `<span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs flex items-center gap-1">${c} <button onclick="removeTempCriteria(${i})" class="hover:text-red-600">×</button></span>`
-            ).join('');
+            document.getElementById('new-project-criteria-list').innerHTML = tempProjectCriteria.map((c, i) => `<span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs flex items-center gap-1">${c} <button onclick="removeTempCriteria(${i})" class="hover:text-red-600">×</button></span>`).join('');
         }
-        window.removeTempCriteria = function(index) {
-            tempProjectCriteria.splice(index, 1);
-            renderTempCriteriaList();
-        }
+        function removeTempCriteria(index) { tempProjectCriteria.splice(index, 1); renderTempCriteriaList(); }
+        
         async function saveNewProject() {
             const name = document.getElementById('new-project-name').value.trim();
             const level = document.getElementById('new-project-level').value;
-
             if (!name) { alert('Nama projek wajib diisi'); return; }
             if (tempProjectCriteria.length === 0) { alert('Minimal satu kriteria penilaian wajib diisi'); return; }
-
-            const newProject = {
-                id: 'PROJ_' + Date.now(),
-                name: name,
-                level: level,
-                criteria: [...tempProjectCriteria]
-            };
-
+            const newProject = { id: 'PROJ_' + Date.now(), name: name, level: level, criteria: [...tempProjectCriteria] };
             if (!appData.projects) appData.projects = [];
             appData.projects.push(newProject);
-            
-            // Reset form
-            document.getElementById('new-project-name').value = '';
-            tempProjectCriteria = [];
-            renderTempCriteriaList();
-
-            await saveData();
-            renderProjectList();
-            refreshAllViews(); // Update dropdowns in other views
-            alert('Projek berhasil ditambahkan!');
+            document.getElementById('new-project-name').value = ''; tempProjectCriteria = []; renderTempCriteriaList();
+            await saveData(); renderProjectList(); refreshAllViews(); alert('Projek berhasil ditambahkan!');
         }
 
-        // 3. Delete Project Logic
-        window.deleteProject = async function(id) {
-            if(confirm("Apakah Anda yakin ingin menghapus projek ini? Semua nilai siswa yang terkait dengan projek ini akan ikut terhapus permanen.")) {
-                // Remove project from list
+        function deleteProject(id) {
+            if(confirm("Apakah Anda yakin ingin menghapus projek ini?")) {
                 appData.projects = appData.projects.filter(p => p.id !== id);
-                
-                // Remove associated scores
-                if(appData.scores && appData.scores[id]) {
-                    delete appData.scores[id];
-                }
-
-                await saveData();
-                renderProjectList();
-                refreshAllViews();
-                alert('Projek berhasil dihapus.');
+                if(appData.scores && appData.scores[id]) delete appData.scores[id];
+                saveData().then(() => {
+                    renderProjectList(); refreshAllViews(); alert('Projek berhasil dihapus.');
+                });
             }
         }
 
-        // 4. Edit Project Logic
-        window.openEditProject = function(id) {
-            const project = appData.projects.find(p => p.id === id);
-            if(!project) return;
-
-            editingProjectId = id;
-            document.getElementById('edit-project-name').value = project.name;
-            document.getElementById('edit-project-level').value = project.level;
-            
-            // Copy criteria to temp array for editing
-            tempNewCriteriaForEdit = [...project.criteria];
-            renderEditCriteriaList();
-            
+        function openEditProject(id) {
+            const project = appData.projects.find(p => p.id === id); if(!project) return;
+            editingProjectId = id; document.getElementById('edit-project-name').value = project.name; document.getElementById('edit-project-level').value = project.level;
+            tempNewCriteriaForEdit = [...project.criteria]; renderEditCriteriaList();
             document.getElementById('edit-project-modal').classList.remove('hidden');
         }
 
         function addTempCriteriaForEdit() {
-            const input = document.getElementById('edit-project-new-criteria-input');
-            const val = input.value.trim();
-            if(val) {
-                tempNewCriteriaForEdit.push(val);
-                renderEditCriteriaList();
-                input.value = '';
-                input.focus();
-            }
+            const input = document.getElementById('edit-project-new-criteria-input'); const val = input.value.trim();
+            if(val) { tempNewCriteriaForEdit.push(val); renderEditCriteriaList(); input.value = ''; input.focus(); }
         }
-
         function renderEditCriteriaList() {
-            const container = document.getElementById('edit-project-criteria-list');
-            container.innerHTML = tempNewCriteriaForEdit.map((c, i) => 
-                `<span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs flex items-center gap-1 border border-indigo-200">${c} <button onclick="removeEditTempCriteria(${i})" class="hover:text-red-600 font-bold ml-1">×</button></span>`
-            ).join('');
+            document.getElementById('edit-project-criteria-list').innerHTML = tempNewCriteriaForEdit.map((c, i) => `<span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs flex items-center gap-1 border border-indigo-200">${c} <button onclick="removeEditTempCriteria(${i})" class="hover:text-red-600 font-bold ml-1">×</button></span>`).join('');
         }
-        
-        window.removeEditTempCriteria = function(index) {
-            tempNewCriteriaForEdit.splice(index, 1);
-            renderEditCriteriaList();
-        }
+        function removeEditTempCriteria(index) { tempNewCriteriaForEdit.splice(index, 1); renderEditCriteriaList(); }
 
         async function saveEditedProject() {
             if(!editingProjectId) return;
-            const newName = document.getElementById('edit-project-name').value.trim();
-            const newLevel = document.getElementById('edit-project-level').value;
-
+            const newName = document.getElementById('edit-project-name').value.trim(); const newLevel = document.getElementById('edit-project-level').value;
             if(!newName) { alert('Nama projek tidak boleh kosong'); return; }
             if(tempNewCriteriaForEdit.length === 0) { alert('Kriteria tidak boleh kosong'); return; }
-
             const projectIndex = appData.projects.findIndex(p => p.id === editingProjectId);
             if(projectIndex !== -1) {
-                // Update project data
-                appData.projects[projectIndex].name = newName;
-                appData.projects[projectIndex].level = newLevel;
-                appData.projects[projectIndex].criteria = [...tempNewCriteriaForEdit];
-
-                await saveData();
-                renderProjectList();
-                refreshAllViews();
-                
-                document.getElementById('edit-project-modal').classList.add('hidden');
-                editingProjectId = null;
-                alert('Perubahan berhasil disimpan');
+                appData.projects[projectIndex].name = newName; appData.projects[projectIndex].level = newLevel; appData.projects[projectIndex].criteria = [...tempNewCriteriaForEdit];
+                await saveData(); renderProjectList(); refreshAllViews(); document.getElementById('edit-project-modal').classList.add('hidden'); editingProjectId = null; alert('Perubahan berhasil disimpan');
             }
         }
+
+        // --- NEW IMPORTER FUNCTIONS RESTORED ---
+        
+        function downloadAttendanceTemplate() {
+            const selectedClass = document.getElementById('input-attendance-class').value;
+            if (!selectedClass) { alert('Pilih kelas terlebih dahulu.'); return; }
+            
+            const students = appData.students[selectedClass] || [];
+            if (students.length === 0) { alert('Tidak ada siswa di kelas ini.'); return; }
+
+            const data = [];
+            data.push(['No', 'NIS', 'Nama Siswa', 'Status (hadir/sakit/izin/alpa)']); 
+            
+            students.forEach((s, index) => {
+                data.push([index + 1, s.nis || '', s.name, '']);
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Absensi");
+            worksheet['!cols'] = [{wch: 5}, {wch: 15}, {wch: 30}, {wch: 30}];
+            XLSX.writeFile(workbook, `Template_Absensi_${selectedClass}.xlsx`);
+        }
+
+        async function processAttendanceImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                if (jsonData.length > 1) jsonData.shift(); 
+
+                const selectedClass = document.getElementById('input-attendance-class').value;
+                const selectedDate = document.getElementById('input-attendance-date').value;
+
+                if (!selectedClass || !selectedDate) { alert('Pastikan kelas dan tanggal sudah dipilih.'); return; }
+                
+                if (!appData.attendance) appData.attendance = {};
+                if (!appData.attendance[selectedClass]) appData.attendance[selectedClass] = { daily: {} };
+                if (!appData.attendance[selectedClass].daily) appData.attendance[selectedClass].daily = {};
+                if (!appData.attendance[selectedClass].daily[selectedDate]) appData.attendance[selectedClass].daily[selectedDate] = {};
+
+                let updateCount = 0;
+                const students = appData.students[selectedClass] || [];
+
+                jsonData.forEach(row => {
+                    const nis = row[1] ? String(row[1]).trim() : '';
+                    const name = row[2] ? String(row[2]).trim() : '';
+                    let status = row[3] ? String(row[3]).toLowerCase().trim() : '';
+
+                    if (!['hadir', 'sakit', 'izin', 'alpa'].includes(status)) return;
+
+                    const student = students.find(s => (s.nis && String(s.nis) === nis) || (s.name.toLowerCase() === name.toLowerCase()));
+
+                    if (student) {
+                        appData.attendance[selectedClass].daily[selectedDate][student.id] = status;
+                        updateCount++;
+                    }
+                });
+
+                await saveData();
+                populateAttendanceInputTable(document.getElementById('attendance-student-search').value);
+                alert(`Berhasil mengimpor data kehadiran untuk ${updateCount} siswa.`);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function downloadScoreTemplate() {
+            const selectedClass = document.getElementById('input-score-class').value;
+            const selectedProjectId = document.getElementById('input-score-project').value;
+
+            if (!selectedClass || !selectedProjectId) { alert('Pilih kelas dan projek terlebih dahulu.'); return; }
+
+            const project = appData.projects.find(p => p.id === selectedProjectId);
+            const students = appData.students[selectedClass] || [];
+            
+            if (!project) return;
+            if (students.length === 0) { alert('Tidak ada siswa di kelas ini.'); return; }
+
+            const data = [];
+            const headers = ['No', 'NIS', 'Nama Siswa', ...project.criteria];
+            data.push(headers);
+
+            students.forEach((s, index) => {
+                const row = [index + 1, s.nis || '', s.name];
+                project.criteria.forEach(() => row.push('')); 
+                data.push(row);
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Nilai");
+            
+            const wscols = [{wch: 5}, {wch: 15}, {wch: 30}];
+            project.criteria.forEach(() => wscols.push({wch: 15}));
+            worksheet['!cols'] = wscols;
+
+            XLSX.writeFile(workbook, `Template_Nilai_${project.name}_${selectedClass}.xlsx`);
+        }
+
+        async function processScoreImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                const headers = jsonData[0]; 
+
+                const selectedClass = document.getElementById('input-score-class').value;
+                const selectedProjectId = document.getElementById('input-score-project').value;
+
+                if (!selectedClass || !selectedProjectId) { alert('Pastikan kelas dan projek sudah dipilih.'); return; }
+                
+                const project = appData.projects.find(p => p.id === selectedProjectId);
+                if(!project) return;
+
+                if (!appData.scores) appData.scores = {};
+                if (!appData.scores[selectedProjectId]) appData.scores[selectedProjectId] = {};
+
+                let updateCount = 0;
+                const students = appData.students[selectedClass] || [];
+
+                const criteriaIndices = {};
+                project.criteria.forEach(crit => {
+                    const idx = headers.findIndex(h => String(h).trim().toLowerCase() === crit.toLowerCase());
+                    if (idx !== -1) criteriaIndices[crit] = idx;
+                });
+
+                for (let i = 1; i < jsonData.length; i++) {
+                    const row = jsonData[i];
+                    if (!row || row.length === 0) continue;
+
+                    const nis = row[1] ? String(row[1]).trim() : '';
+                    const name = row[2] ? String(row[2]).trim() : '';
+                    const student = students.find(s => (s.nis && String(s.nis) === nis) || (s.name.toLowerCase() === name.toLowerCase()));
+
+                    if (student) {
+                        let scoreSum = 0;
+                        let details = {};
+                        let validCriteriaCount = 0;
+
+                        project.criteria.forEach(crit => {
+                            const idx = criteriaIndices[crit];
+                            if (idx !== undefined) {
+                                let val = parseFloat(row[idx]);
+                                if (isNaN(val)) val = 0;
+                                if (val > 100) val = 100;
+                                if (val < 0) val = 0;
+                                details[crit] = val;
+                                scoreSum += val;
+                                validCriteriaCount++;
+                            } else { details[crit] = 0; }
+                        });
+
+                        const total = validCriteriaCount > 0 ? Math.round(scoreSum / validCriteriaCount) : 0;
+                        appData.scores[selectedProjectId][student.id] = { total: total, details: details };
+                        updateCount++;
+                    }
+                }
+
+                await saveData();
+                populateScoreInputTable();
+                alert(`Berhasil mengimpor nilai untuk ${updateCount} siswa.`);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // --- 4. WINDOW EXPORTS ---
+        window.deleteProject = deleteProject;
+        window.openEditProject = openEditProject;
+        window.removeTempCriteria = removeTempCriteria;
+        window.removeEditTempCriteria = removeEditTempCriteria;
+        window.deleteAdmin = deleteAdmin;
+        window.openMissingScoreModal = openMissingScoreModal;
+        window.closeMissingScoreModal = closeMissingScoreModal;
+        window.saveMissingScore = saveMissingScore;
+        window.openProjectDetail = openProjectDetail;
+        window.closeProjectDetail = closeProjectDetail;
+        window.handleReset = handleReset;
+
+        // --- 5. EXECUTION LOGIC ---
+        await loadData();
+        applyLoginScreenSettings();
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            const admin = appData.admins.find(a => a.email === email && a.password === password);
+            if (admin) {
+                loginContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                await initApp();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
 
     });
     </script>
