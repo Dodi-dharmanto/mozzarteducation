@@ -1245,6 +1245,89 @@
             });
         }
 
+        function populateActivityInputTable() {
+            const className = document.getElementById('input-activity-class').value;
+            const tbody = document.getElementById('activity-input-table');
+            tbody.innerHTML = '';
+            
+            if (!className) return;
+
+            const students = appData.students[className] || [];
+            
+            // Ensure structure exists
+            if (!appData.activityScores) appData.activityScores = {};
+            if (!appData.activityScores[className]) appData.activityScores[className] = {};
+
+            students.forEach((s) => {
+                const score = appData.activityScores[className][s.id];
+                const scoreValue = (score !== undefined && score !== null) ? score : '';
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-700 font-medium align-middle">
+                        ${s.name}
+                        <div class="text-xs text-slate-400 font-normal">${s.nis || ''}</div>
+                    </td>
+                    <td class="p-3 align-middle">
+                        <div class="flex items-center">
+                            <input type="number" 
+                                class="activity-score-input w-24 p-2 border border-slate-300 rounded-md text-center focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-semibold text-slate-700" 
+                                data-student-id="${s.id}" 
+                                value="${scoreValue}" 
+                                placeholder="0-100" 
+                                min="0" 
+                                max="100">
+                            <span class="ml-2 text-slate-400 text-sm">/ 100</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if(students.length === 0) {
+                 tbody.innerHTML = `<tr><td colspan="2" class="p-8 text-center text-slate-500 italic">Belum ada siswa di kelas ini.</td></tr>`;
+            }
+        }
+
+        async function saveActivityData() {
+            const className = document.getElementById('input-activity-class').value;
+            if (!className) {
+                alert("Silakan pilih kelas terlebih dahulu.");
+                return;
+            }
+
+            if (!appData.activityScores) appData.activityScores = {};
+            if (!appData.activityScores[className]) appData.activityScores[className] = {};
+
+            const inputs = document.querySelectorAll('.activity-score-input');
+            let updatedCount = 0;
+
+            inputs.forEach(input => {
+                const studentId = input.dataset.studentId;
+                const valStr = input.value.trim();
+                
+                if (valStr === '') {
+                    // If empty, remove the score (reset)
+                    if (appData.activityScores[className][studentId] !== undefined) {
+                        delete appData.activityScores[className][studentId];
+                        updatedCount++;
+                    }
+                } else {
+                    let val = parseInt(valStr);
+                    if (isNaN(val)) val = 0;
+                    if (val < 0) val = 0;
+                    if (val > 100) val = 100;
+                    
+                    appData.activityScores[className][studentId] = val;
+                    updatedCount++;
+                }
+            });
+
+            await saveData();
+            alert('Data keaktifan berhasil disimpan.');
+        }
+
         async function saveAttendanceData() {
             const cls = document.getElementById('input-attendance-class').value;
             const date = document.getElementById('input-attendance-date').value;
@@ -1467,8 +1550,6 @@
         window.closeProjectDetail = function() { document.getElementById('project-detail-modal').classList.add('hidden'); };
 
         function exportAttendanceByDateRange() { alert('Fitur export range tersedia.'); }
-        function populateActivityInputTable() {}
-        function saveActivityData() {}
         function addNewGroup() {}
         function renderGroupManagementUI() {}
         function handleGroupImport() {}
