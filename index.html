@@ -9,9 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Plugin Datalabels untuk Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     
     <!-- Lucide Icons for modern icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -190,7 +189,7 @@
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rapor-semester-1">
                         <i data-lucide="book-open-check" class="sidebar-icon"></i>
-                        <span data-lang="raporSemester1" class="ml-4 nav-text">Rapor Semester 1</span>
+                        <span data-lang="raporSemester1" class="ml-4 nav-text">Nilai Rapor Semester 1</span>
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="missing-scores">
                         <i data-lucide="alert-circle" class="sidebar-icon"></i>
@@ -337,33 +336,67 @@
                         <div class="card">
                             <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
                                 <div>
-                                    <h3 class="card-title mb-1" data-lang="raporSemester1">Rapor Semester 1</h3>
-                                    <p class="text-sm text-slate-500">Kalkulasi rata-rata otomatis dari seluruh projek.</p>
+                                    <h3 class="card-title mb-1" data-lang="raporSemester1">Nilai Rapor Semester 1</h3>
+                                    <p class="text-sm text-slate-500">Kalkulasi nilai rapor berdasarkan progres projek.</p>
                                 </div>
                                 <div class="flex gap-2 w-full sm:w-auto">
                                     <select id="rapor-class-filter" class="p-2 border rounded-md bg-white form-select flex-1 sm:w-auto text-sm"></select>
-                                    <button id="export-rapor-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center whitespace-nowrap">
+                                    <button id="export-rapor-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center whitespace-nowrap hidden">
                                         <i data-lucide="download" class="w-4 h-4 mr-2"></i>
                                         <span data-lang="exportExcel">Export</span>
                                     </button>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm border-collapse">
-                                    <thead class="bg-slate-50 border-b border-slate-200">
-                                        <tr>
-                                            <th class="p-3 font-semibold text-slate-700">No</th>
-                                            <th class="p-3 font-semibold text-slate-700">NIS</th>
-                                            <th class="p-3 font-semibold text-slate-700">Nama Siswa</th>
-                                            <th class="p-3 font-semibold text-slate-700 text-center">Jumlah Projek</th>
-                                            <th class="p-3 font-semibold text-slate-700 text-center">Rata-Rata Akhir</th>
-                                            <th class="p-3 font-semibold text-slate-700 text-center">Predikat</th>
-                                            <th class="p-3 font-semibold text-slate-700">Keterangan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rapor-table-body" class="divide-y divide-slate-100"></tbody>
-                                </table>
+
+                            <!-- Bagian 1: Rapor Pertengahan Semester -->
+                            <div class="mb-10">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="bg-indigo-600 w-1 h-6 rounded-full"></div>
+                                    <h4 class="text-lg font-bold text-slate-800">1. Nilai Rapor Pertengahan Semester</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 mb-3 ml-3">Mengambil rata-rata dari 50% projek awal.</p>
+                                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                    <table class="w-full text-left text-sm border-collapse">
+                                        <thead class="bg-indigo-50 border-b border-indigo-100">
+                                            <tr>
+                                                <th class="p-3 font-semibold text-indigo-900 w-12">No</th>
+                                                <th class="p-3 font-semibold text-indigo-900 w-24">NIS</th>
+                                                <th class="p-3 font-semibold text-indigo-900">Nama Siswa</th>
+                                                <th class="p-3 font-semibold text-indigo-900 text-center">Jml Projek (50%)</th>
+                                                <th class="p-3 font-semibold text-indigo-900 text-center">Nilai Rata-Rata</th>
+                                                <th class="p-3 font-semibold text-indigo-900 text-center">Predikat</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rapor-mid-table-body" class="divide-y divide-slate-100 bg-white"></tbody>
+                                    </table>
+                                </div>
                             </div>
+
+                            <!-- Bagian 2: Rapor Semester Akhir -->
+                            <div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="bg-emerald-600 w-1 h-6 rounded-full"></div>
+                                    <h4 class="text-lg font-bold text-slate-800">2. Nilai Rapor Semester (Akhir)</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 mb-3 ml-3">Mengambil rata-rata dari seluruh projek.</p>
+                                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                    <table class="w-full text-left text-sm border-collapse">
+                                        <thead class="bg-emerald-50 border-b border-emerald-100">
+                                            <tr>
+                                                <th class="p-3 font-semibold text-emerald-900 w-12">No</th>
+                                                <th class="p-3 font-semibold text-emerald-900 w-24">NIS</th>
+                                                <th class="p-3 font-semibold text-emerald-900">Nama Siswa</th>
+                                                <th class="p-3 font-semibold text-emerald-900 text-center">Total Projek</th>
+                                                <th class="p-3 font-semibold text-emerald-900 text-center">Nilai Akhir</th>
+                                                <th class="p-3 font-semibold text-emerald-900 text-center">Predikat</th>
+                                                <th class="p-3 font-semibold text-emerald-900">Keterangan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rapor-final-table-body" class="divide-y divide-slate-100 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     
@@ -815,7 +848,10 @@
         // MOVED TRANSLATIONS TO TOP SCOPE
         const translations = {
               id: {
-                appTitle: "Mozzart Education", dashboard: "Dasbor Kelas", rekapNilai: "Rekapitulasi Nilai", dataInput: "Input Data", inputManagement: "Manajemen Input", settings: "Pengaturan", guide: "Panduan", language: "Bahasa:", attendanceRecap: "Rekapitulasi Kehadiran", class: "Per Kelas", individual: "Individual", daily: "Harian", weekly: "Mingguan", monthly: "Bulanan", scoreRating: "Rating Nilai Siswa", topStudents: "Peringkat Teratas", attendanceToday: "Kehadiran Hari Ini", inputAttendance: "Input Kehadiran", inputActivity: "Input Keaktifan", studentName: "Nama Siswa", status: "Status", save: "Simpan", inputScore: "Input Nilai", personal: "Personal", group: "Kelompok", addCriteria: "+ Tambah Kriteria", appearance: "Tampilan", appLogo: "Logo Aplikasi", appBackground: "Background Aplikasi", themeColor: "Warna Tema", adminManagement: "Manajemen Admin", add: "Tambah", dataManagement: "Manajemen Data", importStudentData: "Import Data Siswa (Excel)", importFormat: "Format: no, nis, nama, kelas", resetAllData: "Reset Semua Data Aplikasi", guideTitle: "Panduan Penggunaan Mozzart Education", guide1Title: "Langkah 1: Pengaturan Awal", guide1Text: "Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa dari file Excel.", guide2Title: "Langkah 2: Membuat Projek", guide2TextNew: "Buka menu 'Manajemen Input'. Tambahkan projek beserta kriteria penilaiannya.", guide3Title: "Langkah 3: Mencatat Kehadiran", guide3TextNew: "Masuk ke 'Input Data' -> 'Input Kehadiran'. Anda bisa input manual atau gunakan tombol 'Download Format' untuk mengisi di Excel lalu upload kembali dengan 'Import (Excel)'.", guide4Title: "Langkah 4: Menginput Nilai", guide4Text: "Buka 'Input Data' -> 'Input Nilai'. Pilih projek, lalu gunakan 'Download Format' untuk mendapatkan template Excel yang sesuai kriteria projek. Isi nilai, lalu upload kembali.", guide5Title: "Langkah 5: Memantau Progres", guide5TextNew: "Gunakan 'Dasbor Kelas' untuk melihat rekapitulasi.", cancel: "Batal", confirm: "Yakin", present: "Hadir", sick: "Sakit", permit: "Izin", absent: "Alpa", score: "Nilai", rank: "Peringkat", projectManagement: "Manajemen Projek", projectName: "Nama Projek Baru", projectCriteria: "Scoring Criteria", addProject: "Add Project", projectList: "Project List", projectLevel: "Class Level", groupManagement: "Group Management", addGroup: "Add", searchStudent: "Search & add student...", importingData: "Importing data...", resetingData: "Resetting data...", classStats: "Class Statistics", totalStudents: "Total Students", activeProjects: "Active Projects", viewDetailsProgress: "View Progress Details", viewDetailsRating: "View Full Ratings", viewDetailsAttendance: "Input & Detail Kehadiran", classComparison: "Inter-Class Comparison", bestRankingInfo: "Informasi Peringkat Terbaik", bestClass: "Kelas Terbaik", bestStudent: "Siswa Terbaik", attendance: "Kehadiran", averageScore: "Rata-rata Nilai", totalScore: "Total Score", logout: "Logout", password: "Password", newAdminEmail: "New admin email", newAdminPassword: "New password", exportExcel: "Export to Excel", importAttendanceExcel: "Import (Excel)", exportAttendanceExcel: "Export (Excel)", exportAttendanceRange: "Export Attendance Recap", exportAttendanceDesc: "Select a date range to export (max 6 months).", importScoresExcel: "Import Nilai (Excel)", importGroupsExcel: "Import Groups (Excel)", importingGroups: "Importing group data...", availableStudents: "Available Students", collapseMenu: "Collapse menu", teacherInsight: "Student Activity Insights", mostActiveStudents: "Most Active Students", needsAttentionStudents: "Students Needing Attention", attendanceInsight: "Attendance Insight", attendanceImprovement: "Best Attendance", attendanceDecline: "Needs Attention", raporSemester1: "Semester 1 Report", finalGrade: "Final Grade", predicate: "Predicate", description: "Description", missingScores: "Cek Data Nilai", missingScoresTitle: "Cek Data Nilai"
+                appTitle: "Mozzart Education", dashboard: "Dasbor Kelas", rekapNilai: "Rekapitulasi Nilai", dataInput: "Input Data", inputManagement: "Manajemen Input", settings: "Pengaturan", guide: "Panduan", language: "Bahasa:", attendanceRecap: "Rekapitulasi Kehadiran", class: "Per Kelas", individual: "Individual", daily: "Harian", weekly: "Mingguan", monthly: "Bulanan", scoreRating: "Rating Nilai Siswa", topStudents: "Peringkat Teratas", attendanceToday: "Kehadiran Hari Ini", inputAttendance: "Input Kehadiran", inputActivity: "Input Keaktifan", studentName: "Nama Siswa", status: "Status", save: "Simpan", inputScore: "Input Nilai", personal: "Personal", group: "Kelompok", addCriteria: "+ Tambah Kriteria", appearance: "Tampilan", appLogo: "Logo Aplikasi", appBackground: "Background Aplikasi", themeColor: "Warna Tema", adminManagement: "Manajemen Admin", add: "Tambah", dataManagement: "Manajemen Data", importStudentData: "Import Data Siswa (Excel)", importFormat: "Format: no, nis, nama, kelas", resetAllData: "Reset Semua Data Aplikasi", guideTitle: "Panduan Penggunaan Mozzart Education", guide1Title: "Langkah 1: Pengaturan Awal", guide1Text: "Pertama kali, buka menu 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa dari file Excel.", guide2Title: "Langkah 2: Membuat Projek", guide2TextNew: "Buka menu 'Manajemen Input'. Tambahkan projek beserta kriteria penilaiannya.", guide3Title: "Langkah 3: Mencatat Kehadiran", guide3TextNew: "Masuk ke 'Input Data' -> 'Input Kehadiran'. Anda bisa input manual atau gunakan tombol 'Download Format' untuk mengisi di Excel lalu upload kembali dengan 'Import (Excel)'.", guide4Title: "Langkah 4: Menginput Nilai", guide4Text: "Buka 'Input Data' -> 'Input Nilai'. Pilih projek, lalu gunakan 'Download Format' untuk mendapatkan template Excel yang sesuai kriteria projek. Isi nilai, lalu upload kembali.", guide5Title: "Langkah 5: Memantau Progres", guide5TextNew: "Gunakan 'Dasbor Kelas' untuk melihat rekapitulasi.", cancel: "Batal", confirm: "Yakin", present: "Hadir", sick: "Sakit", permit: "Izin", absent: "Alpa", score: "Nilai", rank: "Peringkat", projectManagement: "Manajemen Projek", projectName: "Nama Projek Baru", projectCriteria: "Scoring Criteria", addProject: "Add Project", projectList: "Project List", projectLevel: "Class Level", groupManagement: "Group Management", addGroup: "Add", searchStudent: "Search & add student...", importingData: "Importing data...", resetingData: "Resetting data...", classStats: "Class Statistics", totalStudents: "Total Students", activeProjects: "Active Projects", viewDetailsProgress: "View Progress Details", viewDetailsRating: "View Full Ratings", viewDetailsAttendance: "Input & Detail Kehadiran", classComparison: "Inter-Class Comparison", bestRankingInfo: "Informasi Peringkat Terbaik", bestClass: "Kelas Terbaik", bestStudent: "Siswa Terbaik", attendance: "Kehadiran", averageScore: "Rata-rata Nilai", totalScore: "Total Score", logout: "Logout", password: "Password", newAdminEmail: "New admin email", newAdminPassword: "New password", exportExcel: "Export to Excel", importAttendanceExcel: "Import (Excel)", exportAttendanceExcel: "Export (Excel)", exportAttendanceRange: "Export Attendance Recap", exportAttendanceDesc: "Select a date range to export (max 6 months).", importScoresExcel: "Import Nilai (Excel)", importGroupsExcel: "Import Groups (Excel)", importingGroups: "Importing group data...", availableStudents: "Available Students", collapseMenu: "Collapse menu", teacherInsight: "Student Activity Insights", mostActiveStudents: "Most Active Students", needsAttentionStudents: "Students Needing Attention", attendanceInsight: "Attendance Insight", attendanceImprovement: "Best Attendance", attendanceDecline: "Needs Attention", raporSemester1: "Nilai Rapor Semester 1", finalGrade: "Final Grade", predicate: "Predicate", description: "Description", missingScores: "Cek Data Nilai", missingScoresTitle: "Cek Data Nilai"
+            },
+            en: {
+                appTitle: "Mozzart Education", dashboard: "Class Dashboard", rekapNilai: "Grade Summary", dataInput: "Data Input", inputManagement: "Input Management", settings: "Settings", guide: "Guide", language: "Language:", attendanceRecap: "Attendance Recap", class: "By Class", individual: "Individual", daily: "Daily", weekly: "Weekly", monthly: "Monthly", scoreRating: "Student Score Rating", topStudents: "Top Students", attendanceToday: "Attendance Today", inputAttendance: "Input Attendance", inputActivity: "Input Activity", studentName: "Student Name", status: "Status", save: "Save", inputScore: "Input Scores", personal: "Personal", group: "Group", addCriteria: "+ Add Criteria", appearance: "Appearance", appLogo: "App Logo", appBackground: "App Background", themeColor: "Theme Color", adminManagement: "Admin Management", add: "Add", dataManagement: "Data Management", importStudentData: "Import Student Data (Excel)", importFormat: "Format: no, nis, name, class", resetAllData: "Reset All App Data", guideTitle: "Mozzart Education User Guide", guide1Title: "Step 1: Initial Setup", guide1Text: "First, go to 'Settings'. Use 'Import Student Data' to upload your student list from an Excel file.", guide2Title: "Step 2: Create Projects", guide2TextNew: "Go to 'Input Management'. Add projects along with their scoring criteria.", guide3Title: "Step 3: Record Attendance", guide3TextNew: "Go to 'Data Input' -> 'Input Attendance'. You can input manually or use the 'Download Format' button to fill in Excel and upload back with 'Import (Excel)'.", guide4Title: "Step 4: Input Scores", guide4Text: "Open 'Data Input' -> 'Input Scores'. Select a project, then use 'Download Format'. Fill in scores, then upload back.", guide5Title: "Step 5: Monitor Progress", guide5TextNew: "Use 'Class Dashboard' to view the summary.", cancel: "Cancel", confirm: "Confirm", present: "Present", sick: "Sick", permit: "Permit", absent: "Absent", score: "Score", rank: "Rank", projectManagement: "Project Management", projectName: "New Project Name", projectCriteria: "Scoring Criteria", addProject: "Add Project", projectList: "Project List", projectLevel: "Class Level", groupManagement: "Group Management", addGroup: "Add", searchStudent: "Search & add student...", importingData: "Importing data...", resetingData: "Resetting data...", classStats: "Class Statistics", totalStudents: "Total Students", activeProjects: "Active Projects", viewDetailsProgress: "View Progress Details", viewDetailsRating: "View Full Ratings", viewDetailsAttendance: "Input & Detail Kehadiran", classComparison: "Inter-Class Comparison", bestRankingInfo: "Best Ranking Info", bestClass: "Best Class", bestStudent: "Best Student", attendance: "Attendance", averageScore: "Average Score", totalScore: "Total Score", logout: "Logout", password: "Password", newAdminEmail: "New admin email", newAdminPassword: "New password", exportExcel: "Export to Excel", importAttendanceExcel: "Import (Excel)", exportAttendanceExcel: "Export (Excel)", exportAttendanceRange: "Export Attendance Recap", exportAttendanceDesc: "Select a date range to export (max 6 months).", importScoresExcel: "Import Nilai (Excel)", importGroupsExcel: "Import Groups (Excel)", importingGroups: "Importing group data...", availableStudents: "Available Students", collapseMenu: "Collapse menu", teacherInsight: "Student Activity Insights", mostActiveStudents: "Most Active Students", needsAttentionStudents: "Students Needing Attention", attendanceInsight: "Attendance Insight", attendanceImprovement: "Best Attendance", attendanceDecline: "Needs Attention", raporSemester1: "Semester 1 Grade Report", finalGrade: "Final Grade", predicate: "Predicate", description: "Description", missingScores: "Check Missing Scores", missingScoresTitle: "Check Missing Scores"
             }
         };
 
@@ -873,6 +909,160 @@
             setupEventListeners();
             refreshAllViews();
             changeLanguage('id'); // Fix: translations is now defined
+        }
+
+        // --- NEW HELPER FUNCTIONS FOR IMPORT/EXPORT ---
+        function downloadAttendanceTemplate() {
+            const className = document.getElementById('input-attendance-class').value;
+            if (!className) { alert("Pilih kelas terlebih dahulu!"); return; }
+            
+            const students = appData.students[className] || [];
+            const data = [["No", "NIS", "Nama", "Status (H/S/I/A)"]];
+            
+            students.forEach((s, i) => {
+                data.push([i + 1, s.nis, s.name, ""]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Absensi");
+            XLSX.writeFile(wb, `Template_Absensi_${className}.xlsx`);
+        }
+
+        async function processAttendanceImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const className = document.getElementById('input-attendance-class').value;
+            const dateStr = document.getElementById('input-attendance-date').value;
+
+            if (!className || !dateStr) {
+                alert("Mohon pilih Kelas dan Tanggal terlebih dahulu pada menu Input Kehadiran sebelum import.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet);
+
+                if (!appData.attendance) appData.attendance = {};
+                if (!appData.attendance[className]) appData.attendance[className] = { daily: {} };
+                if (!appData.attendance[className].daily) appData.attendance[className].daily = {};
+                if (!appData.attendance[className].daily[dateStr]) appData.attendance[className].daily[dateStr] = {};
+
+                let count = 0;
+                json.forEach(row => {
+                    const keys = Object.keys(row);
+                    const nameKey = keys.find(k => k.toLowerCase().includes('nama'));
+                    const statusKey = keys.find(k => k.toLowerCase().includes('status'));
+                    
+                    if (nameKey && statusKey && row[nameKey]) {
+                        const studentName = String(row[nameKey]).trim();
+                        const statusVal = String(row[statusKey]).trim().toLowerCase().charAt(0);
+                        const student = appData.students[className].find(s => s.name.toLowerCase() === studentName.toLowerCase());
+                        
+                        if (student && ['h','s','i','a'].includes(statusVal)) {
+                            appData.attendance[className].daily[dateStr][student.id] = statusVal;
+                            count++;
+                        }
+                    }
+                });
+
+                await saveData();
+                populateAttendanceInputTable('');
+                alert(`Berhasil mengimpor data absensi untuk ${count} siswa.`);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function downloadScoreTemplate() {
+            const className = document.getElementById('input-score-class').value;
+            const projectId = document.getElementById('input-score-project').value;
+            
+            if (!className || !projectId) { alert("Pilih kelas dan projek terlebih dahulu!"); return; }
+            
+            const project = appData.projects.find(p => p.id === projectId);
+            const students = appData.students[className] || [];
+            
+            const headers = ["No", "NIS", "Nama", ...project.criteria];
+            const data = [headers];
+            
+            students.forEach((s, i) => {
+                const row = [i + 1, s.nis, s.name];
+                project.criteria.forEach(() => row.push(""));
+                data.push(row);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Nilai");
+            XLSX.writeFile(wb, `Template_Nilai_${className}_${project.name}.xlsx`);
+        }
+
+        async function processScoreImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const className = document.getElementById('input-score-class').value;
+            const projectId = document.getElementById('input-score-project').value;
+
+            if (!className || !projectId) {
+                alert("Mohon pilih Kelas dan Projek terlebih dahulu pada menu Input Nilai sebelum import.");
+                return;
+            }
+            
+            const project = appData.projects.find(p => p.id === projectId);
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet);
+
+                if(!appData.scores) appData.scores = {};
+                if(!appData.scores[projectId]) appData.scores[projectId] = {};
+
+                let count = 0;
+                json.forEach(row => {
+                    const keys = Object.keys(row);
+                    const nameKey = keys.find(k => k.toLowerCase() === 'nama');
+                    
+                    if (nameKey && row[nameKey]) {
+                        const studentName = String(row[nameKey]).trim();
+                        const student = appData.students[className].find(s => s.name.toLowerCase() === studentName.toLowerCase());
+                        
+                        if (student) {
+                            const details = {};
+                            let sum = 0;
+                            let critCount = 0;
+
+                            project.criteria.forEach(crit => {
+                                const critKey = keys.find(k => k.toLowerCase() === crit.toLowerCase());
+                                let val = 0;
+                                if (critKey && row[critKey] !== undefined) {
+                                    val = parseInt(row[critKey]);
+                                    if (isNaN(val)) val = 0;
+                                }
+                                details[crit] = val;
+                                sum += val;
+                                critCount++;
+                            });
+                            
+                            const total = critCount > 0 ? Math.round(sum / critCount) : 0;
+                            appData.scores[projectId][student.id] = { total, details };
+                            count++;
+                        }
+                    }
+                });
+
+                await saveData();
+                populateScoreInputTable();
+                renderDashboardCharts();
+                alert(`Berhasil mengimpor nilai untuk ${count} siswa.`);
+            };
+            reader.readAsArrayBuffer(file);
         }
 
         function setupEventListeners() {
@@ -1030,7 +1220,8 @@
 
         function getLevelFromClassName(className) {
             if (typeof className !== 'string') return null;
-            className = className.toUpperCase().trim(); // Improved robust check
+            className = className.toUpperCase().trim(); 
+            // Enhanced check for normal numbers too (e.g. 12 IPA)
             if (className.startsWith('XII') || className.startsWith('12')) return 'XII';
             if (className.startsWith('XI') || className.startsWith('11')) return 'XI';
             if (className.startsWith('X') || className.startsWith('10')) return 'X';
@@ -1170,36 +1361,90 @@
 
         function renderRaporSemester1() {
             const className = document.getElementById('rapor-class-filter').value;
-            const tbody = document.getElementById('rapor-table-body');
-            tbody.innerHTML = '';
+            const midTbody = document.getElementById('rapor-mid-table-body');
+            const finalTbody = document.getElementById('rapor-final-table-body');
+            
+            midTbody.innerHTML = '';
+            finalTbody.innerHTML = '';
+            
             if(!className) return;
             
             const students = appData.students[className] || [];
             const classLevel = getLevelFromClassName(className);
-            const projects = appData.projects.filter(p => p.level === classLevel || p.level === 'Semua');
+            const allProjects = appData.projects.filter(p => p.level === classLevel || p.level === 'Semua');
             
-            students.forEach((s, idx) => {
+            // Logic Split: 50% Projects for Mid, All for Final
+            // Assuming projects are ordered by creation/insertion time.
+            // Math.ceil ensuring if 3 projects, we take 2 (more than half is safer for "mid" in odd numbers)
+            const midCutoffIndex = Math.ceil(allProjects.length / 2);
+            const midProjects = allProjects.slice(0, midCutoffIndex);
+
+            // Helper to generate row
+            const generateRow = (s, idx, projectsToUse, isFinal = false) => {
                 let total = 0, count = 0;
-                projects.forEach(p => {
-                    const scoreData = appData.scores?.[p.id]?.[s.id];
-                    // FIX: Check if score data exists and has a total property that is a number (including 0)
-                    if(scoreData && typeof scoreData.total === 'number') { 
+                projectsToUse.forEach(p => {
+                    // Check strict ID match then string match
+                    const scoreData = appData.scores?.[p.id]?.[s.id] || appData.scores?.[p.id]?.[String(s.id)];
+                    if(scoreData && typeof scoreData.total === 'number' && scoreData.total > 0) { 
                          total += scoreData.total; 
                          count++; 
                     }
                 });
+
+                // Calculate Average
                 const avg = count > 0 ? Math.round(total/count) : 0;
+                
+                // Determine Predicate
                 let pred='-', ket='-';
                 if(count > 0) {
-                    if(avg>=90) { pred='A'; ket='Sangat Baik'; }
-                    else if(avg>=80) { pred='B'; ket='Baik'; }
-                    else if(avg>=70) { pred='C'; ket='Cukup'; }
+                    if(avg>=92) { pred='A'; ket='Sangat Baik'; }
+                    else if(avg>=83) { pred='B'; ket='Baik'; }
+                    else if(avg>=75) { pred='C'; ket='Cukup'; }
                     else { pred='D'; ket='Kurang'; }
                 }
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="p-3 text-slate-500">${idx+1}</td><td class="p-3 text-slate-500 font-mono text-xs">${s.nis||'-'}</td><td class="p-3 font-medium text-slate-800">${s.name}</td><td class="p-3 text-center">${count}</td><td class="p-3 text-center font-bold">${avg||'-'}</td><td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold ${pred==='A'?'bg-emerald-100 text-emerald-700':(pred==='D'?'bg-red-100 text-red-700':'bg-slate-100 text-slate-700')}">${pred}</span></td><td class="p-3 text-slate-600">${ket}</td>`;
-                tbody.appendChild(tr);
+
+                const displayAvg = count > 0 ? avg : '-';
+                const projectCountText = `${count} / ${projectsToUse.length}`;
+                
+                // Color Classes
+                const scoreColor = isFinal ? 'text-emerald-600' : 'text-indigo-600';
+                const badgeColor = pred === 'A' ? 'bg-emerald-100 text-emerald-700' : 
+                                  (pred === 'D' ? 'bg-red-100 text-red-700' : 
+                                  (pred === '-' ? 'bg-slate-100 text-slate-700' : 'bg-blue-50 text-blue-700'));
+
+                let rowHTML = `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 text-slate-500">${idx+1}</td>
+                        <td class="p-3 text-slate-500 font-mono text-xs">${s.nis||'-'}</td>
+                        <td class="p-3 font-medium text-slate-800">
+                            ${s.name}
+                            ${count < projectsToUse.length ? `<i data-lucide="alert-circle" class="w-3 h-3 text-amber-500 inline ml-1" title="Nilai belum lengkap"></i>` : ''}
+                        </td>
+                        <td class="p-3 text-center text-xs text-slate-500">${projectCountText}</td>
+                        <td class="p-3 text-center font-bold ${scoreColor}">${displayAvg}</td>
+                        <td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold ${badgeColor}">${pred}</span></td>
+                `;
+
+                if (isFinal) {
+                    rowHTML += `<td class="p-3 text-slate-600 text-sm">${ket}</td>`;
+                }
+                
+                rowHTML += `</tr>`;
+                return rowHTML;
+            };
+
+            students.forEach((s, idx) => {
+                midTbody.innerHTML += generateRow(s, idx, midProjects, false);
+                finalTbody.innerHTML += generateRow(s, idx, allProjects, true);
             });
+
+            if (students.length === 0) {
+                 midTbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Tidak ada siswa di kelas ini.</td></tr>';
+                 finalTbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 italic">Tidak ada siswa di kelas ini.</td></tr>';
+            }
+            
+            // Re-init icons for the alert circles if any
+            lucide.createIcons();
         }
 
         function populateAttendanceInputTable(search) {
@@ -1347,19 +1592,57 @@
             if(!appData.scores) appData.scores={}; if(!appData.scores[pid]) appData.scores[pid]={};
             
             const inputs = document.querySelectorAll('.score-input-field');
-            const tempScores = {};
+            const studentInputs = {};
+
+            // Group inputs by student ID first
             inputs.forEach(inp => {
-                const sid = inp.dataset.student; const crit = inp.dataset.criteria; const val = parseInt(inp.value)||0;
-                if(!tempScores[sid]) tempScores[sid] = {};
-                tempScores[sid][crit] = val;
+                const sid = inp.dataset.student; 
+                if(!studentInputs[sid]) studentInputs[sid] = [];
+                studentInputs[sid].push(inp);
             });
-            
-            Object.keys(tempScores).forEach(sid => {
-                const details = tempScores[sid];
-                const vals = Object.values(details);
-                const total = vals.length > 0 ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
-                appData.scores[pid][sid] = { total, details };
+
+            // Process each student
+            Object.keys(studentInputs).forEach(sid => {
+                const fields = studentInputs[sid];
+                let hasData = false;
+                const details = {};
+                let sum = 0;
+                let count = 0;
+
+                // Check if any field has a value
+                fields.forEach(f => {
+                    const crit = f.dataset.criteria;
+                    const valStr = f.value.trim();
+                    if(valStr !== "") {
+                        hasData = true;
+                        let val = parseInt(valStr);
+                        if(isNaN(val)) val = 0;
+                        details[crit] = val;
+                        sum += val;
+                        count++;
+                    } else {
+                        details[crit] = 0; // Default to 0 internally for calculation if partly filled
+                    }
+                });
+                
+                // Only save if at least one field was filled. 
+                // If NO fields were filled, remove the entry to mark as "Missing"
+                if(hasData) {
+                    // Recalculate average based on total criteria of project, or just filled ones? 
+                    // Usually average is sum / total criteria count.
+                    // Here we used count of filled. Let's stick to simple avg of non-empty or avg of all?
+                    // Previous logic: sum / length of details (which includes 0s). 
+                    const totalCriteria = fields.length;
+                    const total = totalCriteria > 0 ? Math.round(sum / totalCriteria) : 0;
+                    appData.scores[pid][sid] = { total, details };
+                } else {
+                    // Remove entry if exists, so it shows up in "Check Missing Scores"
+                    if(appData.scores[pid][sid]) {
+                        delete appData.scores[pid][sid];
+                    }
+                }
             });
+
             await saveData(); alert('Nilai disimpan.'); renderDashboardCharts();
         }
 
@@ -1440,7 +1723,15 @@
                                        appData.scores[project.id] && 
                                        appData.scores[project.id][student.id];
                         
-                        if (!hasScore) {
+                        // FIX: Ensure ID string matching is robust
+                        const sidStr = String(student.id);
+                        const scoreData = appData.scores && appData.scores[project.id] && 
+                                             (appData.scores[project.id][student.id] || appData.scores[project.id][sidStr]);
+                        
+                        // Check if score exists AND total > 0. If total is 0, consider it missing.
+                        const hasValidScore = scoreData && typeof scoreData.total === 'number' && scoreData.total > 0;
+
+                        if (!hasValidScore) {
                             foundMissing = true;
                             const tr = document.createElement('tr');
                             tr.className = "border-b border-slate-50 hover:bg-slate-50";
@@ -1493,13 +1784,13 @@
             });
 
             document.getElementById('missing-score-modal').classList.remove('hidden');
-        };
+        } // Added missing brace
 
         window.closeMissingScoreModal = function() {
             document.getElementById('missing-score-modal').classList.add('hidden');
             currentMissingScoreStudentId = null;
             currentMissingScoreProjectId = null;
-        };
+        } // Added missing brace
 
         window.saveMissingScore = async function() {
             if (!currentMissingScoreStudentId || !currentMissingScoreProjectId) return;
@@ -1535,7 +1826,7 @@
             checkMissingScores();
             renderDashboardCharts();
             closeMissingScoreModal();
-        };
+        }
         
         window.openProjectDetail = function(pid, cname) {
             const p = appData.projects.find(x=>x.id===pid); const s = appData.students[cname]||[];
@@ -1649,9 +1940,7 @@
         }
 
         function handleReset(e) {
-            // Check if e exists because onclick="handleReset()" might pass undefined
             const type = e ? e.currentTarget.dataset.type : 'all'; 
-            // In HTML onclick="handleReset(event)" is needed, but we can default
             if(confirm("PERINGATAN: Ini akan menghapus SELURUH data siswa, nilai, dan absensi. Tindakan ini tidak dapat dibatalkan. Lanjutkan?")) {
                 const admins = appData.admins;
                 const settings = appData.settings;
@@ -1766,181 +2055,6 @@
                 appData.projects[projectIndex].name = newName; appData.projects[projectIndex].level = newLevel; appData.projects[projectIndex].criteria = [...tempNewCriteriaForEdit];
                 await saveData(); renderProjectList(); refreshAllViews(); document.getElementById('edit-project-modal').classList.add('hidden'); editingProjectId = null; alert('Perubahan berhasil disimpan');
             }
-        }
-
-        // --- NEW IMPORTER FUNCTIONS RESTORED ---
-        
-        function downloadAttendanceTemplate() {
-            const selectedClass = document.getElementById('input-attendance-class').value;
-            if (!selectedClass) { alert('Pilih kelas terlebih dahulu.'); return; }
-            
-            const students = appData.students[selectedClass] || [];
-            if (students.length === 0) { alert('Tidak ada siswa di kelas ini.'); return; }
-
-            const data = [];
-            data.push(['No', 'NIS', 'Nama Siswa', 'Status (hadir/sakit/izin/alpa)']); 
-            
-            students.forEach((s, index) => {
-                data.push([index + 1, s.nis || '', s.name, '']);
-            });
-
-            const worksheet = XLSX.utils.aoa_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Absensi");
-            worksheet['!cols'] = [{wch: 5}, {wch: 15}, {wch: 30}, {wch: 30}];
-            XLSX.writeFile(workbook, `Template_Absensi_${selectedClass}.xlsx`);
-        }
-
-        async function processAttendanceImport(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
-                if (jsonData.length > 1) jsonData.shift(); 
-
-                const selectedClass = document.getElementById('input-attendance-class').value;
-                const selectedDate = document.getElementById('input-attendance-date').value;
-
-                if (!selectedClass || !selectedDate) { alert('Pastikan kelas dan tanggal sudah dipilih.'); return; }
-                
-                if (!appData.attendance) appData.attendance = {};
-                if (!appData.attendance[selectedClass]) appData.attendance[selectedClass] = { daily: {} };
-                if (!appData.attendance[selectedClass].daily) appData.attendance[selectedClass].daily = {};
-                if (!appData.attendance[selectedClass].daily[selectedDate]) appData.attendance[selectedClass].daily[selectedDate] = {};
-
-                let updateCount = 0;
-                const students = appData.students[selectedClass] || [];
-
-                jsonData.forEach(row => {
-                    const nis = row[1] ? String(row[1]).trim() : '';
-                    const name = row[2] ? String(row[2]).trim() : '';
-                    let status = row[3] ? String(row[3]).toLowerCase().trim() : '';
-
-                    if (!['hadir', 'sakit', 'izin', 'alpa'].includes(status)) return;
-
-                    const student = students.find(s => (s.nis && String(s.nis) === nis) || (s.name.toLowerCase() === name.toLowerCase()));
-
-                    if (student) {
-                        appData.attendance[selectedClass].daily[selectedDate][student.id] = status;
-                        updateCount++;
-                    }
-                });
-
-                await saveData();
-                populateAttendanceInputTable(document.getElementById('attendance-student-search').value);
-                alert(`Berhasil mengimpor data kehadiran untuk ${updateCount} siswa.`);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function downloadScoreTemplate() {
-            const selectedClass = document.getElementById('input-score-class').value;
-            const selectedProjectId = document.getElementById('input-score-project').value;
-
-            if (!selectedClass || !selectedProjectId) { alert('Pilih kelas dan projek terlebih dahulu.'); return; }
-
-            const project = appData.projects.find(p => p.id === selectedProjectId);
-            const students = appData.students[selectedClass] || [];
-            
-            if (!project) return;
-            if (students.length === 0) { alert('Tidak ada siswa di kelas ini.'); return; }
-
-            const data = [];
-            const headers = ['No', 'NIS', 'Nama Siswa', ...project.criteria];
-            data.push(headers);
-
-            students.forEach((s, index) => {
-                const row = [index + 1, s.nis || '', s.name];
-                project.criteria.forEach(() => row.push('')); 
-                data.push(row);
-            });
-
-            const worksheet = XLSX.utils.aoa_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Nilai");
-            
-            const wscols = [{wch: 5}, {wch: 15}, {wch: 30}];
-            project.criteria.forEach(() => wscols.push({wch: 15}));
-            worksheet['!cols'] = wscols;
-
-            XLSX.writeFile(workbook, `Template_Nilai_${project.name}_${selectedClass}.xlsx`);
-        }
-
-        async function processScoreImport(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                const headers = jsonData[0]; 
-
-                const selectedClass = document.getElementById('input-score-class').value;
-                const selectedProjectId = document.getElementById('input-score-project').value;
-
-                if (!selectedClass || !selectedProjectId) { alert('Pastikan kelas dan projek sudah dipilih.'); return; }
-                
-                const project = appData.projects.find(p => p.id === selectedProjectId);
-                if(!project) return;
-
-                if (!appData.scores) appData.scores = {};
-                if (!appData.scores[selectedProjectId]) appData.scores[selectedProjectId] = {};
-
-                let updateCount = 0;
-                const students = appData.students[selectedClass] || [];
-
-                const criteriaIndices = {};
-                project.criteria.forEach(crit => {
-                    const idx = headers.findIndex(h => String(h).trim().toLowerCase() === crit.toLowerCase());
-                    if (idx !== -1) criteriaIndices[crit] = idx;
-                });
-
-                for (let i = 1; i < jsonData.length; i++) {
-                    const row = jsonData[i];
-                    if (!row || row.length === 0) continue;
-
-                    const nis = row[1] ? String(row[1]).trim() : '';
-                    const name = row[2] ? String(row[2]).trim() : '';
-                    const student = students.find(s => (s.nis && String(s.nis) === nis) || (s.name.toLowerCase() === name.toLowerCase()));
-
-                    if (student) {
-                        let scoreSum = 0;
-                        let details = {};
-                        let validCriteriaCount = 0;
-
-                        project.criteria.forEach(crit => {
-                            const idx = criteriaIndices[crit];
-                            if (idx !== undefined) {
-                                let val = parseFloat(row[idx]);
-                                if (isNaN(val)) val = 0;
-                                if (val > 100) val = 100;
-                                if (val < 0) val = 0;
-                                details[crit] = val;
-                                scoreSum += val;
-                                validCriteriaCount++;
-                            } else { details[crit] = 0; }
-                        });
-
-                        const total = validCriteriaCount > 0 ? Math.round(scoreSum / validCriteriaCount) : 0;
-                        appData.scores[selectedProjectId][student.id] = { total: total, details: details };
-                        updateCount++;
-                    }
-                }
-
-                await saveData();
-                populateScoreInputTable();
-                alert(`Berhasil mengimpor nilai untuk ${updateCount} siswa.`);
-            };
-            reader.readAsArrayBuffer(file);
         }
 
         // --- 4. WINDOW EXPORTS ---
