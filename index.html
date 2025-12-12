@@ -36,7 +36,7 @@
             background-repeat: no-repeat;
         }
         .sidebar-icon { stroke-width: 1.5; }
-        .chart-container { position: relative; height: 250px; width: 100%; }
+        .chart-container { position: relative; height: 200px; width: 100%; }
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #e2e8f0; }
@@ -94,8 +94,8 @@
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rekap-nilai">
                         <i data-lucide="file-spreadsheet" class="sidebar-icon"></i><span data-lang="rekapNilai" class="ml-4 nav-text">Rekapitulasi Nilai</span>
                     </a>
-                    <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rapor-semester-1">
-                        <i data-lucide="book-open-check" class="sidebar-icon"></i><span data-lang="raporSemester1" class="ml-4 nav-text">Nilai Rapor Semester 1</span>
+                    <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rapor-semester">
+                        <i data-lucide="book-open-check" class="sidebar-icon"></i><span data-lang="raporSemester" class="ml-4 nav-text">Nilai Rapor Semester</span>
                     </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="missing-scores">
                         <i data-lucide="alert-circle" class="sidebar-icon"></i><span data-lang="missingScores" class="ml-4 nav-text">Cek Nilai Kosong</span>
@@ -141,55 +141,80 @@
                 </header>
                 <div class="flex-1 p-4 md:p-8 overflow-y-auto">
                     
-                    <!-- Dashboard View -->
+                    <!-- Dashboard View (Updated with Detailed Stats) -->
                     <div id="dashboard-view" class="view">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Template for Level Card to Reduce HTML redundancy (Populated by JS if needed, but keeping static for simplicity in basic html structure) -->
+                        <div class="grid grid-cols-1 gap-6">
+                            <!-- Levels Container -->
+                            
                             <!-- Level X -->
-                            <div class="card flex flex-col h-full">
-                                <h3 class="card-title text-center border-b pb-3 mb-4 text-indigo-700">Jenjang Kelas X</h3>
-                                <div class="space-y-8 flex-1">
-                                    <div>
-                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3"><i data-lucide="user-check" class="w-4 h-4 inline mr-1"></i> Perkembangan Kehadiran</h4>
-                                        <div class="chart-container" style="height: 220px;"><canvas id="chart-att-X"></canvas></div>
+                            <div class="card">
+                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between">
+                                    <span>Jenjang Kelas X</span>
+                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Statistik Semester Berjalan</span>
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div class="flex flex-col">
+                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3">Grafik Kehadiran</h4>
+                                        <div class="chart-container"><canvas id="chart-att-X"></canvas></div>
                                     </div>
-                                    <div class="pt-4 border-t border-slate-100">
-                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i> Perkembangan Nilai</h4>
-                                        <div class="chart-container" style="height: 220px;"><canvas id="chart-score-X"></canvas></div>
+                                    <div class="flex flex-col justify-center space-y-4">
+                                        <div id="stats-X" class="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                                            <!-- Stats injected here -->
+                                        </div>
+                                        <div class="pt-4 border-t border-slate-100">
+                                            <h4 class="text-sm font-semibold text-slate-600 mb-2">Perkembangan Nilai</h4>
+                                            <div class="chart-container" style="height: 150px;"><canvas id="chart-score-X"></canvas></div>
+                                        </div>
                                     </div>
-                                    <div id="solution-X" class="hidden pt-4 border-t border-slate-200 bg-red-50 p-4 rounded-md"></div>
                                 </div>
                             </div>
+
                             <!-- Level XI -->
-                            <div class="card flex flex-col h-full">
-                                <h3 class="card-title text-center border-b pb-3 mb-4 text-indigo-700">Jenjang Kelas XI</h3>
-                                <div class="space-y-8 flex-1">
-                                    <div>
-                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3"><i data-lucide="user-check" class="w-4 h-4 inline mr-1"></i> Perkembangan Kehadiran</h4>
-                                        <div class="chart-container" style="height: 220px;"><canvas id="chart-att-XI"></canvas></div>
+                            <div class="card">
+                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between">
+                                    <span>Jenjang Kelas XI</span>
+                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Statistik Semester Berjalan</span>
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div class="flex flex-col">
+                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3">Grafik Kehadiran</h4>
+                                        <div class="chart-container"><canvas id="chart-att-XI"></canvas></div>
                                     </div>
-                                    <div class="pt-4 border-t border-slate-100">
-                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i> Perkembangan Nilai</h4>
-                                        <div class="chart-container" style="height: 220px;"><canvas id="chart-score-XI"></canvas></div>
+                                    <div class="flex flex-col justify-center space-y-4">
+                                        <div id="stats-XI" class="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                                            <!-- Stats injected here -->
+                                        </div>
+                                        <div class="pt-4 border-t border-slate-100">
+                                            <h4 class="text-sm font-semibold text-slate-600 mb-2">Perkembangan Nilai</h4>
+                                            <div class="chart-container" style="height: 150px;"><canvas id="chart-score-XI"></canvas></div>
+                                        </div>
                                     </div>
-                                    <div id="solution-XI" class="hidden pt-4 border-t border-slate-200 bg-red-50 p-4 rounded-md"></div>
                                 </div>
                             </div>
+
                             <!-- Level XII -->
-                            <div class="card flex flex-col h-full">
-                                <h3 class="card-title text-center border-b pb-3 mb-4 text-indigo-700">Jenjang Kelas XII</h3>
-                                <div class="space-y-8 flex-1">
-                                    <div>
-                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3"><i data-lucide="user-check" class="w-4 h-4 inline mr-1"></i> Perkembangan Kehadiran</h4>
-                                        <div class="chart-container" style="height: 220px;"><canvas id="chart-att-XII"></canvas></div>
+                            <div class="card">
+                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between">
+                                    <span>Jenjang Kelas XII</span>
+                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Statistik Semester Berjalan</span>
+                                </h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div class="flex flex-col">
+                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3">Grafik Kehadiran</h4>
+                                        <div class="chart-container"><canvas id="chart-att-XII"></canvas></div>
                                     </div>
-                                    <div class="pt-4 border-t border-slate-100">
-                                        <h4 class="text-sm font-semibold text-center text-slate-600 mb-3"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i> Perkembangan Nilai</h4>
-                                        <div class="chart-container" style="height: 220px;"><canvas id="chart-score-XII"></canvas></div>
+                                    <div class="flex flex-col justify-center space-y-4">
+                                        <div id="stats-XII" class="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                                            <!-- Stats injected here -->
+                                        </div>
+                                        <div class="pt-4 border-t border-slate-100">
+                                            <h4 class="text-sm font-semibold text-slate-600 mb-2">Perkembangan Nilai</h4>
+                                            <div class="chart-container" style="height: 150px;"><canvas id="chart-score-XII"></canvas></div>
+                                        </div>
                                     </div>
-                                    <div id="solution-XII" class="hidden pt-4 border-t border-slate-200 bg-red-50 p-4 rounded-md"></div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     
@@ -204,38 +229,56 @@
                         <div id="rekap-projek-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
                     </div>
 
-                    <!-- Rapor Semester 1 -->
-                    <div id="rapor-semester-1-view" class="view hidden space-y-8">
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <!-- Rapor Semester View (UPDATED: Semester Selection) -->
+                    <div id="rapor-semester-view" class="view hidden space-y-8">
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
-                                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="book-open-check" class="w-6 h-6 text-indigo-600"></i> Nilai Rapor Semester 1</h2>
+                                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="book-open-check" class="w-6 h-6 text-indigo-600"></i> Nilai Rapor Semester</h2>
+                                <p class="text-sm text-slate-500 mt-1">Pilih semester dan kelas untuk melihat nilai.</p>
                             </div>
-                            <div class="w-full sm:w-auto">
-                                <label class="block text-xs font-medium text-slate-500 mb-1 ml-1">Pilih Kelas</label>
-                                <select id="rapor-class-filter" class="w-full sm:w-64 p-2.5 border rounded-lg bg-slate-50 form-select text-sm font-medium"></select>
+                            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                                <div class="w-full sm:w-40">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1 ml-1">Pilih Semester</label>
+                                    <select id="rapor-semester-filter" class="w-full p-2.5 border rounded-lg bg-slate-50 form-select text-sm font-medium">
+                                        <option value="1">Semester 1 (Ganjil)</option>
+                                        <option value="2">Semester 2 (Genap)</option>
+                                    </select>
+                                </div>
+                                <div class="w-full sm:w-48">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1 ml-1">Pilih Kelas</label>
+                                    <select id="rapor-class-filter" class="w-full p-2.5 border rounded-lg bg-slate-50 form-select text-sm font-medium"></select>
+                                </div>
                             </div>
                         </div>
+                        
+                        <!-- Tabs Content -->
                         <div class="card relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                                <div><h3 class="text-lg font-bold text-slate-800">Rapor Tengah Semester (Mid)</h3></div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800">Rapor Tengah Semester (Mid)</h3>
+                                    <p class="text-xs text-slate-500">Nilai rata-rata dari projek yang telah selesai.</p>
+                                </div>
                                 <div class="flex gap-2">
                                     <button onclick="exportRaporPDF('mid')" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
                                     <button onclick="exportRaporExcel('mid')" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-mid" class="w-full text-left text-sm border-collapse"><thead class="bg-indigo-50 text-indigo-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Jml Projek</th><th class="p-3 text-center">Rata-Rata</th><th class="p-3 text-center">Predikat</th></tr></thead><tbody id="rapor-mid-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas terlebih dahulu.</td></tr></tbody></table></div>
+                            <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-mid" class="w-full text-left text-sm border-collapse"><thead class="bg-indigo-50 text-indigo-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Jml Projek</th><th class="p-3 text-center">Rata-Rata</th><th class="p-3 text-center">Predikat</th></tr></thead><tbody id="rapor-mid-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas.</td></tr></tbody></table></div>
                         </div>
                         <div class="card relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                                <div><h3 class="text-lg font-bold text-slate-800">Rapor Akhir Semester (Final)</h3></div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800">Rapor Akhir Semester (Final)</h3>
+                                    <p class="text-xs text-slate-500">Akumulasi seluruh nilai projek pada semester ini.</p>
+                                </div>
                                 <div class="flex gap-2">
                                     <button onclick="exportRaporPDF('final')" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
                                     <button onclick="exportRaporExcel('final')" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-final" class="w-full text-left text-sm border-collapse"><thead class="bg-emerald-50 text-emerald-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Total Projek</th><th class="p-3 text-center">Nilai Akhir</th><th class="p-3 text-center">Predikat</th><th class="p-3">Keterangan</th></tr></thead><tbody id="rapor-final-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas terlebih dahulu.</td></tr></tbody></table></div>
+                            <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-final" class="w-full text-left text-sm border-collapse"><thead class="bg-emerald-50 text-emerald-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Total Projek</th><th class="p-3 text-center">Nilai Akhir</th><th class="p-3 text-center">Predikat</th><th class="p-3">Keterangan</th></tr></thead><tbody id="rapor-final-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas.</td></tr></tbody></table></div>
                         </div>
                     </div>
                     
@@ -320,14 +363,23 @@
                         </div>
                     </div>
 
-                    <!-- Input Management View -->
+                    <!-- Input Management View (Updated with Semester Select) -->
                     <div id="input-management-view" class="view hidden space-y-8">
                         <div class="card">
                             <h3 class="card-title" data-lang="projectManagement">Manajemen Projek</h3>
                             <div class="grid md:grid-cols-2 gap-8">
                                 <div class="space-y-4">
                                     <div><label class="block text-sm font-medium mb-1 text-slate-600">Nama Projek Baru</label><input type="text" id="new-project-name" class="p-2 border rounded-md w-full form-input" placeholder="Contoh: Projek Sains Bab 3"></div>
-                                    <div><label class="block text-sm font-medium mb-1 text-slate-600">Jenjang Kelas</label><select id="new-project-level" class="p-2 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select></div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1 text-slate-600">Jenjang Kelas</label>
+                                            <select id="new-project-level" class="p-2 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1 text-slate-600">Semester</label>
+                                            <select id="new-project-semester" class="p-2 border rounded-md w-full form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select>
+                                        </div>
+                                    </div>
                                     <div>
                                         <label class="block text-sm font-medium mb-1 text-slate-600">Kriteria Penilaian</label>
                                         <div class="flex"><input type="text" id="new-project-criteria" class="p-2 border rounded-l-md w-full form-input" placeholder="Contoh: Kreativitas"><button id="add-project-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div>
@@ -388,9 +440,10 @@
                         <div class="card prose max-w-none prose-slate">
                             <h2 data-lang="guideTitle">Panduan Penggunaan</h2>
                             <h3 data-lang="guide1Title">Langkah 1: Pengaturan Awal</h3><p data-lang="guide1Text">Buka 'Pengaturan'. Gunakan 'Import Data Siswa' untuk mengunggah daftar siswa (Excel).</p>
-                            <h3 data-lang="guide2Title">Langkah 2: Membuat Projek</h3><p data-lang="guide2TextNew">Buka 'Manajemen Input'. Tambahkan projek beserta kriteria penilaiannya.</p>
+                            <h3 data-lang="guide2Title">Langkah 2: Membuat Projek</h3><p data-lang="guide2TextNew">Buka 'Manajemen Input'. Tambahkan projek beserta kriteria penilaiannya. <b>Pilih Semester yang sesuai.</b></p>
                             <h3 data-lang="guide3Title">Langkah 3: Mencatat Kehadiran</h3><p data-lang="guide3TextNew">Masuk ke 'Input Data' -> 'Input Kehadiran'. Input manual atau gunakan format Excel.</p>
                             <h3 data-lang="guide4Title">Langkah 4: Menginput Nilai</h3><p data-lang="guide4Text">Buka 'Input Data' -> 'Input Nilai'. Pilih projek, isi nilai manual atau via Excel.</p>
+                            <h3>Langkah 5: Rapor</h3><p>Pilih 'Nilai Rapor Semester', tentukan Ganjil/Genap dan Kelas untuk melihat hasil akhir.</p>
                         </div>
                     </div>
 
@@ -399,16 +452,15 @@
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- Modals (Same as before) -->
     <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm"><h3 class="text-lg font-bold mb-4 text-slate-800">Konfirmasi</h3><p class="mb-6 text-slate-600">Apakah Anda yakin?</p><div class="flex justify-end space-x-3"><button id="modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="modal-confirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Yakin</button></div></div></div>
-    <div id="edit-project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg"><h3 class="text-lg font-bold mb-4 text-slate-800">Edit Projek</h3><div class="space-y-4 mb-4"><div><label class="block text-sm font-medium mb-1">Nama Projek</label><input type="text" id="edit-project-name" class="p-2 border rounded-md w-full form-input"></div><div><label class="block text-sm font-medium mb-1">Jenjang Kelas</label><select id="edit-project-level" class="p-2 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select></div></div><div class="space-y-4"><div><label class="block text-sm font-medium mb-1">Kriteria</label><div class="flex mb-2"><input type="text" id="edit-project-new-criteria-input" class="p-2 border rounded-l-md w-full form-input" placeholder="Tambah kriteria"><button id="edit-project-add-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div><div id="edit-project-criteria-list" class="flex flex-wrap gap-2 p-2 bg-slate-50 rounded border border-slate-200 min-h-[50px]"></div></div></div><div class="flex justify-end space-x-3 mt-6"><button id="edit-project-modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="edit-project-modal-save" class="px-4 py-2 btn-primary text-white rounded-md">Simpan Perubahan</button></div></div></div>
+    <div id="edit-project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg"><h3 class="text-lg font-bold mb-4 text-slate-800">Edit Projek</h3><div class="space-y-4 mb-4"><div><label class="block text-sm font-medium mb-1">Nama Projek</label><input type="text" id="edit-project-name" class="p-2 border rounded-md w-full form-input"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium mb-1">Jenjang Kelas</label><select id="edit-project-level" class="p-2 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select></div><div><label class="block text-sm font-medium mb-1">Semester</label><select id="edit-project-semester" class="p-2 border rounded-md w-full form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select></div></div></div><div class="space-y-4"><div><label class="block text-sm font-medium mb-1">Kriteria</label><div class="flex mb-2"><input type="text" id="edit-project-new-criteria-input" class="p-2 border rounded-l-md w-full form-input" placeholder="Tambah kriteria"><button id="edit-project-add-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div><div id="edit-project-criteria-list" class="flex flex-wrap gap-2 p-2 bg-slate-50 rounded border border-slate-200 min-h-[50px]"></div></div></div><div class="flex justify-end space-x-3 mt-6"><button id="edit-project-modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="edit-project-modal-save" class="px-4 py-2 btn-primary text-white rounded-md">Simpan Perubahan</button></div></div></div>
     <div id="missing-score-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60] p-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all scale-100"><div class="flex justify-between items-center mb-4 border-b pb-3"><h3 class="text-lg font-bold text-slate-800">Input Nilai</h3><button onclick="closeMissingScoreModal()" class="text-slate-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="mb-4 bg-indigo-50 p-3 rounded-md border border-indigo-100"><p class="text-sm text-indigo-800 font-semibold"><span id="ms-modal-student-name"></span></p><p class="text-xs text-indigo-600 mt-1">Projek: <span id="ms-modal-project-name"></span></p></div><form id="ms-modal-form" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"><div id="ms-modal-inputs" class="space-y-3"></div></form><div class="flex justify-end space-x-3 mt-6 pt-3 border-t"><button onclick="closeMissingScoreModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-md hover:bg-slate-200 text-sm font-medium">Batal</button><button onclick="saveMissingScore()" class="px-4 py-2 btn-primary text-white rounded-md text-sm font-semibold flex items-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan</button></div></div></div>
     <div id="project-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[70] p-4"><div class="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col"><div class="flex justify-between items-center p-6 border-b"><div><h3 class="text-xl font-bold text-slate-800" id="detail-modal-title">Detail Nilai</h3><p class="text-sm text-slate-500">Detail nilai per siswa</p></div><button onclick="closeProjectDetail()" class="text-slate-400 hover:text-red-500 transition"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="flex-1 overflow-auto p-6"><table class="w-full text-left text-sm border-collapse"><thead class="bg-slate-50 border-b sticky top-0 z-10"><tr id="detail-table-head"></tr></thead><tbody id="detail-table-body" class="divide-y divide-slate-100"></tbody></table></div><div class="p-4 border-t bg-slate-50 text-right"><button onclick="closeProjectDetail()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 font-medium">Tutup</button></div></div></div>
 
     <input type="file" id="generic-file-input" class="hidden" accept=".xlsx, .xls, .csv">
 
     <script>
-    // --- UTILITY: Debounce for Performance (Mengurangi loading saat mengetik) ---
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
@@ -420,11 +472,24 @@
     document.addEventListener('DOMContentLoaded', async function () {
         const SUPABASE_URL = 'https://taeodevmwvalajqjbpaq.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhZW9kZXZtd3ZhbGFqcWpicGFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NDYxNjUsImV4cCI6MjA3MjAyMjE2NX0.-IX9xVUlrkKow0CKUahPCEx2fGUHqnNpkcpoFxBW4G4';
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let supabaseClient;
+        try {
+            const { createClient } = supabase;
+            supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) {
+            console.error("Supabase failed to init:", e);
+        }
+
         const DATA_ROW_ID = 1; 
 
-        let appData = {};
+        // 1. Initialize appData immediately with defaults to prevent Login errors
+        function getInitialDataStructure() {
+             return { students: {}, projects: [], scores: {}, attendance: {}, activityScores: {}, admins: [{ email: 'admin@gmail.com', password: 'admin', protected: true }], settings: { logoUrl: 'https://placehold.co/40x40/1e293b/ffffff?text=ME', backgroundUrl: '', theme: { primary: '#1e293b', secondary: '#4f46e5' } } };
+        }
+        
+        let appData = getInitialDataStructure();
+        
         let selectedGroupId = null;
         let tempNewCriteriaForEdit = [];
         let fileImportCallback = null;
@@ -442,67 +507,80 @@
         const appContainer = document.getElementById('app-container');
         const loginError = document.getElementById('login-error');
 
-        // Translations (Optimized structure)
+        // Translations
         const translations = {
-            id: { appTitle: "Mozzart Education", dashboard: "Dasbor Kelas", rekapNilai: "Rekapitulasi Nilai", dataInput: "Input Data", inputManagement: "Manajemen Input", settings: "Pengaturan", guide: "Panduan", language: "Bahasa:", logout: "Keluar", missingScores: "Cek Nilai Kosong" },
-            en: { appTitle: "Mozzart Education", dashboard: "Class Dashboard", rekapNilai: "Grade Summary", dataInput: "Data Input", inputManagement: "Input Management", settings: "Settings", guide: "Guide", language: "Language:", logout: "Logout", missingScores: "Check Missing Scores" }
+            id: { appTitle: "Mozzart Education", dashboard: "Dasbor Kelas", rekapNilai: "Rekapitulasi Nilai", raporSemester: "Nilai Rapor Semester", dataInput: "Input Data", inputManagement: "Manajemen Input", settings: "Pengaturan", guide: "Panduan", language: "Bahasa:", logout: "Keluar", missingScores: "Cek Nilai Kosong" },
+            en: { appTitle: "Mozzart Education", dashboard: "Class Dashboard", rekapNilai: "Grade Summary", raporSemester: "Semester Report", dataInput: "Data Input", inputManagement: "Input Management", settings: "Settings", guide: "Guide", language: "Language:", logout: "Logout", missingScores: "Check Missing Scores" }
         };
+
+        // 2. Attach Login Listener IMMEDIATELY (Before fetching data)
+        // This prevents the page reload issue if user clicks fast
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            const em = e.target.email.value;
+            const pw = e.target.password.value;
+            
+            const adminFound = appData.admins && appData.admins.find(a => a.email === em && a.password === pw);
+
+            if(adminFound) { 
+                loginContainer.classList.add('hidden'); 
+                appContainer.classList.remove('hidden'); 
+                await initApp(); 
+            } else { 
+                loginError.classList.remove('hidden'); 
+            }
+        });
 
         // --- CORE FUNCTIONS ---
         async function loadData() {
+            if(!supabaseClient) return; // Fallback to initial data if no supabase
             try {
-                const { data } = await supabaseClient.from('class_management_data').select('app_data').eq('id', DATA_ROW_ID).single();
-                appData = (data && data.app_data) ? data.app_data : getInitialDataStructure();
-                if(!appData.admins || appData.admins.length === 0) appData.admins = getInitialDataStructure().admins;
-            } catch { appData = getInitialDataStructure(); }
+                const { data, error } = await supabaseClient.from('class_management_data').select('app_data').eq('id', DATA_ROW_ID).single();
+                
+                if (data && data.app_data) {
+                    appData = data.app_data;
+                    // Ensure robust structure even if data loaded is partial
+                    if(!appData.admins || appData.admins.length === 0) appData.admins = getInitialDataStructure().admins;
+                    if(!appData.students) appData.students = {};
+                }
+            } catch (err) { 
+                console.warn("Using offline/default data due to load error:", err);
+                // appData is already default, so just continue
+            }
         }
 
         async function saveData() {
+            if(!supabaseClient) { alert("Tidak dapat menyimpan (Mode Offline/Error Supabase)"); return; }
             await supabaseClient.from('class_management_data').upsert({ id: DATA_ROW_ID, app_data: appData });
         }
 
-        function getInitialDataStructure() {
-             return { students: {}, projects: [], scores: {}, attendance: {}, activityScores: {}, admins: [{ email: 'admin@gmail.com', password: 'admin', protected: true }], settings: { logoUrl: 'https://placehold.co/40x40/1e293b/ffffff?text=ME', backgroundUrl: '', theme: { primary: '#1e293b', secondary: '#4f46e5' } } };
-        }
-
         async function initApp() {
-            // Lazy load lucide icons only once initially
             if(window.lucide) lucide.createIcons();
             applySettings();
             setupEventListeners();
-            // Populate common selects only once to save perf
             populateCommonClassSelects();
-            // Don't render EVERYTHING yet. Render only active view.
             navigateTo('dashboard');
         }
 
         function populateCommonClassSelects() {
             const allClassNames = appData.students ? Object.keys(appData.students).sort() : [];
             const ids = ['rekap-class-filter', 'rapor-class-filter', 'input-attendance-class', 'input-activity-class', 'input-score-class'];
-            
-            // Build options string once
             let optionsHTML = allClassNames.length === 0 ? `<option value="">Tidak Ada Kelas</option>` : `<option value="">Pilih Kelas</option>`;
             allClassNames.forEach(c => optionsHTML += `<option value="${c}">${c}</option>`);
-
-            // Apply to all selects (batch DOM update)
             ids.forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
                     const current = el.value;
                     el.innerHTML = optionsHTML;
-                    // Restore value if still valid
                     if (allClassNames.includes(current)) el.value = current;
                 }
             });
         }
 
         function navigateTo(viewId) {
-            // Hide all views first
             document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            // Show target
             document.getElementById(`${viewId}-view`).classList.remove('hidden');
             
-            // Update nav style
             document.querySelectorAll('.nav-link').forEach(l => {
                 l.classList.remove('active', 'text-white');
                 l.classList.add('text-slate-600');
@@ -515,50 +593,55 @@
                 activeLink.style.backgroundColor = appData.settings?.theme?.primary || '#1e293b';
             }
             
-            // Lazy Loading Logic (Optimization): Only render what's needed for this view
             switch(viewId) {
                 case 'dashboard': renderDashboardCharts(); break;
                 case 'rekap-nilai': renderRekapitulasiView(); break;
-                case 'rapor-semester-1': renderRaporSemester1(); break;
+                case 'rapor-semester': renderRaporSemester(); break;
                 case 'input-management': renderProjectList(); break;
                 case 'settings': renderAdminList(); break;
                 case 'missing-scores': populateMissingScoresFilters(); break;
             }
 
-            // Update title
             const titleText = translations['id'][viewId] || "Mozzart Education";
             document.getElementById('view-title').textContent = titleText;
-            
-            // Re-scan icons only in the visible view container to save resources
             setTimeout(() => lucide.createIcons(), 50);
         }
 
-        // --- CHART OPTIMIZATION: REUSE INSTANCES ---
         function createOrUpdateChart(id, config) {
             const ctx = document.getElementById(id).getContext('2d');
             if (charts[id]) {
-                // Update existing chart data
                 charts[id].data = config.data;
                 charts[id].update();
             } else {
-                // Create new only if doesn't exist
                 charts[id] = new Chart(ctx, config);
             }
         }
 
         function renderDashboardCharts() {
-            // Logic is same, but using optimized createOrUpdateChart
             ['X', 'XI', 'XII'].forEach(level => {
                 let attCounts = { hadir: 0, sakit: 0, izin: 0, alpa: 0 };
                 let scoreCounts = { baik: 0, kurang: 0, perlu: 0 };
                 const classNames = appData.students ? Object.keys(appData.students) : [];
                 const levelClasses = classNames.filter(c => getLevelFromClassName(c) === level);
                 
+                let worstClass = '-';
+                let maxAlpa = -1;
+
                 if (levelClasses.length > 0) {
                     levelClasses.forEach(cls => {
+                        let classAlpaCount = 0;
                         const students = appData.students[cls] || [];
                         const attData = appData.attendance?.[cls]?.daily || {};
-                        Object.values(attData).forEach(day => Object.values(day).forEach(s => { if(attCounts[s]!==undefined) attCounts[s]++; }));
+                        
+                        Object.values(attData).forEach(day => Object.values(day).forEach(s => { 
+                            if(attCounts[s]!==undefined) attCounts[s]++; 
+                            if(s === 'alpa') classAlpaCount++;
+                        }));
+
+                        if (classAlpaCount > maxAlpa) {
+                            maxAlpa = classAlpaCount;
+                            worstClass = cls;
+                        }
 
                         students.forEach(student => {
                             let totalScore = 0, pCount = 0;
@@ -573,20 +656,36 @@
                     });
                 }
                 
-                // Visualization update logic (simplified for brevity)
-                const chartConfigAtt = { type: 'pie', data: { labels: ['Hadir', 'Sakit', 'Izin', 'Alpa'], datasets: [{ data: [attCounts.hadir, attCounts.sakit, attCounts.izin, attCounts.alpa], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 0 }] }, options: { animation: false, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } } };
-                const chartConfigScore = { type: 'pie', data: { labels: ['Baik', 'Kurang', 'Perlu'], datasets: [{ data: [scoreCounts.baik, scoreCounts.kurang, scoreCounts.perlu], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }] }, options: { animation: false, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } } };
+                const statsHTML = `
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-emerald-500 mr-2"></span> Hadir: <span class="ml-auto font-bold">${attCounts.hadir}</span></div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-amber-500 mr-2"></span> Sakit: <span class="ml-auto font-bold">${attCounts.sakit}</span></div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span> Izin: <span class="ml-auto font-bold">${attCounts.izin}</span></div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> Alpa: <span class="ml-auto font-bold">${attCounts.alpa}</span></div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200">
+                             <h5 class="text-xs font-bold text-red-600 uppercase mb-1 flex items-center"><i data-lucide="alert-triangle" class="w-3 h-3 mr-1"></i> Perhatian</h5>
+                             <p class="text-xs text-slate-600">Kelas dengan Alpa terbanyak:</p>
+                             <div class="text-lg font-bold text-slate-800">${maxAlpa > 0 ? worstClass : 'Tidak ada'} <span class="text-xs font-normal text-slate-500">(${maxAlpa > 0 ? maxAlpa + ' alpa' : 'Nihil'})</span></div>
+                        </div>
+                    </div>
+                `;
+                const statsContainer = document.getElementById(`stats-${level}`);
+                if (statsContainer) statsContainer.innerHTML = statsHTML;
+
+                const chartConfigAtt = { type: 'doughnut', data: { labels: ['Hadir', 'Sakit', 'Izin', 'Alpa'], datasets: [{ data: [attCounts.hadir, attCounts.sakit, attCounts.izin, attCounts.alpa], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 0 }] }, options: { animation: false, responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false }, datalabels: { display: false } } } };
+                const chartConfigScore = { type: 'bar', data: { labels: ['Baik', 'Kurang', 'Perlu'], datasets: [{ label: 'Siswa', data: [scoreCounts.baik, scoreCounts.kurang, scoreCounts.perlu], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderRadius: 4 }] }, options: { indexAxis: 'y', animation: false, responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { grid: { display: false } } }, plugins: { legend: { display: false }, datalabels: { display: true, color: 'white', font: { weight: 'bold' } } } } };
 
                 createOrUpdateChart(`chart-att-${level}`, chartConfigAtt);
                 createOrUpdateChart(`chart-score-${level}`, chartConfigScore);
             });
+            lucide.createIcons();
         }
 
-        // --- DOM BATCHING (Optimized Table Rendering) ---
         function populateAttendanceInputTable(search) {
             const className = document.getElementById('input-attendance-class').value;
             const tbody = document.getElementById('attendance-input-table');
-            // Clear content
             tbody.innerHTML = '';
             
             if(!className) return;
@@ -594,7 +693,6 @@
             const date = document.getElementById('input-attendance-date').value;
             const saved = date && appData.attendance?.[className]?.daily?.[date] ? appData.attendance[className].daily[date] : {};
             
-            // Build large string in memory
             let htmlBuffer = '';
             const searchLower = search.toLowerCase();
 
@@ -606,11 +704,9 @@
                     </div></td></tr>`;
                 }
             });
-            // Update DOM once
             tbody.innerHTML = htmlBuffer;
         }
 
-        // --- DATA SAVING FUNCTIONS (ADDED FIX) ---
         async function saveAttendanceData() {
             const className = document.getElementById('input-attendance-class').value;
             const dateStr = document.getElementById('input-attendance-date').value;
@@ -619,13 +715,10 @@
                 alert("Mohon pilih kelas dan tanggal terlebih dahulu.");
                 return;
             }
-
-            // Ensure structure exists
             if (!appData.attendance[className]) appData.attendance[className] = { daily: {} };
             if (!appData.attendance[className].daily) appData.attendance[className].daily = {};
             if (!appData.attendance[className].daily[dateStr]) appData.attendance[className].daily[dateStr] = {};
 
-            // Collect data from radio buttons
             const students = appData.students[className] || [];
             let count = 0;
             
@@ -641,27 +734,22 @@
             });
 
             await saveData();
-            renderDashboardCharts(); // Update charts
+            renderDashboardCharts();
             alert(`Data kehadiran berhasil disimpan (${count} siswa).`);
         }
 
         async function saveActivityData() {
              const cls = document.getElementById('input-activity-class').value; 
              if(!cls) { alert("Pilih kelas."); return; }
-             
              if(!appData.activityScores[cls]) appData.activityScores[cls]={};
-             
              document.querySelectorAll('.act-input').forEach(i => { 
                  const v = i.value.trim(); 
                  if(v === '') delete appData.activityScores[cls][i.dataset.sid]; 
                  else appData.activityScores[cls][i.dataset.sid] = parseInt(v); 
              });
-             
-             await saveData(); 
-             alert('Nilai keaktifan disimpan.');
+             await saveData(); alert('Nilai keaktifan disimpan.');
         }
 
-        // FUNGSI BARU: Add Admin (Fix ReferenceError)
         async function addAdmin() {
             const emailInput = document.getElementById('new-admin-email');
             const passwordInput = document.getElementById('new-admin-password');
@@ -669,56 +757,42 @@
             const password = passwordInput.value;
 
             if (email && password) {
-                appData.admins.push({
-                    email: email,
-                    password: password,
-                    protected: false
-                });
-                await saveData();
-                renderAdminList();
-                emailInput.value = '';
-                passwordInput.value = ''; // Clear password too for UX
+                appData.admins.push({ email: email, password: password, protected: false });
+                await saveData(); renderAdminList();
+                emailInput.value = ''; passwordInput.value = '';
                 alert("Admin berhasil ditambahkan.");
-            } else {
-                alert("Mohon isi email dan password.");
-            }
+            } else { alert("Mohon isi email dan password."); }
         }
 
-        // --- EVENT LISTENERS ---
         function setupEventListeners() {
-            // Navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 if (link.id !== 'logout-btn') link.addEventListener('click', (e) => { e.preventDefault(); if(link.dataset.view) navigateTo(link.dataset.view); });
             });
             document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); appContainer.classList.add('hidden'); loginContainer.classList.remove('hidden'); });
 
-            // Sidebar Toggle
             document.getElementById('menu-toggle').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('main-sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebar-overlay').classList.toggle('hidden'); });
             document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('main-sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('hidden'); });
 
-            // View Specific Triggers
             document.getElementById('rekap-class-filter').addEventListener('change', renderRekapitulasiView);
-            document.getElementById('rapor-class-filter').addEventListener('change', renderRaporSemester1);
+            document.getElementById('rapor-class-filter').addEventListener('change', renderRaporSemester);
+            document.getElementById('rapor-semester-filter').addEventListener('change', renderRaporSemester);
+            
             document.getElementById('missing-level-filter').addEventListener('change', populateMissingScoresFilters);
             document.getElementById('check-missing-btn').addEventListener('click', checkMissingScores);
 
-            // Input Navigation
             ['attendance', 'score', 'activity'].forEach(type => {
                 document.getElementById(`go-to-${type}-input`).addEventListener('click', () => navigateTo(`${type}-input`));
                 document.getElementById(`back-to-data-input-from-${type}`).addEventListener('click', () => navigateTo('data-input'));
             });
 
-            // Attendance Input (Debounced Search)
             document.getElementById('input-attendance-class').addEventListener('change', () => populateAttendanceInputTable(''));
             document.getElementById('attendance-student-search').addEventListener('input', debounce((e) => populateAttendanceInputTable(e.target.value), 300));
             document.getElementById('save-attendance').addEventListener('click', saveAttendanceData);
 
-            // Score Input
             document.getElementById('input-score-class').addEventListener('change', updateScoreProjectFilterAndTable);
             document.getElementById('input-score-project').addEventListener('change', populateScoreInputTable);
             document.getElementById('save-scores').addEventListener('click', saveScoreData);
 
-            // Import/Export
             document.getElementById('download-attendance-template-btn').addEventListener('click', downloadAttendanceTemplate);
             document.getElementById('import-attendance-btn').addEventListener('click', () => { fileImportCallback = processAttendanceImport; document.getElementById('generic-file-input').click(); });
             document.getElementById('download-score-template-btn').addEventListener('click', downloadScoreTemplate);
@@ -726,7 +800,6 @@
             document.getElementById('import-btn').addEventListener('click', handleStudentImport);
             document.getElementById('generic-file-input').addEventListener('change', (e) => { if (fileImportCallback) fileImportCallback(e); e.target.value = ''; });
 
-            // Settings & Admin
             document.getElementById('logo-upload').addEventListener('change', (e) => handleImageUpload(e, 'logoUrl'));
             document.getElementById('background-upload').addEventListener('change', (e) => handleImageUpload(e, 'backgroundUrl'));
             document.getElementById('primary-color-picker').addEventListener('change', (e) => handleColorChange(e, 'primary'));
@@ -735,17 +808,14 @@
             document.getElementById('add-admin-btn').addEventListener('click', addAdmin);
             document.querySelectorAll('.reset-btn').forEach(button => button.addEventListener('click', handleReset));
 
-            // Modals
             document.getElementById('modal-cancel').addEventListener('click', () => document.getElementById('confirmation-modal').classList.add('hidden'));
             
-            // Project Mgmt
             document.getElementById('add-project-criteria-btn').addEventListener('click', addTempCriteria);
             document.getElementById('save-new-project-btn').addEventListener('click', saveNewProject);
             document.getElementById('edit-project-add-criteria-btn').addEventListener('click', addTempCriteriaForEdit);
             document.getElementById('edit-project-modal-cancel').addEventListener('click', () => { document.getElementById('edit-project-modal').classList.add('hidden'); });
             document.getElementById('edit-project-modal-save').addEventListener('click', saveEditedProject);
 
-            // Activity Input
             document.getElementById('input-activity-class').addEventListener('change', populateActivityInputTable);
             document.getElementById('save-activity').addEventListener('click', saveActivityData);
         }
@@ -762,52 +832,31 @@
             XLSX.writeFile(wb, `Template_Absensi_${className}.xlsx`);
         }
 
-        // FUNGSI BARU: Handle Student Import (Perbaikan Error)
         function handleStudentImport() {
             fileImportCallback = async (e) => {
                 const f = e.target.files[0]; if(!f) return;
-                
                 const reader = new FileReader(); 
                 reader.onload = async (ev) => {
                     try {
                         const workbook = XLSX.read(new Uint8Array(ev.target.result), {type:'array'});
-                        const firstSheetName = workbook.SheetNames[0];
-                        const json = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
-                        
+                        const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
                         let c=0; 
                         json.forEach(row => {
-                            // Cari kolom yang mengandung kata kunci, case-insensitive
                             const keys = Object.keys(row);
                             const nKey = keys.find(k => k.toLowerCase().includes('nama'));
                             const kKey = keys.find(k => k.toLowerCase().includes('kelas'));
                             const nisKey = keys.find(k => k.toLowerCase().includes('nis'));
-
-                            const n = nKey ? row[nKey] : null;
-                            const k = kKey ? row[kKey] : null;
-                            const nis = nisKey ? row[nisKey] : '';
-
+                            const n = nKey ? row[nKey] : null; const k = kKey ? row[kKey] : null; const nis = nisKey ? row[nisKey] : '';
                             if(n && k) { 
                                 const cls = String(k).trim(); 
                                 if(!appData.students[cls]) appData.students[cls]=[]; 
-                                // Cek duplikat nama
                                 if(!appData.students[cls].find(s => s.name.toLowerCase() === String(n).trim().toLowerCase())){ 
-                                    appData.students[cls].push({
-                                        id: Date.now() + Math.random(), 
-                                        name: String(n).trim(), 
-                                        nis: nis
-                                    }); 
-                                    c++; 
+                                    appData.students[cls].push({ id: Date.now() + Math.random(), name: String(n).trim(), nis: nis }); c++; 
                                 } 
                             }
                         });
-                        
-                        await saveData(); 
-                        populateCommonClassSelects(); 
-                        alert(`Berhasil mengimpor ${c} siswa baru.`);
-                    } catch (err) {
-                        console.error(err);
-                        alert("Gagal membaca file Excel. Pastikan format benar.");
-                    }
+                        await saveData(); populateCommonClassSelects(); alert(`Berhasil mengimpor ${c} siswa baru.`);
+                    } catch (err) { console.error(err); alert("Gagal membaca file Excel. Pastikan format benar."); }
                 }; 
                 reader.readAsArrayBuffer(f);
             }; 
@@ -815,7 +864,6 @@
         }
 
         async function processAttendanceImport(e) {
-            // Simplified for brevity, logic remains same
             const file = e.target.files[0]; if (!file) return;
             const className = document.getElementById('input-attendance-class').value;
             const dateStr = document.getElementById('input-attendance-date').value;
@@ -879,7 +927,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // --- RENDERING HELPERS (Fragmented for Speed) ---
+        // --- RENDERING HELPERS ---
         function renderRekapitulasiView() {
             const className = document.getElementById('rekap-class-filter').value;
             const container = document.getElementById('rekap-projek-container');
@@ -893,7 +941,7 @@
                 const ranked = (appData.students[className]||[]).map(s => ({...s, score: appData.scores?.[p.id]?.[s.id]?.total||0})).sort((a,b)=>b.score-a.score).slice(0,5);
                 let rows = ranked.map((s, i) => s.score>0 ? `<tr class="border-b border-slate-50"><td class="py-2 text-center font-bold text-slate-400 w-8">${i+1}</td><td class="py-2 text-slate-700">${s.name}</td><td class="py-2 text-right font-bold text-indigo-600">${s.score}</td></tr>` : '').join('');
                 if(!rows) rows = '<tr><td colspan="3" class="py-4 text-center text-slate-400 italic text-sm">Belum ada nilai.</td></tr>';
-                html += `<div class="card p-5 hover:shadow-md transition"><div class="flex justify-between items-center mb-4 border-b pb-3"><h4 class="font-bold text-lg">${p.name}</h4><span class="text-xs bg-slate-100 px-2 py-1 rounded">Top 5</span></div><table class="w-full text-sm mb-4"><tbody>${rows}</tbody></table><button onclick="openProjectDetail('${p.id}', '${className}')" class="w-full py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-semibold hover:bg-indigo-100 flex justify-center items-center"><i data-lucide="list" class="w-4 h-4 mr-2"></i> Detail</button></div>`;
+                html += `<div class="card p-5 hover:shadow-md transition"><div class="flex justify-between items-center mb-4 border-b pb-3"><h4 class="font-bold text-lg flex flex-col"><span class="text-xs text-slate-400 font-normal">Sem ${p.semester || 1}</span>${p.name}</h4><span class="text-xs bg-slate-100 px-2 py-1 rounded">Top 5</span></div><table class="w-full text-sm mb-4"><tbody>${rows}</tbody></table><button onclick="openProjectDetail('${p.id}', '${className}')" class="w-full py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-semibold hover:bg-indigo-100 flex justify-center items-center"><i data-lucide="list" class="w-4 h-4 mr-2"></i> Detail</button></div>`;
             });
             container.innerHTML = html;
             lucide.createIcons();
@@ -923,10 +971,8 @@
             if(!pid) return;
             if(!appData.scores[pid]) appData.scores[pid]={};
             
-            // Batch process inputs
             const inputs = document.querySelectorAll('.score-input-field');
-            const map = {}; // StudentID -> [inputs]
-            
+            const map = {}; 
             inputs.forEach(inp => { const sid = inp.dataset.student; if(!map[sid]) map[sid]=[]; map[sid].push(inp); });
 
             Object.keys(map).forEach(sid => {
@@ -940,11 +986,9 @@
                 if(hasVal) appData.scores[pid][sid] = { total: count>0?Math.round(sum/map[sid].length):0, details };
                 else delete appData.scores[pid][sid];
             });
-            
             await saveData(); alert('Nilai disimpan.');
         }
 
-        // --- SETTINGS LOGIC ---
         function handleImageUpload(event, key) {
             const file = event.target.files[0];
             if (file) { const r = new FileReader(); r.onload = (e) => pendingSettings[key] = e.target.result; r.readAsDataURL(file); }
@@ -969,9 +1013,172 @@
              }
         }
 
-        // --- MISC HELPERS ---
         function getLevelFromClassName(n) { n = String(n).toUpperCase().trim(); if(n.startsWith('XII')||n.startsWith('12')) return 'XII'; if(n.startsWith('XI')||n.startsWith('11')) return 'XI'; return 'X'; }
-        function populateMissingScoresFilters() { /* Logic kept simpler but functional */ const s=document.getElementById('missing-level-filter'); const c=document.getElementById('missing-class-filter'); const p=document.getElementById('missing-project-filter'); c.disabled=p.disabled=!s.value; if(!s.value) return; c.innerHTML='<option value="">Semua Kelas</option>'+Object.keys(appData.students).filter(k=>getLevelFromClassName(k)===s.value).map(k=>`<option value="${k}">${k}</option>`).join(''); p.innerHTML='<option value="">Semua Projek</option>'+appData.projects.filter(j=>j.level===s.value||j.level==='Semua').map(j=>`<option value="${j.id}">${j.name}</option>`).join(''); }
+        
+        // --- RAPOR RENDERER (Updated Logic for Semesters) ---
+        function renderRaporSemester() {
+            const cls = document.getElementById('rapor-class-filter').value;
+            const semester = document.getElementById('rapor-semester-filter').value; // Get selected Semester
+            
+            const midBody = document.getElementById('rapor-mid-table-body');
+            const finalBody = document.getElementById('rapor-final-table-body');
+            midBody.innerHTML = '<tr><td colspan="6" class="p-6 text-center italic">Memuat...</td></tr>';
+            finalBody.innerHTML = '<tr><td colspan="7" class="p-6 text-center italic">Memuat...</td></tr>';
+
+            if(!cls) {
+                midBody.innerHTML = '<tr><td colspan="6" class="p-6 text-center italic text-slate-400">Silakan pilih kelas.</td></tr>';
+                finalBody.innerHTML = '<tr><td colspan="7" class="p-6 text-center italic text-slate-400">Silakan pilih kelas.</td></tr>';
+                return;
+            }
+            
+            // Filter projects based on Level AND Semester
+            // Note: Old projects might not have 'semester' field, default to '1'
+            const projects = appData.projects.filter(p => 
+                (p.level === getLevelFromClassName(cls) || p.level === 'Semua') &&
+                (String(p.semester || '1') === String(semester))
+            );
+            
+            if (projects.length === 0) {
+                 midBody.innerHTML = '<tr><td colspan="6" class="p-6 text-center italic text-slate-500">Belum ada projek di semester ini.</td></tr>';
+                 finalBody.innerHTML = '<tr><td colspan="7" class="p-6 text-center italic text-slate-500">Belum ada projek di semester ini.</td></tr>';
+                 return;
+            }
+
+            const midPrjs = projects.slice(0, Math.ceil(projects.length/2));
+            
+            let midHtml = '', finalHtml = '';
+            (appData.students[cls]||[]).forEach((s, i) => {
+                // Mid Calculation (Filtered Projects)
+                let mSum=0, mCount=0; midPrjs.forEach(p => { const sc=appData.scores?.[p.id]?.[s.id]?.total; if(sc){mSum+=sc;mCount++;} });
+                const mAvg = mCount>0 ? Math.round(mSum/mCount) : 0;
+                const mPred = mCount? (mAvg>=92?'A':(mAvg>=83?'B':(mAvg>=75?'C':'D'))) : '-';
+                
+                // Final Calculation (Filtered Projects)
+                let fSum=0, fCount=0; projects.forEach(p => { const sc=appData.scores?.[p.id]?.[s.id]?.total; if(sc){fSum+=sc;fCount++;} });
+                const fAvg = fCount>0 ? Math.round(fSum/fCount) : 0;
+                const fPred = fCount? (fAvg>=92?'A':(fAvg>=83?'B':(fAvg>=75?'C':'D'))) : '-';
+                const fKet = fPred==='A'?'Sangat Baik':(fPred==='B'?'Baik':(fPred==='C'?'Cukup':'-'));
+
+                midHtml += `<tr class="hover:bg-slate-50"><td class="p-3 text-center text-slate-500">${i+1}</td><td class="p-3 font-mono text-xs">${s.nis||'-'}</td><td class="p-3 font-medium text-slate-800">${s.name}</td><td class="p-3 text-center text-xs">${mCount}/${midPrjs.length}</td><td class="p-3 text-center font-bold text-indigo-600">${mCount?mAvg:'-'}</td><td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold bg-slate-100">${mPred}</span></td></tr>`;
+                finalHtml += `<tr class="hover:bg-slate-50"><td class="p-3 text-center text-slate-500">${i+1}</td><td class="p-3 font-mono text-xs">${s.nis||'-'}</td><td class="p-3 font-medium text-slate-800">${s.name}</td><td class="p-3 text-center text-xs">${fCount}/${projects.length}</td><td class="p-3 text-center font-bold text-emerald-600">${fCount?fAvg:'-'}</td><td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold bg-slate-100">${fPred}</span></td><td class="p-3 text-sm">${fKet}</td></tr>`;
+            });
+            midBody.innerHTML = midHtml || '<tr><td colspan="6" class="p-6 text-center italic">Data siswa tidak ditemukan.</td></tr>';
+            finalBody.innerHTML = finalHtml || '<tr><td colspan="7" class="p-6 text-center italic">Data siswa tidak ditemukan.</td></tr>';
+        }
+
+        // --- GLOBAL EXPORTS ---
+        window.deleteProject = (id) => { if(confirm("Hapus?")) { appData.projects = appData.projects.filter(p=>p.id!==id); saveData().then(renderProjectList); } };
+        window.deleteAdmin = (email) => { if(confirm("Hapus?")) { appData.admins = appData.admins.filter(a=>a.email!==email); saveData().then(renderAdminList); } };
+        window.openEditProject = (id) => { 
+            const p = appData.projects.find(x=>x.id===id); editingProjectId=id; 
+            document.getElementById('edit-project-name').value=p.name; 
+            document.getElementById('edit-project-semester').value=p.semester || '1'; // Edit Semester
+            tempNewCriteriaForEdit=[...p.criteria]; renderEditCriteriaList(); document.getElementById('edit-project-modal').classList.remove('hidden'); 
+        };
+        window.addTempCriteria = () => { const v=document.getElementById('new-project-criteria').value; if(v){tempProjectCriteria.push(v); document.getElementById('new-project-criteria-list').innerHTML=tempProjectCriteria.map(c=>`<span class="bg-indigo-100 px-2 py-1 rounded text-xs">${c}</span>`).join(' '); document.getElementById('new-project-criteria').value='';} };
+        
+        // Save New Project (Updated with Semester)
+        window.saveNewProject = async () => { 
+            const n=document.getElementById('new-project-name').value; 
+            const sem=document.getElementById('new-project-semester').value; // Get Semester
+            if(n&&tempProjectCriteria.length){
+                appData.projects.push({
+                    id:'P'+Date.now(), name:n, 
+                    level:document.getElementById('new-project-level').value, 
+                    semester: sem, // Save Semester
+                    criteria:[...tempProjectCriteria]
+                }); 
+                tempProjectCriteria=[]; await saveData(); renderProjectList(); alert('Sukses');
+            } 
+        };
+        
+        function renderAdminList() { document.getElementById('admin-list').innerHTML = appData.admins.map(a => `<li class="flex justify-between items-center p-3 bg-slate-50 rounded border border-slate-200"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><i data-lucide="user" class="w-4 h-4"></i></div><div class="text-sm font-semibold">${a.email}</div></div>${!a.protected ? `<button onclick="deleteAdmin('${a.email}')" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</li>`).join(''); lucide.createIcons(); }
+        // Update Project List to show Semester
+        function renderProjectList() { 
+            document.getElementById('project-list-display').innerHTML = appData.projects.length ? appData.projects.map(p => `
+            <li class="bg-white border border-slate-200 rounded p-3 group">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="flex gap-2 mb-1">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 border text-slate-500">${p.level}</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 border border-indigo-100 text-indigo-600">Sem ${p.semester || 1}</span>
+                        </div>
+                        <span class="font-semibold text-sm">${p.name}</span>
+                        <div class="mt-1 flex gap-1 flex-wrap">${p.criteria.map(c=>`<span class="text-[10px] px-1 bg-slate-50 border border-slate-200 rounded text-slate-500">${c}</span>`).join('')}</div>
+                    </div>
+                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                        <button onclick="openEditProject('${p.id}')" class="text-indigo-500"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                        <button onclick="deleteProject('${p.id}')" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            </li>`).join('') : '<li class="text-center text-slate-400 text-sm">Belum ada projek.</li>'; 
+            lucide.createIcons(); 
+        }
+
+        function renderEditCriteriaList() { document.getElementById('edit-project-criteria-list').innerHTML = tempNewCriteriaForEdit.map((c,i)=>`<span class="bg-indigo-100 px-2 py-1 rounded text-xs flex items-center">${c} <button onclick="removeEditTempCriteria(${i})" class="ml-1 text-red-500 font-bold">×</button></span>`).join(''); }
+        window.removeEditTempCriteria = (i) => { tempNewCriteriaForEdit.splice(i,1); renderEditCriteriaList(); };
+        window.addTempCriteriaForEdit = () => { const v=document.getElementById('edit-project-new-criteria-input').value; if(v){tempNewCriteriaForEdit.push(v); document.getElementById('edit-project-new-criteria-input').value=''; renderEditCriteriaList();} };
+        window.saveEditedProject = async () => { 
+            const p=appData.projects.find(x=>x.id===editingProjectId); 
+            if(p){
+                p.name=document.getElementById('edit-project-name').value; 
+                p.level=document.getElementById('edit-project-level').value; 
+                p.semester=document.getElementById('edit-project-semester').value; // Save Edited Semester
+                p.criteria=[...tempNewCriteriaForEdit]; 
+                await saveData(); renderProjectList(); document.getElementById('edit-project-modal').classList.add('hidden');
+            } 
+        };
+
+        window.openMissingScoreModal = (sid, pid, cname) => {
+            currentMissingScoreStudentId=sid; currentMissingScoreProjectId=pid; currentMissingScoreClassName=cname;
+            const s=appData.students[cname].find(x=>x.id==sid); const p=appData.projects.find(x=>x.id==pid);
+            document.getElementById('ms-modal-student-name').innerText=s.name; document.getElementById('ms-modal-project-name').innerText=p.name;
+            document.getElementById('ms-modal-inputs').innerHTML = p.criteria.map(c=>`<div><label class="text-xs uppercase text-slate-500">${c}</label><input type="number" class="w-full p-2 border rounded ms-crit-inp" data-crit="${c}"></div>`).join('');
+            document.getElementById('missing-score-modal').classList.remove('hidden');
+        };
+        window.closeMissingScoreModal = () => document.getElementById('missing-score-modal').classList.add('hidden');
+        window.saveMissingScore = async () => {
+            const inps = document.querySelectorAll('.ms-crit-inp'); let sum=0, count=0, det={};
+            inps.forEach(i=>{ const v=parseInt(i.value)||0; det[i.dataset.crit]=v; sum+=v; count++; });
+            if(!appData.scores[currentMissingScoreProjectId]) appData.scores[currentMissingScoreProjectId]={};
+            appData.scores[currentMissingScoreProjectId][currentMissingScoreStudentId] = { total: Math.round(sum/count), details: det };
+            await saveData(); checkMissingScores(); closeMissingScoreModal();
+        };
+
+        window.openProjectDetail = (pid, cname) => {
+            const p = appData.projects.find(x=>x.id===pid); const s = appData.students[cname]||[];
+            document.getElementById('detail-modal-title').textContent = p.name;
+            document.getElementById('detail-table-head').innerHTML = `<th class="p-3">No</th><th class="p-3">Nama</th>` + p.criteria.map(c=>`<th class="p-3 text-center">${c}</th>`).join('') + `<th class="p-3 text-center">Rata2</th>`;
+            const sc = appData.scores?.[pid]||{};
+            document.getElementById('detail-table-body').innerHTML = s.map((std, i) => { const d = sc[std.id]||{total:'-',details:{}}; return `<tr><td class="p-3 text-slate-500">${i+1}</td><td class="p-3 font-medium">${std.name}</td>` + p.criteria.map(c=>`<td class="p-3 text-center">${d.details?.[c]||'-'}</td>`).join('') + `<td class="p-3 text-center font-bold">${d.total}</td></tr>`; }).join('');
+            document.getElementById('project-detail-modal').classList.remove('hidden');
+        };
+        window.closeProjectDetail = () => document.getElementById('project-detail-modal').classList.add('hidden');
+        
+        window.populateActivityInputTable = () => {
+            const cls = document.getElementById('input-activity-class').value; const tbody = document.getElementById('activity-input-table');
+            if(!cls) { tbody.innerHTML=''; return; }
+            const saved = appData.activityScores[cls]||{};
+            tbody.innerHTML = (appData.students[cls]||[]).map(s => `<tr class="border-b border-slate-100 hover:bg-slate-50"><td class="p-3 text-slate-700 font-medium">${s.name}</td><td class="p-3"><input type="number" class="w-24 p-2 border rounded text-center act-input" data-sid="${s.id}" value="${saved[s.id]!==undefined?saved[s.id]:''}" placeholder="0-100"></td></tr>`).join('');
+        };
+        
+        window.exportRaporPDF = (type) => {
+            const cls=document.getElementById('rapor-class-filter').value; if(!cls) return alert('Pilih kelas');
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.text(`Rapor ${type} Semester - ${cls}`, 14, 15);
+            doc.autoTable({ html: type==='mid'?'#table-rapor-mid':'#table-rapor-final', startY: 20 });
+            doc.save(`Rapor_${cls}.pdf`);
+        };
+        window.exportRaporExcel = (type) => {
+            const cls=document.getElementById('rapor-class-filter').value; if(!cls) return alert('Pilih kelas');
+            XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById(type==='mid'?'table-rapor-mid':'table-rapor-final')), `Rapor_${cls}.xlsx`);
+        };
+        window.updateScoreProjectFilterAndTable = () => {
+             const cls = document.getElementById('input-score-class').value; const ps = document.getElementById('input-score-project');
+             ps.innerHTML = '<option value="">Pilih Projek</option>' + appData.projects.filter(p=>p.level===getLevelFromClassName(cls)||p.level==='Semua').map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+             populateScoreInputTable();
+        };
+
         function checkMissingScores() {
              const level = document.getElementById('missing-level-filter').value;
              const clsFilter = document.getElementById('missing-class-filter').value;
@@ -996,131 +1203,13 @@
              });
              tbody.innerHTML = html || `<tr><td colspan="5" class="p-8 text-center text-emerald-600 font-medium">Semua lengkap!</td></tr>`;
         }
+        function populateMissingScoresFilters() { const s=document.getElementById('missing-level-filter'); const c=document.getElementById('missing-class-filter'); const p=document.getElementById('missing-project-filter'); c.disabled=p.disabled=!s.value; if(!s.value) return; c.innerHTML='<option value="">Semua Kelas</option>'+Object.keys(appData.students).filter(k=>getLevelFromClassName(k)===s.value).map(k=>`<option value="${k}">${k}</option>`).join(''); p.innerHTML='<option value="">Semua Projek</option>'+appData.projects.filter(j=>j.level===s.value||j.level==='Semua').map(j=>`<option value="${j.id}">${j.name}</option>`).join(''); }
+
         function handleReset(e) { if(confirm("Hapus SEMUA data?")) { const {admins, settings} = appData; appData = getInitialDataStructure(); appData.admins=admins; appData.settings=settings; saveData().then(()=>alert("Reset berhasil.")); } }
-        
-        // --- ADMIN & PROJECT MANAGEMENT RENDERERS ---
-        function renderAdminList() { document.getElementById('admin-list').innerHTML = appData.admins.map(a => `<li class="flex justify-between items-center p-3 bg-slate-50 rounded border border-slate-200"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><i data-lucide="user" class="w-4 h-4"></i></div><div class="text-sm font-semibold">${a.email}</div></div>${!a.protected ? `<button onclick="deleteAdmin('${a.email}')" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</li>`).join(''); lucide.createIcons(); }
-        function renderProjectList() { document.getElementById('project-list-display').innerHTML = appData.projects.length ? appData.projects.map(p => `<li class="bg-white border border-slate-200 rounded p-3 group"><div class="flex justify-between"><div><span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100">${p.level}</span> <span class="font-semibold text-sm">${p.name}</span><div class="mt-1 flex gap-1 flex-wrap">${p.criteria.map(c=>`<span class="text-[10px] px-1 bg-slate-50 border border-slate-200 rounded text-slate-500">${c}</span>`).join('')}</div></div><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition"><button onclick="openEditProject('${p.id}')" class="text-indigo-500"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="deleteProject('${p.id}')" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div></li>`).join('') : '<li class="text-center text-slate-400 text-sm">Belum ada projek.</li>'; lucide.createIcons(); }
-        
-        // --- RAPOR RENDERER (Optimized) ---
-        function renderRaporSemester1() {
-            const cls = document.getElementById('rapor-class-filter').value;
-            if(!cls) return;
-            const midBody = document.getElementById('rapor-mid-table-body');
-            const finalBody = document.getElementById('rapor-final-table-body');
-            
-            const projects = appData.projects.filter(p => p.level === getLevelFromClassName(cls) || p.level === 'Semua');
-            const midPrjs = projects.slice(0, Math.ceil(projects.length/2));
-            
-            // Build strings
-            let midHtml = '', finalHtml = '';
-            (appData.students[cls]||[]).forEach((s, i) => {
-                // Mid Calculation
-                let mSum=0, mCount=0; midPrjs.forEach(p => { const sc=appData.scores?.[p.id]?.[s.id]?.total; if(sc){mSum+=sc;mCount++;} });
-                const mAvg = mCount>0 ? Math.round(mSum/mCount) : 0;
-                const mPred = mCount? (mAvg>=92?'A':(mAvg>=83?'B':(mAvg>=75?'C':'D'))) : '-';
-                
-                // Final Calculation
-                let fSum=0, fCount=0; projects.forEach(p => { const sc=appData.scores?.[p.id]?.[s.id]?.total; if(sc){fSum+=sc;fCount++;} });
-                const fAvg = fCount>0 ? Math.round(fSum/fCount) : 0;
-                const fPred = fCount? (fAvg>=92?'A':(fAvg>=83?'B':(fAvg>=75?'C':'D'))) : '-';
-                const fKet = fPred==='A'?'Sangat Baik':(fPred==='B'?'Baik':(fPred==='C'?'Cukup':'-'));
 
-                midHtml += `<tr class="hover:bg-slate-50"><td class="p-3 text-center text-slate-500">${i+1}</td><td class="p-3 font-mono text-xs">${s.nis||'-'}</td><td class="p-3 font-medium text-slate-800">${s.name}</td><td class="p-3 text-center text-xs">${mCount}/${midPrjs.length}</td><td class="p-3 text-center font-bold text-indigo-600">${mCount?mAvg:'-'}</td><td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold bg-slate-100">${mPred}</span></td></tr>`;
-                finalHtml += `<tr class="hover:bg-slate-50"><td class="p-3 text-center text-slate-500">${i+1}</td><td class="p-3 font-mono text-xs">${s.nis||'-'}</td><td class="p-3 font-medium text-slate-800">${s.name}</td><td class="p-3 text-center text-xs">${fCount}/${projects.length}</td><td class="p-3 text-center font-bold text-emerald-600">${fCount?fAvg:'-'}</td><td class="p-3 text-center"><span class="px-2 py-1 rounded text-xs font-bold bg-slate-100">${fPred}</span></td><td class="p-3 text-sm">${fKet}</td></tr>`;
-            });
-            midBody.innerHTML = midHtml || '<tr><td colspan="6" class="p-6 text-center italic">Kosong</td></tr>';
-            finalBody.innerHTML = finalHtml || '<tr><td colspan="7" class="p-6 text-center italic">Kosong</td></tr>';
-        }
-
-        // --- GLOBAL EXPORTS FOR HTML ONCLICK ---
-        window.deleteProject = (id) => { if(confirm("Hapus?")) { appData.projects = appData.projects.filter(p=>p.id!==id); saveData().then(renderProjectList); } };
-        window.deleteAdmin = (email) => { if(confirm("Hapus?")) { appData.admins = appData.admins.filter(a=>a.email!==email); saveData().then(renderAdminList); } };
-        window.openEditProject = (id) => { const p = appData.projects.find(x=>x.id===id); editingProjectId=id; document.getElementById('edit-project-name').value=p.name; tempNewCriteriaForEdit=[...p.criteria]; renderEditCriteriaList(); document.getElementById('edit-project-modal').classList.remove('hidden'); };
-        window.addTempCriteria = () => { const v=document.getElementById('new-project-criteria').value; if(v){tempProjectCriteria.push(v); document.getElementById('new-project-criteria-list').innerHTML=tempProjectCriteria.map(c=>`<span class="bg-indigo-100 px-2 py-1 rounded text-xs">${c}</span>`).join(' '); document.getElementById('new-project-criteria').value='';} };
-        window.saveNewProject = async () => { const n=document.getElementById('new-project-name').value; if(n&&tempProjectCriteria.length){appData.projects.push({id:'P'+Date.now(), name:n, level:document.getElementById('new-project-level').value, criteria:[...tempProjectCriteria]}); tempProjectCriteria=[]; await saveData(); renderProjectList(); alert('Sukses');} };
-        
-        // Helper Renderers for Edit Modal
-        function renderEditCriteriaList() { document.getElementById('edit-project-criteria-list').innerHTML = tempNewCriteriaForEdit.map((c,i)=>`<span class="bg-indigo-100 px-2 py-1 rounded text-xs flex items-center">${c} <button onclick="removeEditTempCriteria(${i})" class="ml-1 text-red-500 font-bold">×</button></span>`).join(''); }
-        window.removeEditTempCriteria = (i) => { tempNewCriteriaForEdit.splice(i,1); renderEditCriteriaList(); };
-        window.addTempCriteriaForEdit = () => { const v=document.getElementById('edit-project-new-criteria-input').value; if(v){tempNewCriteriaForEdit.push(v); document.getElementById('edit-project-new-criteria-input').value=''; renderEditCriteriaList();} };
-        window.saveEditedProject = async () => { const p=appData.projects.find(x=>x.id===editingProjectId); if(p){p.name=document.getElementById('edit-project-name').value; p.level=document.getElementById('edit-project-level').value; p.criteria=[...tempNewCriteriaForEdit]; await saveData(); renderProjectList(); document.getElementById('edit-project-modal').classList.add('hidden');} };
-
-        // Helper for Missing Score Modal
-        window.openMissingScoreModal = (sid, pid, cname) => {
-            currentMissingScoreStudentId=sid; currentMissingScoreProjectId=pid; currentMissingScoreClassName=cname;
-            const s=appData.students[cname].find(x=>x.id==sid); const p=appData.projects.find(x=>x.id==pid);
-            document.getElementById('ms-modal-student-name').innerText=s.name; document.getElementById('ms-modal-project-name').innerText=p.name;
-            document.getElementById('ms-modal-inputs').innerHTML = p.criteria.map(c=>`<div><label class="text-xs uppercase text-slate-500">${c}</label><input type="number" class="w-full p-2 border rounded ms-crit-inp" data-crit="${c}"></div>`).join('');
-            document.getElementById('missing-score-modal').classList.remove('hidden');
-        };
-        window.closeMissingScoreModal = () => document.getElementById('missing-score-modal').classList.add('hidden');
-        window.saveMissingScore = async () => {
-            const inps = document.querySelectorAll('.ms-crit-inp'); let sum=0, count=0, det={};
-            inps.forEach(i=>{ const v=parseInt(i.value)||0; det[i.dataset.crit]=v; sum+=v; count++; });
-            if(!appData.scores[currentMissingScoreProjectId]) appData.scores[currentMissingScoreProjectId]={};
-            appData.scores[currentMissingScoreProjectId][currentMissingScoreStudentId] = { total: Math.round(sum/count), details: det };
-            await saveData(); checkMissingScores(); closeMissingScoreModal();
-        };
-
-        // Helper for Project Detail Modal
-        window.openProjectDetail = (pid, cname) => {
-            const p = appData.projects.find(x=>x.id===pid); const s = appData.students[cname]||[];
-            document.getElementById('detail-modal-title').textContent = p.name;
-            document.getElementById('detail-table-head').innerHTML = `<th class="p-3">No</th><th class="p-3">Nama</th>` + p.criteria.map(c=>`<th class="p-3 text-center">${c}</th>`).join('') + `<th class="p-3 text-center">Rata2</th>`;
-            const sc = appData.scores?.[pid]||{};
-            document.getElementById('detail-table-body').innerHTML = s.map((std, i) => { const d = sc[std.id]||{total:'-',details:{}}; return `<tr><td class="p-3 text-slate-500">${i+1}</td><td class="p-3 font-medium">${std.name}</td>` + p.criteria.map(c=>`<td class="p-3 text-center">${d.details?.[c]||'-'}</td>`).join('') + `<td class="p-3 text-center font-bold">${d.total}</td></tr>`; }).join('');
-            document.getElementById('project-detail-modal').classList.remove('hidden');
-        };
-        window.closeProjectDetail = () => document.getElementById('project-detail-modal').classList.add('hidden');
-        
-        // Activity Input Helpers
-        window.populateActivityInputTable = () => {
-            const cls = document.getElementById('input-activity-class').value; const tbody = document.getElementById('activity-input-table');
-            if(!cls) { tbody.innerHTML=''; return; }
-            const saved = appData.activityScores[cls]||{};
-            tbody.innerHTML = (appData.students[cls]||[]).map(s => `<tr class="border-b border-slate-100 hover:bg-slate-50"><td class="p-3 text-slate-700 font-medium">${s.name}</td><td class="p-3"><input type="number" class="w-24 p-2 border rounded text-center act-input" data-sid="${s.id}" value="${saved[s.id]!==undefined?saved[s.id]:''}" placeholder="0-100"></td></tr>`).join('');
-        };
-        // Removed duplicate anonymous event listener for save-activity here since it's now handled in setupEventListeners with saveActivityData
-
-        // Initialize Data Load
+        // Start Data Load
         await loadData();
         applySettings();
-        
-        // Add Admin Handler (Moved inside to access scope)
-        document.getElementById('add-admin-btn').addEventListener('click', async () => {
-            const e=document.getElementById('new-admin-email').value, p=document.getElementById('new-admin-password').value;
-            if(e&&p){ appData.admins.push({email:e, password:p, protected:false}); await saveData(); renderAdminList(); document.getElementById('new-admin-email').value=''; }
-        });
-        
-        // Login Handler
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); const em=e.target.email.value, pw=e.target.password.value;
-            if(appData.admins.find(a=>a.email===em && a.password===pw)) { loginContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); await initApp(); }
-            else loginError.classList.remove('hidden');
-        });
-
-        // Handle Import Button Click (Using new clean function)
-        document.getElementById('import-btn').addEventListener('click', handleStudentImport);
-        
-        // Handle PDF/Excel Export
-        window.exportRaporPDF = (type) => {
-            const cls=document.getElementById('rapor-class-filter').value; if(!cls) return alert('Pilih kelas');
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text(`Rapor ${type} Semester - ${cls}`, 14, 15);
-            doc.autoTable({ html: type==='mid'?'#table-rapor-mid':'#table-rapor-final', startY: 20 });
-            doc.save(`Rapor_${cls}.pdf`);
-        };
-        window.exportRaporExcel = (type) => {
-            const cls=document.getElementById('rapor-class-filter').value; if(!cls) return alert('Pilih kelas');
-            XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById(type==='mid'?'table-rapor-mid':'table-rapor-final')), `Rapor_${cls}.xlsx`);
-        };
-        window.updateScoreProjectFilterAndTable = () => {
-             const cls = document.getElementById('input-score-class').value; const ps = document.getElementById('input-score-project');
-             ps.innerHTML = '<option value="">Pilih Projek</option>' + appData.projects.filter(p=>p.level===getLevelFromClassName(cls)||p.level==='Semua').map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-             populateScoreInputTable();
-        };
-
     });
     </script>
 </body>
