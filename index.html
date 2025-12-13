@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mozzart Education - Manajemen Siswa</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -35,6 +35,7 @@
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
+            -webkit-tap-highlight-color: transparent;
         }
         .sidebar-icon { stroke-width: 1.5; }
         .chart-container { position: relative; height: 200px; width: 100%; }
@@ -54,26 +55,37 @@
         .card-title { font-size: 1.125rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; }
         .nav-link { transition: all 0.2s ease-in-out; }
         .nav-link:not(.active):hover { transform: translateX(4px); background-color: #f1f5f9; }
-        .input-menu-card { display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease-in-out; }
+        .input-menu-card { display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease-in-out; min-height: 140px; }
         .input-menu-card:hover { border-color: var(--secondary-color); transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07); }
+        
+        /* Mobile Improvements */
+        @media (max-width: 768px) {
+            .card { padding: 1rem; }
+            .btn-mobile { width: 100%; justify-content: center; margin-bottom: 0.5rem; }
+            .mobile-stack { flex-direction: column; }
+            .mobile-full { width: 100%; }
+            th, td { padding: 0.75rem 0.5rem; font-size: 0.875rem; }
+            .header-controls { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        }
     </style>
 </head>
 <body class="text-slate-700">
     <!-- Login Container -->
-    <div id="login-container" class="flex items-center justify-center h-screen bg-slate-100">
-        <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg m-4">
+    <div id="login-container" class="flex items-center justify-center h-screen bg-slate-100 px-4">
+        <div class="w-full max-w-md p-6 sm:p-8 space-y-8 bg-white rounded-2xl shadow-lg">
             <div class="text-center">
                 <img id="login-logo" src="https://placehold.co/60x60/1e293b/ffffff?text=ME" alt="Mozzart Education Logo" class="mx-auto h-14 w-14 rounded-xl">
-                <h2 class="mt-6 text-3xl font-bold text-slate-900" data-lang="appTitle">Mozzart Education</h2>
+                <h2 class="mt-6 text-2xl sm:text-3xl font-bold text-slate-900" data-lang="appTitle">Mozzart Education</h2>
                 <p class="mt-2 text-sm text-slate-600">Silakan masuk untuk melanjutkan</p>
             </div>
             <form id="login-form" class="mt-8 space-y-6">
                 <div class="rounded-md shadow-sm -space-y-px">
-                    <div><label for="email-address" class="sr-only">Email</label><input id="email-address" name="email" type="email" required class="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm form-input" placeholder="Email address"></div>
-                    <div><label for="password" class="sr-only">Password</label><input id="password" name="password" type="password" required class="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm form-input" placeholder="Password"></div>
+                    <div><label for="email-address" class="sr-only">Email</label><input id="email-address" name="email" type="email" required class="appearance-none rounded-t-md relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm form-input" placeholder="Email address"></div>
+                    <div><label for="password" class="sr-only">Password</label><input id="password" name="password" type="password" required class="appearance-none rounded-b-md relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm form-input" placeholder="Password"></div>
                 </div>
                  <div id="login-error" class="text-red-500 text-sm text-center hidden">Email atau kata sandi salah.</div>
-                <div><button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-slate-800 hover:bg-slate-900 focus:outline-none btn-primary">Masuk</button></div>
+                <div><button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-slate-800 hover:bg-slate-900 focus:outline-none btn-primary">Masuk</button></div>
             </form>
         </div>
     </div>
@@ -82,13 +94,13 @@
     <div id="app-container" class="hidden">
         <div class="relative min-h-screen md:flex backdrop-blur-xl bg-slate-100/30">
             <!-- Sidebar -->
-            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
-            <aside id="main-sidebar" class="fixed inset-y-0 left-0 bg-white/80 w-64 flex-col transition-transform duration-300 border-r border-slate-200 z-30 transform -translate-x-full md:translate-x-0 md:flex">
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden transition-opacity"></div>
+            <aside id="main-sidebar" class="fixed inset-y-0 left-0 bg-white/95 backdrop-blur w-64 flex-col transition-transform duration-300 border-r border-slate-200 z-30 transform -translate-x-full md:translate-x-0 md:flex shadow-xl md:shadow-none">
                 <div class="flex items-center h-20 border-b border-slate-200 px-4 app-logo-container">
                     <img id="app-logo" src="https://placehold.co/40x40/1e293b/ffffff?text=ME" class="h-10 w-10 rounded-lg flex-shrink-0" alt="App Logo">
                     <h1 data-lang="appTitle" class="text-lg font-bold ml-3 text-slate-800 app-title-text">Mozzart Education</h1>
                 </div>
-                <nav class="flex-1 p-4 space-y-2">
+                <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
                     <a href="#" class="nav-link active flex items-center p-3 rounded-lg text-white" data-view="dashboard" style="background-color: var(--primary-color);">
                         <i data-lucide="layout-dashboard" class="sidebar-icon"></i><span data-lang="dashboard" class="ml-4 nav-text">Dasbor Kelas</span>
                     </a>
@@ -127,19 +139,19 @@
 
             <!-- Main Content -->
             <main id="main-content" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 md:ml-64">
-                <header class="h-20 flex items-center justify-between px-4 md:px-8 border-b border-slate-200 bg-white/60 backdrop-blur-sm">
+                <header class="h-16 md:h-20 flex items-center justify-between px-4 md:px-8 border-b border-slate-200 bg-white/60 backdrop-blur-sm sticky top-0 z-10">
                     <div class="flex items-center">
-                        <button id="menu-toggle" class="md:hidden p-2 mr-2 rounded-md text-slate-600 hover:bg-slate-100">
+                        <button id="menu-toggle" class="md:hidden p-2 mr-2 -ml-2 rounded-md text-slate-600 hover:bg-slate-100 active:bg-slate-200">
                             <i data-lucide="menu" class="w-6 h-6"></i>
                         </button>
-                        <h2 id="view-title" data-lang="dashboard" class="text-xl sm:text-2xl font-semibold text-slate-800">Dasbor Kelas</h2>
+                        <h2 id="view-title" data-lang="dashboard" class="text-lg md:text-2xl font-semibold text-slate-800 truncate max-w-[200px] md:max-w-none">Dasbor Kelas</h2>
                     </div>
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 md:space-x-4">
                         <div class="flex items-center">
-                            <span class="mr-2 text-sm font-medium text-slate-600" data-lang="language">Bahasa:</span>
+                            <span class="mr-2 text-sm font-medium text-slate-600 hidden md:inline" data-lang="language">Bahasa:</span>
                             <div class="flex rounded-md shadow-sm">
-                                <button id="lang-id" class="px-3 py-1 text-sm rounded-l-md bg-slate-800 text-white font-semibold">ID</button>
-                                <button id="lang-en" class="px-3 py-1 text-sm rounded-r-md bg-slate-200 text-slate-700">EN</button>
+                                <button id="lang-id" class="px-2 md:px-3 py-1 text-xs md:text-sm rounded-l-md bg-slate-800 text-white font-semibold">ID</button>
+                                <button id="lang-en" class="px-2 md:px-3 py-1 text-xs md:text-sm rounded-r-md bg-slate-200 text-slate-700">EN</button>
                             </div>
                         </div>
                     </div>
@@ -151,9 +163,9 @@
                         <div class="grid grid-cols-1 gap-6">
                             <!-- Level X -->
                             <div class="card">
-                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between">
+                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between items-center">
                                     <span>Jenjang Kelas X</span>
-                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Statistik Semester Berjalan</span>
+                                    <span class="text-[10px] md:text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full whitespace-nowrap">Sem Berjalan</span>
                                 </h3>
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     <div class="flex flex-col">
@@ -171,9 +183,9 @@
                             </div>
                             <!-- Level XI -->
                             <div class="card">
-                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between">
+                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between items-center">
                                     <span>Jenjang Kelas XI</span>
-                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Statistik Semester Berjalan</span>
+                                    <span class="text-[10px] md:text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full whitespace-nowrap">Sem Berjalan</span>
                                 </h3>
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     <div class="flex flex-col">
@@ -191,9 +203,9 @@
                             </div>
                             <!-- Level XII -->
                             <div class="card">
-                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between">
+                                <h3 class="card-title text-indigo-700 border-b pb-2 mb-4 flex justify-between items-center">
                                     <span>Jenjang Kelas XII</span>
-                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Statistik Semester Berjalan</span>
+                                    <span class="text-[10px] md:text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full whitespace-nowrap">Sem Berjalan</span>
                                 </h3>
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     <div class="flex flex-col">
@@ -217,7 +229,7 @@
                         <div class="card bg-white shadow-sm border border-slate-200">
                             <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
                                 <h3 class="card-title mb-0" data-lang="rekapNilai">Rekapitulasi Nilai</h3>
-                                <select id="rekap-class-filter" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto text-sm focus:ring-2 focus:ring-indigo-500"></select>
+                                <select id="rekap-class-filter" class="p-3 border rounded-md bg-white form-select w-full sm:w-auto text-sm focus:ring-2 focus:ring-indigo-500"></select>
                             </div>
                         </div>
                         <div id="rekap-projek-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
@@ -227,15 +239,15 @@
                     <div id="rapor-semester-view" class="view hidden space-y-8">
                         <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
-                                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="book-open-check" class="w-6 h-6 text-indigo-600"></i> Nilai Rapor Semester</h2>
-                                <p class="text-sm text-slate-500 mt-1">Nilai Murni (Hasil Rata-rata Projek)</p>
+                                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="book-open-check" class="w-6 h-6 text-indigo-600"></i> <span class="hidden md:inline">Nilai</span> Rapor Semester</h2>
+                                <p class="text-sm text-slate-500 mt-1">Nilai Murni</p>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto mobile-stack">
                                 <div class="w-full sm:w-40">
                                     <label class="block text-xs font-medium text-slate-500 mb-1 ml-1">Pilih Semester</label>
                                     <select id="rapor-semester-filter" class="w-full p-2.5 border rounded-lg bg-slate-50 form-select text-sm font-medium">
-                                        <option value="1">Semester 1 (Ganjil)</option>
-                                        <option value="2">Semester 2 (Genap)</option>
+                                        <option value="1">Sem 1 (Ganjil)</option>
+                                        <option value="2">Sem 2 (Genap)</option>
                                     </select>
                                 </div>
                                 <div class="w-full sm:w-48">
@@ -250,12 +262,12 @@
                             <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                                 <div>
-                                    <h3 class="text-lg font-bold text-slate-800">Rapor Tengah Semester (Mid)</h3>
-                                    <p class="text-xs text-slate-500">Nilai rata-rata dari projek yang telah selesai.</p>
+                                    <h3 class="text-lg font-bold text-slate-800">Mid Semester</h3>
+                                    <p class="text-xs text-slate-500">Nilai rata-rata dari projek selesai.</p>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button onclick="exportRaporPDF('mid')" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-                                    <button onclick="exportRaporExcel('mid')" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
+                                <div class="action-buttons w-full md:w-auto">
+                                    <button onclick="exportRaporPDF('mid')" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center justify-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
+                                    <button onclick="exportRaporExcel('mid')" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center justify-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
                                 </div>
                             </div>
                             <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-mid" class="w-full text-left text-sm border-collapse"><thead class="bg-indigo-50 text-indigo-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Jml Projek</th><th class="p-3 text-center">Rata-Rata</th><th class="p-3 text-center">Predikat</th></tr></thead><tbody id="rapor-mid-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas.</td></tr></tbody></table></div>
@@ -264,15 +276,15 @@
                             <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                                 <div>
-                                    <h3 class="text-lg font-bold text-slate-800">Rapor Akhir Semester (Final)</h3>
-                                    <p class="text-xs text-slate-500">Akumulasi seluruh nilai projek pada semester ini.</p>
+                                    <h3 class="text-lg font-bold text-slate-800">Akhir Semester (Final)</h3>
+                                    <p class="text-xs text-slate-500">Akumulasi seluruh nilai.</p>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button onclick="exportRaporPDF('final')" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-                                    <button onclick="exportRaporExcel('final')" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
+                                <div class="action-buttons w-full md:w-auto">
+                                    <button onclick="exportRaporPDF('final')" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center justify-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
+                                    <button onclick="exportRaporExcel('final')" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center justify-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-final" class="w-full text-left text-sm border-collapse"><thead class="bg-emerald-50 text-emerald-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Total Projek</th><th class="p-3 text-center">Nilai Akhir</th><th class="p-3 text-center">Predikat</th><th class="p-3">Keterangan</th></tr></thead><tbody id="rapor-final-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas.</td></tr></tbody></table></div>
+                            <div class="overflow-x-auto rounded-lg border border-slate-200"><table id="table-rapor-final" class="w-full text-left text-sm border-collapse"><thead class="bg-emerald-50 text-emerald-900"><tr><th class="p-3 w-12 text-center">No</th><th class="p-3 w-24">NIS</th><th class="p-3">Nama Siswa</th><th class="p-3 text-center">Total Projek</th><th class="p-3 text-center">Nilai Akhir</th><th class="p-3 text-center">Predikat</th><th class="p-3">Ket</th></tr></thead><tbody id="rapor-final-table-body" class="divide-y divide-slate-100 bg-white"><tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Silakan pilih kelas.</td></tr></tbody></table></div>
                         </div>
                     </div>
 
@@ -281,14 +293,14 @@
                         <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
                                 <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i data-lucide="award" class="w-6 h-6 text-amber-500"></i> Nilai E-Rapor</h2>
-                                <p class="text-sm text-slate-500 mt-1">Nilai yang telah disesuaikan (Curved) sesuai ketentuan sekolah.</p>
+                                <p class="text-sm text-slate-500 mt-1">Nilai disesuaikan (Curved).</p>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto mobile-stack">
                                 <div class="w-full sm:w-40">
                                     <label class="block text-xs font-medium text-slate-500 mb-1 ml-1">Pilih Semester</label>
                                     <select id="erapor-semester-filter" class="w-full p-2.5 border rounded-lg bg-slate-50 form-select text-sm font-medium">
-                                        <option value="1">Semester 1 (Ganjil)</option>
-                                        <option value="2">Semester 2 (Genap)</option>
+                                        <option value="1">Sem 1 (Ganjil)</option>
+                                        <option value="2">Sem 2 (Genap)</option>
                                     </select>
                                 </div>
                                 <div class="w-full sm:w-48">
@@ -303,12 +315,12 @@
                             <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                                 <div>
-                                    <h3 class="text-lg font-bold text-slate-800">Hasil Nilai E-Rapor (Akhir Semester)</h3>
-                                    <p class="text-xs text-slate-500 mt-1">Distribusi otomatis: Max 4 (Bawah KKM), Max 10 (Range KKM), Sisa (Atas KKM).</p>
+                                    <h3 class="text-lg font-bold text-slate-800">Hasil Nilai E-Rapor</h3>
+                                    <p class="text-xs text-slate-500 mt-1">Distribusi otomatis (Curving).</p>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button onclick="exportERaporPDF()" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-                                    <button onclick="exportERaporExcel()" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
+                                <div class="action-buttons w-full md:w-auto">
+                                    <button onclick="exportERaporPDF()" class="px-3 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center justify-center gap-2 text-sm font-semibold transition"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
+                                    <button onclick="exportERaporExcel()" class="px-3 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200 flex items-center justify-center gap-2 text-sm font-semibold transition"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
                                 </div>
                             </div>
                             <div class="overflow-x-auto rounded-lg border border-slate-200">
@@ -319,7 +331,7 @@
                                             <th class="p-3 w-24">NIS</th>
                                             <th class="p-3">Nama Siswa</th>
                                             <th class="p-3 text-center">Nilai Murni</th>
-                                            <th class="p-3 text-center">Nilai E-Rapor</th>
+                                            <th class="p-3 text-center">E-Rapor</th>
                                             <th class="p-3 text-center">Predikat</th>
                                         </tr>
                                     </thead>
@@ -335,11 +347,11 @@
                     <div id="missing-scores-view" class="view hidden">
                         <div class="card">
                             <h3 class="card-title mb-4" data-lang="missingScoresTitle">Cek Nilai Kosong</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-end">
-                                <div><label class="block text-sm font-medium mb-1 text-slate-600">Jenjang</label><select id="missing-level-filter" class="p-2 border rounded-md bg-white form-select w-full"><option value="">Pilih Jenjang</option><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option></select></div>
-                                <div><label class="block text-sm font-medium mb-1 text-slate-600">Kelas</label><select id="missing-class-filter" class="p-2 border rounded-md bg-white form-select w-full" disabled><option value="">Semua Kelas</option></select></div>
-                                <div><label class="block text-sm font-medium mb-1 text-slate-600">Projek</label><select id="missing-project-filter" class="p-2 border rounded-md bg-white form-select w-full" disabled><option value="">Semua Projek</option></select></div>
-                                <button id="check-missing-btn" class="py-2 px-4 rounded-md btn-primary text-sm font-semibold flex items-center justify-center"><i data-lucide="search" class="w-4 h-4 mr-2"></i><span>Tampilkan Siswa</span></button>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-end mobile-stack">
+                                <div class="mobile-full"><label class="block text-sm font-medium mb-1 text-slate-600">Jenjang</label><select id="missing-level-filter" class="p-3 border rounded-md bg-white form-select w-full"><option value="">Pilih Jenjang</option><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option></select></div>
+                                <div class="mobile-full"><label class="block text-sm font-medium mb-1 text-slate-600">Kelas</label><select id="missing-class-filter" class="p-3 border rounded-md bg-white form-select w-full" disabled><option value="">Semua Kelas</option></select></div>
+                                <div class="mobile-full"><label class="block text-sm font-medium mb-1 text-slate-600">Projek</label><select id="missing-project-filter" class="p-3 border rounded-md bg-white form-select w-full" disabled><option value="">Semua Projek</option></select></div>
+                                <button id="check-missing-btn" class="mobile-full py-3 px-4 rounded-md btn-primary text-sm font-semibold flex items-center justify-center"><i data-lucide="search" class="w-4 h-4 mr-2"></i><span>Tampilkan Siswa</span></button>
                             </div>
                             <div class="overflow-x-auto max-h-[60vh] overflow-y-auto"><table class="w-full text-left text-sm border-collapse"><thead class="bg-slate-50 border-b border-slate-200 sticky top-0"><tr><th class="p-3 w-16">No</th><th class="p-3">Nama Siswa</th><th class="p-3">Kelas</th><th class="p-3">Projek yang Kosong</th><th class="p-3 text-center">Aksi</th></tr></thead><tbody id="missing-scores-table-body" class="divide-y divide-slate-100"><tr><td colspan="5" class="p-8 text-center text-slate-500 italic">Silakan pilih filter dan klik "Tampilkan Siswa"</td></tr></tbody></table></div>
                         </div>
@@ -362,53 +374,53 @@
 
                     <!-- Attendance Input View -->
                     <div id="attendance-input-view" class="view hidden">
-                         <button id="back-to-data-input-from-attendance" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Menu Input</button>
-                         <div class="card">
-                            <div class="flex flex-col xl:flex-row gap-4 justify-between xl:items-center">
+                         <button id="back-to-data-input-from-attendance" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 active:bg-slate-200"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                         <div class="card mt-2">
+                            <div class="flex flex-col xl:flex-row gap-4 justify-between xl:items-center mb-4">
                                 <h3 class="card-title mb-0" data-lang="inputAttendance">Input Kehadiran</h3>
-                                <div class="flex flex-wrap gap-2">
-                                    <button id="download-attendance-template-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center bg-emerald-600 hover:bg-emerald-700"><i data-lucide="download" class="w-4 h-4 mr-2"></i> Format</button>
-                                    <button id="import-attendance-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center"><i data-lucide="upload" class="w-4 h-4 mr-2"></i> Import</button>
+                                <div class="flex gap-2 w-full xl:w-auto action-buttons">
+                                    <button id="download-attendance-template-btn" class="flex-1 xl:flex-none py-3 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center bg-emerald-600 hover:bg-emerald-700"><i data-lucide="download" class="w-4 h-4 mr-2"></i> Format</button>
+                                    <button id="import-attendance-btn" class="flex-1 xl:flex-none py-3 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-2"></i> Import</button>
                                 </div>
                             </div>
-                             <div class="flex flex-col sm:flex-row gap-4 my-4">
-                                <select id="input-attendance-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto"></select>
-                                <input type="date" id="input-attendance-date" class="p-2 border rounded-md bg-white form-input w-full sm:w-auto">
+                             <div class="flex flex-col sm:flex-row gap-4 mb-4 header-controls">
+                                <select id="input-attendance-class" class="p-3 border rounded-md bg-white form-select w-full sm:w-auto"></select>
+                                <input type="date" id="input-attendance-date" class="p-3 border rounded-md bg-white form-input w-full sm:w-auto">
                             </div>
-                            <div class="mb-4"><input type="text" id="attendance-student-search" class="p-2 border rounded-md w-full form-input" placeholder="Cari nama siswa..."></div>
+                            <div class="mb-4"><input type="text" id="attendance-student-search" class="p-3 border rounded-md w-full form-input" placeholder="Cari nama siswa..."></div>
                             <div class="max-h-80 overflow-y-auto pr-2"><table class="w-full text-left"><thead><tr class="border-b border-slate-200"><th class="p-2 text-slate-600" data-lang="studentName">Nama Siswa</th><th class="p-2 text-slate-600" data-lang="status">Status</th></tr></thead><tbody id="attendance-input-table"></tbody></table></div>
-                            <button id="save-attendance" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
+                            <button id="save-attendance" class="mt-4 px-4 py-3 rounded-md w-full btn-primary text-base font-medium" data-lang="save">Simpan Data Kehadiran</button>
                         </div>
                     </div>
                     
                     <!-- Activity Input View -->
                     <div id="activity-input-view" class="view hidden">
-                         <button id="back-to-data-input-from-activity" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Menu Input</button>
-                         <div class="card">
+                         <button id="back-to-data-input-from-activity" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                         <div class="card mt-2">
                             <h3 class="card-title" data-lang="inputActivity">Input Keaktifan</h3>
-                             <div class="flex flex-col sm:flex-row gap-4 my-4"><select id="input-activity-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto"></select></div>
+                             <div class="flex flex-col sm:flex-row gap-4 my-4"><select id="input-activity-class" class="p-3 border rounded-md bg-white form-select w-full sm:w-auto"></select></div>
                             <div class="max-h-96 overflow-y-auto pr-2"><table class="w-full text-left"><thead><tr class="border-b border-slate-200"><th class="p-2 text-slate-600" data-lang="studentName">Nama Siswa</th><th class="p-2 text-slate-600">Skor (0-100)</th></tr></thead><tbody id="activity-input-table"></tbody></table></div>
-                            <button id="save-activity" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
+                            <button id="save-activity" class="mt-4 px-4 py-3 rounded-md w-full btn-primary text-base font-medium" data-lang="save">Simpan Data Keaktifan</button>
                         </div>
                     </div>
 
                     <!-- Score Input View -->
                     <div id="score-input-view" class="view hidden">
-                        <button id="back-to-data-input-from-score" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Menu Input</button>
-                         <div class="card">
-                            <div class="flex flex-col xl:flex-row gap-4 justify-between xl:items-center">
+                        <button id="back-to-data-input-from-score" class="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-slate-600 bg-white rounded-lg border border-slate-200 hover:bg-slate-100"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                         <div class="card mt-2">
+                            <div class="flex flex-col xl:flex-row gap-4 justify-between xl:items-center mb-4">
                                 <h3 class="card-title" data-lang="inputScore">Input Nilai</h3>
-                                <div class="flex flex-wrap gap-2">
-                                    <button id="download-score-template-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center bg-emerald-600 hover:bg-emerald-700"><i data-lucide="download" class="w-4 h-4 mr-2"></i> Format</button>
-                                    <button id="import-scores-btn" class="py-2 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center"><i data-lucide="upload" class="w-4 h-4 mr-2"></i> Import</button>
+                                <div class="flex gap-2 w-full xl:w-auto action-buttons">
+                                    <button id="download-score-template-btn" class="flex-1 xl:flex-none py-3 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center bg-emerald-600 hover:bg-emerald-700"><i data-lucide="download" class="w-4 h-4 mr-2"></i> Format</button>
+                                    <button id="import-scores-btn" class="flex-1 xl:flex-none py-3 px-4 rounded-md btn-secondary text-sm font-semibold flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-2"></i> Import</button>
                                 </div>
                             </div>
-                             <div class="flex flex-col sm:flex-row gap-4 my-4">
-                                <select id="input-score-class" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto"></select>
-                                <select id="input-score-project" class="p-2 border rounded-md bg-white form-select w-full sm:w-auto"></select>
+                             <div class="flex flex-col sm:flex-row gap-4 mb-4 header-controls">
+                                <select id="input-score-class" class="p-3 border rounded-md bg-white form-select w-full sm:w-auto"></select>
+                                <select id="input-score-project" class="p-3 border rounded-md bg-white form-select w-full sm:w-auto"></select>
                             </div>
                             <div class="overflow-x-auto"><div class="max-h-96 overflow-y-auto pr-2"><table class="w-full text-left"><thead id="score-input-table-head" class="border-b border-slate-200"></thead><tbody id="score-input-table-body"></tbody></table></div></div>
-                            <button id="save-scores" class="mt-4 px-4 py-2 rounded-md w-full btn-primary" data-lang="save">Simpan</button>
+                            <button id="save-scores" class="mt-4 px-4 py-3 rounded-md w-full btn-primary text-base font-medium" data-lang="save">Simpan Nilai</button>
                         </div>
                     </div>
 
@@ -418,23 +430,23 @@
                             <h3 class="card-title" data-lang="projectManagement">Manajemen Projek</h3>
                             <div class="grid md:grid-cols-2 gap-8">
                                 <div class="space-y-4">
-                                    <div><label class="block text-sm font-medium mb-1 text-slate-600">Nama Projek Baru</label><input type="text" id="new-project-name" class="p-2 border rounded-md w-full form-input" placeholder="Contoh: Projek Sains Bab 3"></div>
+                                    <div><label class="block text-sm font-medium mb-1 text-slate-600">Nama Projek Baru</label><input type="text" id="new-project-name" class="p-3 border rounded-md w-full form-input" placeholder="Contoh: Projek Sains Bab 3"></div>
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-sm font-medium mb-1 text-slate-600">Jenjang Kelas</label>
-                                            <select id="new-project-level" class="p-2 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select>
+                                            <select id="new-project-level" class="p-3 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium mb-1 text-slate-600">Semester</label>
-                                            <select id="new-project-semester" class="p-2 border rounded-md w-full form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select>
+                                            <select id="new-project-semester" class="p-3 border rounded-md w-full form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select>
                                         </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium mb-1 text-slate-600">Kriteria Penilaian</label>
-                                        <div class="flex"><input type="text" id="new-project-criteria" class="p-2 border rounded-l-md w-full form-input" placeholder="Contoh: Kreativitas"><button id="add-project-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div>
+                                        <div class="flex"><input type="text" id="new-project-criteria" class="p-3 border rounded-l-md w-full form-input" placeholder="Contoh: Kreativitas"><button id="add-project-criteria-btn" class="px-4 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div>
                                         <div id="new-project-criteria-list" class="mt-2 flex flex-wrap gap-2"></div>
                                     </div>
-                                    <button id="save-new-project-btn" class="px-4 py-2 rounded-md w-full btn-primary" data-lang="addProject">Tambah Projek</button>
+                                    <button id="save-new-project-btn" class="px-4 py-3 rounded-md w-full btn-primary font-medium" data-lang="addProject">Tambah Projek</button>
                                 </div>
                                  <div><h4 class="text-lg font-semibold mb-2 text-slate-700" data-lang="projectList">Daftar Projek</h4><ul id="project-list-display" class="space-y-3 max-h-80 overflow-y-auto pr-2"></ul></div>
                             </div>
@@ -456,7 +468,7 @@
                                             <div><label class="text-xs">Sekunder</label><input type="color" id="secondary-color-picker" class="w-full h-8 mt-1 rounded cursor-pointer"></div>
                                         </div>
                                     </div>
-                                    <button id="save-appearance-btn" class="mt-4 px-4 py-2 rounded-md w-full btn-primary text-sm flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan Tampilan</button>
+                                    <button id="save-appearance-btn" class="mt-4 px-4 py-3 rounded-md w-full btn-primary text-sm flex items-center justify-center font-medium"><i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan Tampilan</button>
                                 </div>
                             </div>
                             <div class="card">
@@ -464,9 +476,9 @@
                                 <ul id="admin-list" class="space-y-3 mb-6 max-h-60 overflow-y-auto pr-1"></ul>
                                 <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
                                     <div class="space-y-3">
-                                        <input type="email" id="new-admin-email" placeholder="Email admin" class="p-2 border rounded-md w-full form-input text-sm">
-                                        <input type="password" id="new-admin-password" placeholder="Password" class="p-2 border rounded-md w-full form-input text-sm">
-                                        <button id="add-admin-btn" class="px-4 py-2 rounded-md w-full btn-primary text-sm flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah</button>
+                                        <input type="email" id="new-admin-email" placeholder="Email admin" class="p-3 border rounded-md w-full form-input text-sm">
+                                        <input type="password" id="new-admin-password" placeholder="Password" class="p-3 border rounded-md w-full form-input text-sm">
+                                        <button id="add-admin-btn" class="px-4 py-3 rounded-md w-full btn-primary text-sm flex items-center justify-center font-medium"><i data-lucide="plus" class="w-4 h-4 mr-2"></i> Tambah</button>
                                     </div>
                                 </div>
                             </div>
@@ -502,8 +514,8 @@
     </div>
 
     <!-- Modals (Same as before) -->
-    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm"><h3 class="text-lg font-bold mb-4 text-slate-800">Konfirmasi</h3><p class="mb-6 text-slate-600">Apakah Anda yakin?</p><div class="flex justify-end space-x-3"><button id="modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="modal-confirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Yakin</button></div></div></div>
-    <div id="edit-project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg"><h3 class="text-lg font-bold mb-4 text-slate-800">Edit Projek</h3><div class="space-y-4 mb-4"><div><label class="block text-sm font-medium mb-1">Nama Projek</label><input type="text" id="edit-project-name" class="p-2 border rounded-md w-full form-input"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium mb-1">Jenjang Kelas</label><select id="edit-project-level" class="p-2 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select></div><div><label class="block text-sm font-medium mb-1">Semester</label><select id="edit-project-semester" class="p-2 border rounded-md w-full form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select></div></div></div><div class="space-y-4"><div><label class="block text-sm font-medium mb-1">Kriteria</label><div class="flex mb-2"><input type="text" id="edit-project-new-criteria-input" class="p-2 border rounded-l-md w-full form-input" placeholder="Tambah kriteria"><button id="edit-project-add-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div><div id="edit-project-criteria-list" class="flex flex-wrap gap-2 p-2 bg-slate-50 rounded border border-slate-200 min-h-[50px]"></div></div></div><div class="flex justify-end space-x-3 mt-6"><button id="edit-project-modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="edit-project-modal-save" class="px-4 py-2 btn-primary text-white rounded-md">Simpan Perubahan</button></div></div></div>
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 px-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm"><h3 class="text-lg font-bold mb-4 text-slate-800">Konfirmasi</h3><p class="mb-6 text-slate-600">Apakah Anda yakin?</p><div class="flex justify-end space-x-3"><button id="modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="modal-confirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Yakin</button></div></div></div>
+    <div id="edit-project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg"><h3 class="text-lg font-bold mb-4 text-slate-800">Edit Projek</h3><div class="space-y-4 mb-4"><div><label class="block text-sm font-medium mb-1">Nama Projek</label><input type="text" id="edit-project-name" class="p-3 border rounded-md w-full form-input"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium mb-1">Jenjang Kelas</label><select id="edit-project-level" class="p-3 border rounded-md w-full form-select"><option value="X">Kelas X</option><option value="XI">Kelas XI</option><option value="XII">Kelas XII</option><option value="Semua">Semua Jenjang</option></select></div><div><label class="block text-sm font-medium mb-1">Semester</label><select id="edit-project-semester" class="p-3 border rounded-md w-full form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select></div></div></div><div class="space-y-4"><div><label class="block text-sm font-medium mb-1">Kriteria</label><div class="flex mb-2"><input type="text" id="edit-project-new-criteria-input" class="p-3 border rounded-l-md w-full form-input" placeholder="Tambah kriteria"><button id="edit-project-add-criteria-btn" class="px-3 py-2 btn-secondary rounded-r-md"><i data-lucide="plus"></i></button></div><div id="edit-project-criteria-list" class="flex flex-wrap gap-2 p-2 bg-slate-50 rounded border border-slate-200 min-h-[50px]"></div></div></div><div class="flex justify-end space-x-3 mt-6"><button id="edit-project-modal-cancel" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">Batal</button><button id="edit-project-modal-save" class="px-4 py-2 btn-primary text-white rounded-md">Simpan Perubahan</button></div></div></div>
     <div id="missing-score-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[60] p-4"><div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all scale-100"><div class="flex justify-between items-center mb-4 border-b pb-3"><h3 class="text-lg font-bold text-slate-800">Input Nilai</h3><button onclick="closeMissingScoreModal()" class="text-slate-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="mb-4 bg-indigo-50 p-3 rounded-md border border-indigo-100"><p class="text-sm text-indigo-800 font-semibold"><span id="ms-modal-student-name"></span></p><p class="text-xs text-indigo-600 mt-1">Projek: <span id="ms-modal-project-name"></span></p></div><form id="ms-modal-form" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"><div id="ms-modal-inputs" class="space-y-3"></div></form><div class="flex justify-end space-x-3 mt-6 pt-3 border-t"><button onclick="closeMissingScoreModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-md hover:bg-slate-200 text-sm font-medium">Batal</button><button onclick="saveMissingScore()" class="px-4 py-2 btn-primary text-white rounded-md text-sm font-semibold flex items-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan</button></div></div></div>
     <div id="project-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-[70] p-4"><div class="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col"><div class="flex justify-between items-center p-6 border-b"><div><h3 class="text-xl font-bold text-slate-800" id="detail-modal-title">Detail Nilai</h3><p class="text-sm text-slate-500">Detail nilai per siswa</p></div><button onclick="closeProjectDetail()" class="text-slate-400 hover:text-red-500 transition"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="flex-1 overflow-auto p-6"><table class="w-full text-left text-sm border-collapse"><thead class="bg-slate-50 border-b sticky top-0 z-10"><tr id="detail-table-head"></tr></thead><tbody id="detail-table-body" class="divide-y divide-slate-100"></tbody></table></div><div class="p-4 border-t bg-slate-50 text-right"><button onclick="closeProjectDetail()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 font-medium">Tutup</button></div></div></div>
 
@@ -647,6 +659,12 @@
                 activeLink.style.backgroundColor = appData.settings?.theme?.primary || '#1e293b';
             }
             
+            // Adjust Sidebar on Mobile
+            if(window.innerWidth < 768) {
+                document.getElementById('main-sidebar').classList.add('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.add('hidden');
+            }
+
             switch(viewId) {
                 case 'dashboard': renderDashboardCharts(); break;
                 case 'rekap-nilai': renderRekapitulasiView(); break;
@@ -754,8 +772,8 @@
             students.forEach(s => {
                 if(s.name.toLowerCase().includes(searchLower)) {
                     const st = saved[s.id] || '';
-                    htmlBuffer += `<tr class="border-b border-slate-100"><td class="p-2 text-slate-700">${s.name}</td><td class="p-2"><div class="flex gap-1">
-                        ${['Hadir','Sakit','Izin','Alpa'].map(l => `<label class="cursor-pointer"><input type="radio" name="att-${s.id}" value="${l.toLowerCase()}" class="peer hidden" ${st===l.toLowerCase()?'checked':''}><span class="px-3 py-1 rounded text-xs border peer-checked:bg-slate-800 peer-checked:text-white hover:bg-slate-100 transition-colors">${l[0]}</span></label>`).join('')}
+                    htmlBuffer += `<tr class="border-b border-slate-100"><td class="p-2 text-slate-700 font-medium">${s.name}</td><td class="p-2"><div class="flex gap-2 flex-wrap">
+                        ${['Hadir','Sakit','Izin','Alpa'].map(l => `<label class="cursor-pointer"><input type="radio" name="att-${s.id}" value="${l.toLowerCase()}" class="peer hidden" ${st===l.toLowerCase()?'checked':''}><span class="px-3 py-2 rounded text-xs border peer-checked:bg-slate-800 peer-checked:text-white hover:bg-slate-100 transition-colors inline-block min-w-[36px] text-center">${l[0]}</span></label>`).join('')}
                     </div></td></tr>`;
                 }
             });
@@ -879,16 +897,24 @@
             document.getElementById('save-activity').addEventListener('click', saveActivityData);
         }
 
-        // --- IMPORT/EXPORT HELPERS ---
+        // --- IMPORT/EXPORT HELPERS (Robust Mobile Fix) ---
         function downloadAttendanceTemplate() {
-            const className = document.getElementById('input-attendance-class').value;
-            if (!className) { alert("Pilih kelas terlebih dahulu!"); return; }
-            const students = appData.students[className] || [];
-            const data = [["No", "NIS", "Nama", "Status (H/S/I/A)"], ...students.map((s, i) => [i + 1, s.nis, s.name, ""])];
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Template Absensi");
-            XLSX.writeFile(wb, `Template_Absensi_${className}.xlsx`);
+            try {
+                if (typeof XLSX === 'undefined') { alert("Library Excel belum siap. Coba refresh halaman."); return; }
+                const className = document.getElementById('input-attendance-class').value;
+                if (!className) { alert("Pilih kelas terlebih dahulu untuk mengunduh format!"); return; }
+                const students = appData.students[className] || [];
+                
+                // Format: No, NIS, Nama, Status (H/S/I/A)
+                const data = [["No", "NIS", "Nama", "Status (H/S/I/A)"], ...students.map((s, i) => [i + 1, s.nis, s.name, ""])];
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Template Absensi");
+                XLSX.writeFile(wb, `Template_Absensi_${className}.xlsx`);
+            } catch (error) {
+                console.error("Download failed:", error);
+                alert("Gagal mengunduh format. Pastikan browser mendukung file download.");
+            }
         }
 
         function handleStudentImport() {
@@ -950,12 +976,25 @@
         }
 
         function downloadScoreTemplate() {
-            const className = document.getElementById('input-score-class').value;
-            const projectId = document.getElementById('input-score-project').value;
-            if (!className || !projectId) { alert("Pilih kelas & projek!"); return; }
-            const p = appData.projects.find(x => x.id === projectId);
-            const data = [["No", "NIS", "Nama", ...p.criteria], ...appData.students[className].map((s, i) => [i + 1, s.nis, s.name, ...p.criteria.map(()=>"")])];
-            XLSX.writeFile(XLSX.utils.book_new(XLSX.utils.book_append_sheet(XLSX.utils.book_new(), XLSX.utils.aoa_to_sheet(data), "Nilai")), `Nilai_${className}.xlsx`);
+            try {
+                if (typeof XLSX === 'undefined') { alert("Library Excel belum siap. Coba refresh halaman."); return; }
+                const className = document.getElementById('input-score-class').value;
+                const projectId = document.getElementById('input-score-project').value;
+                
+                if (!className || !projectId) { alert("Pilih kelas & projek terlebih dahulu!"); return; }
+                
+                const p = appData.projects.find(x => x.id === projectId);
+                if (!p) { alert("Projek tidak ditemukan."); return; }
+                
+                const data = [["No", "NIS", "Nama", ...p.criteria], ...appData.students[className].map((s, i) => [i + 1, s.nis, s.name, ...p.criteria.map(()=>"")])];
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Nilai");
+                XLSX.writeFile(wb, `Nilai_${className}_${p.name}.xlsx`);
+            } catch (error) {
+                console.error("Download failed:", error);
+                alert("Gagal mengunduh format. Pastikan browser mendukung file download.");
+            }
         }
 
         async function processScoreImport(e) {
@@ -1020,7 +1059,7 @@
             let html = '';
             (appData.students[className]||[]).forEach((s, i) => {
                 const details = appData.scores?.[projectId]?.[s.id]?.details || {};
-                html += `<tr class="border-b border-slate-50"><td class="p-2 text-slate-500">${i+1}</td><td class="p-2 font-medium">${s.name}</td>${project.criteria.map(c=>`<td class="p-2"><input type="number" class="w-full p-1 border rounded text-center score-input-field" data-student="${s.id}" data-criteria="${c}" value="${details[c]||''}" placeholder="0"></td>`).join('')}</tr>`;
+                html += `<tr class="border-b border-slate-50"><td class="p-2 text-slate-500">${i+1}</td><td class="p-2 font-medium">${s.name}</td>${project.criteria.map(c=>`<td class="p-2"><input type="number" class="w-full p-2 border rounded text-center score-input-field" data-student="${s.id}" data-criteria="${c}" value="${details[c]||''}" placeholder="0"></td>`).join('')}</tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -1181,13 +1220,10 @@
                 let finalScore = s.rawScore; // Default fallback
                 
                 if (index < 4) {
-                    // Bucket 1: Below Min (e.g., Min-5 to Min-1)
-                    // Distribute linearly to avoid everyone having same score
-                    // Example X: Range 77 - 81
-                    const lowStart = rules.min - 4;
-                    const lowEnd = rules.min - 1;
-                    const step = (lowEnd - lowStart) / 4; 
-                    finalScore = Math.round(lowStart + (step * index));
+                    // Bucket 1: Below Min. Previously mapped to (min-4...min-1). 
+                    // NEW REQUIREMENT: No score below 82 (or class Min). 
+                    // Force the value to rules.min.
+                    finalScore = rules.min;
                 } else if (index < 14) {
                     // Bucket 2: Mid Range (e.g., 82 - 84) (10 students)
                     // Indices 4 to 13. Normalized index 0 to 9.
@@ -1397,6 +1433,13 @@
 
         // Start Data Load
         await loadData();
+
+        // --- PATCH: REMOVE SPECIFIC STUDENT ---
+        if (appData.students && appData.students['XG']) {
+            appData.students['XG'] = appData.students['XG'].filter(s => !(String(s.nis) === '252610334' || s.name.toUpperCase() === 'MUHAMMAD RESTU'));
+        }
+        // --------------------------------------
+
         applySettings();
     });
     </script>
