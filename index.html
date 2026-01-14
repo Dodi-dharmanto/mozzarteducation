@@ -68,6 +68,10 @@
             .header-controls { flex-direction: column; align-items: stretch; gap: 0.5rem; }
             .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
         }
+        
+        /* Table Sticky Columns for Attendance Matrix */
+        .sticky-col { position: sticky; left: 0; background-color: white; z-index: 10; border-right: 1px solid #e2e8f0; }
+        .sticky-header { position: sticky; top: 0; z-index: 20; }
     </style>
 </head>
 <body class="text-slate-700">
@@ -107,10 +111,13 @@
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rekap-nilai">
                         <i data-lucide="file-spreadsheet" class="sidebar-icon"></i><span data-lang="rekapNilai" class="ml-4 nav-text">Rekapitulasi Nilai</span>
                     </a>
+                    <!-- NEW MENU: Rekap Absensi -->
+                    <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rekap-absensi">
+                        <i data-lucide="calendar-days" class="sidebar-icon"></i><span class="ml-4 nav-text">Rekap Absensi</span>
+                    </a>
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="rapor-semester">
                         <i data-lucide="book-open-check" class="sidebar-icon"></i><span data-lang="raporSemester" class="ml-4 nav-text">Nilai Rapor Semester</span>
                     </a>
-                    <!-- MENU BARU: E-Rapor -->
                     <a href="#" class="nav-link flex items-center p-3 rounded-lg text-slate-600" data-view="e-rapor">
                         <i data-lucide="award" class="sidebar-icon"></i><span data-lang="eRapor" class="ml-4 nav-text">Nilai E-Rapor</span>
                     </a>
@@ -233,6 +240,76 @@
                             </div>
                         </div>
                         <div id="rekap-projek-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+                    </div>
+
+                    <!-- NEW: Rekap Absensi View -->
+                    <div id="rekap-absensi-view" class="view hidden space-y-6">
+                        <div class="card border border-slate-200">
+                            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2 mb-4">
+                                <i data-lucide="calendar-days" class="w-6 h-6 text-indigo-600"></i> Rekapitulasi Absensi
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Kelas</label>
+                                    <select id="rekap-absensi-class" class="w-full p-2.5 border rounded-lg bg-white form-select text-sm"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Mode Laporan</label>
+                                    <select id="rekap-absensi-mode" class="w-full p-2.5 border rounded-lg bg-white form-select text-sm">
+                                        <option value="monthly">Bulanan (Detail Harian)</option>
+                                        <option value="semester">Semester (Ringkasan)</option>
+                                    </select>
+                                </div>
+                                <div id="container-month-filter">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Bulan</label>
+                                    <input type="month" id="rekap-absensi-month" class="w-full p-2.5 border rounded-lg bg-white form-input text-sm">
+                                </div>
+                                <div id="container-semester-filter" class="hidden">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Semester</label>
+                                    <select id="rekap-absensi-semester" class="w-full p-2.5 border rounded-lg bg-white form-select text-sm">
+                                        <option value="1">Semester 1 (Ganjil)</option>
+                                        <option value="2">Semester 2 (Genap)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex flex-col items-center">
+                                <span class="text-xs font-bold text-emerald-600 uppercase">Hadir</span>
+                                <span id="rekap-total-h" class="text-2xl font-bold text-emerald-700">0</span>
+                            </div>
+                            <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex flex-col items-center">
+                                <span class="text-xs font-bold text-amber-600 uppercase">Sakit</span>
+                                <span id="rekap-total-s" class="text-2xl font-bold text-amber-700">0</span>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex flex-col items-center">
+                                <span class="text-xs font-bold text-blue-600 uppercase">Izin</span>
+                                <span id="rekap-total-i" class="text-2xl font-bold text-blue-700">0</span>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col items-center">
+                                <span class="text-xs font-bold text-red-600 uppercase">Alpa</span>
+                                <span id="rekap-total-a" class="text-2xl font-bold text-red-700">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Main Table -->
+                        <div class="card overflow-hidden">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-slate-700" id="rekap-table-title">Detail Kehadiran</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="exportRekapAbsensiPDF()" class="p-2 bg-rose-50 text-rose-600 rounded hover:bg-rose-100 border border-rose-200" title="Export PDF"><i data-lucide="file-text" class="w-4 h-4"></i></button>
+                                    <button onclick="exportRekapAbsensiExcel()" class="p-2 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100 border border-emerald-200" title="Export Excel"><i data-lucide="sheet" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto border rounded-lg border-slate-200 max-h-[600px]">
+                                <table id="table-rekap-absensi" class="w-full text-xs text-left border-collapse">
+                                    <thead id="rekap-absensi-thead" class="bg-slate-50 text-slate-600 sticky-header shadow-sm"></thead>
+                                    <tbody id="rekap-absensi-tbody" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Rapor Semester View -->
@@ -690,7 +767,7 @@
 
         function populateCommonClassSelects() {
             const allClassNames = appData.students ? Object.keys(appData.students).sort() : [];
-            const ids = ['rekap-class-filter', 'rapor-class-filter', 'erapor-class-filter', 'input-attendance-class', 'input-activity-class', 'input-score-class', 'manage-student-class-select'];
+            const ids = ['rekap-class-filter', 'rapor-class-filter', 'erapor-class-filter', 'input-attendance-class', 'input-activity-class', 'input-score-class', 'manage-student-class-select', 'rekap-absensi-class'];
             let optionsHTML = allClassNames.length === 0 ? `<option value="">Tidak Ada Kelas</option>` : `<option value="">Pilih Kelas</option>`;
             allClassNames.forEach(c => optionsHTML += `<option value="${c}">${c}</option>`);
             ids.forEach(id => {
@@ -733,6 +810,11 @@
                 case 'input-management': renderProjectList(); break;
                 case 'settings': renderAdminList(); break;
                 case 'missing-scores': populateMissingScoresFilters(); break;
+                case 'rekap-absensi':
+                    const today = new Date();
+                    document.getElementById('rekap-absensi-month').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+                    renderRekapAbsensi();
+                    break;
             }
 
             const titleText = translations['id'][viewId] || "Mozzart Education";
@@ -770,8 +852,15 @@
                         const attData = appData.attendance?.[cls]?.daily || {};
                         
                         Object.values(attData).forEach(day => Object.values(day).forEach(s => { 
-                            if(attCounts[s]!==undefined) attCounts[s]++; 
-                            if(s === 'alpa') classAlpaCount++;
+                             // Normalize status (check for full word OR char)
+                             let status = (s || '').toLowerCase();
+                             if (status === 'h') status = 'hadir';
+                             if (status === 's') status = 'sakit';
+                             if (status === 'i') status = 'izin';
+                             if (status === 'a') status = 'alpa';
+
+                            if(attCounts[status]!==undefined) attCounts[status]++; 
+                            if(status === 'alpa') classAlpaCount++;
                         }));
 
                         if (classAlpaCount > maxAlpa) {
@@ -961,6 +1050,21 @@
 
             document.getElementById('input-activity-class').addEventListener('change', populateActivityInputTable);
             document.getElementById('save-activity').addEventListener('click', saveActivityData);
+
+            // Listener Rekap Absensi
+            document.getElementById('rekap-absensi-class').addEventListener('change', renderRekapAbsensi);
+            document.getElementById('rekap-absensi-mode').addEventListener('change', (e) => {
+                if(e.target.value === 'monthly') {
+                    document.getElementById('container-month-filter').classList.remove('hidden');
+                    document.getElementById('container-semester-filter').classList.add('hidden');
+                } else {
+                    document.getElementById('container-month-filter').classList.add('hidden');
+                    document.getElementById('container-semester-filter').classList.remove('hidden');
+                }
+                renderRekapAbsensi();
+            });
+            document.getElementById('rekap-absensi-month').addEventListener('change', renderRekapAbsensi);
+            document.getElementById('rekap-absensi-semester').addEventListener('change', renderRekapAbsensi);
         }
 
         // --- NEW: STUDENT MANAGEMENT FUNCTIONS ---
@@ -1100,6 +1204,178 @@
                     alert("Gagal menghapus siswa. Silakan refresh halaman.");
                 }
             }
+        };
+
+        // --- NEW: REKAP ABSENSI LOGIC ---
+        
+        window.renderRekapAbsensi = () => {
+            const cls = document.getElementById('rekap-absensi-class').value;
+            const mode = document.getElementById('rekap-absensi-mode').value;
+            const thead = document.getElementById('rekap-absensi-thead');
+            const tbody = document.getElementById('rekap-absensi-tbody');
+            const titleEl = document.getElementById('rekap-table-title');
+            
+            const totalH = document.getElementById('rekap-total-h');
+            const totalS = document.getElementById('rekap-total-s');
+            const totalI = document.getElementById('rekap-total-i');
+            const totalA = document.getElementById('rekap-total-a');
+            
+            // Reset Summary
+            totalH.innerText = '0'; totalS.innerText = '0'; totalI.innerText = '0'; totalA.innerText = '0';
+            
+            if (!cls || !appData.students[cls]) {
+                thead.innerHTML = '';
+                tbody.innerHTML = '<tr><td class="p-6 text-center italic text-slate-500">Pilih kelas terlebih dahulu.</td></tr>';
+                return;
+            }
+
+            const students = appData.students[cls];
+            let grandH=0, grandS=0, grandI=0, grandA=0;
+
+            if (mode === 'monthly') {
+                const monthInput = document.getElementById('rekap-absensi-month').value;
+                if (!monthInput) {
+                     tbody.innerHTML = '<tr><td class="p-6 text-center italic text-slate-500">Pilih bulan.</td></tr>'; return;
+                }
+                const [year, month] = monthInput.split('-');
+                const daysInMonth = new Date(year, month, 0).getDate();
+                const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                
+                titleEl.textContent = `Absensi Harian - ${monthNames[parseInt(month)-1]} ${year}`;
+
+                // Build Header
+                let headerHtml = '<tr><th class="p-3 sticky-col w-10 text-center">No</th><th class="p-3 sticky-col w-40 left-10 text-left bg-slate-50">Nama Siswa</th>';
+                for(let i=1; i<=daysInMonth; i++) {
+                    headerHtml += `<th class="p-1 w-8 text-center text-[10px] border-l border-slate-100">${i}</th>`;
+                }
+                headerHtml += '<th class="p-2 w-10 text-center bg-emerald-50 text-emerald-700">H</th><th class="p-2 w-10 text-center bg-amber-50 text-amber-700">S</th><th class="p-2 w-10 text-center bg-blue-50 text-blue-700">I</th><th class="p-2 w-10 text-center bg-red-50 text-red-700">A</th></tr>';
+                thead.innerHTML = headerHtml;
+
+                // Build Rows
+                const dailyData = appData.attendance[cls]?.daily || {};
+                let rowsHtml = '';
+                
+                students.forEach((s, idx) => {
+                    let sH=0, sS=0, sI=0, sA=0;
+                    let dailyCells = '';
+                    
+                    for(let i=1; i<=daysInMonth; i++) {
+                        const dateKey = `${year}-${month}-${String(i).padStart(2, '0')}`;
+                        const status = dailyData[dateKey]?.[s.id];
+                        let cellContent = '';
+                        let cellClass = 'border-l border-slate-50 text-center';
+                        
+                        if(status) {
+                            const st = status.toLowerCase();
+                            // Fix: Check for both char 'h' and word 'hadir' using startsWith
+                            if(st.startsWith('h')){ cellContent='•'; cellClass+=' text-emerald-500 font-bold'; sH++; }
+                            else if(st.startsWith('s')){ cellContent='S'; cellClass+=' text-amber-500 font-bold bg-amber-50'; sS++; }
+                            else if(st.startsWith('i')){ cellContent='I'; cellClass+=' text-blue-500 font-bold bg-blue-50'; sI++; }
+                            else if(st.startsWith('a')){ cellContent='A'; cellClass+=' text-red-500 font-bold bg-red-50'; sA++; }
+                        }
+                        dailyCells += `<td class="${cellClass}">${cellContent}</td>`;
+                    }
+                    
+                    grandH+=sH; grandS+=sS; grandI+=sI; grandA+=sA;
+
+                    rowsHtml += `<tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-2 text-center sticky-col bg-white">${idx+1}</td>
+                        <td class="p-2 font-medium sticky-col left-10 bg-white whitespace-nowrap text-xs">${s.name}</td>
+                        ${dailyCells}
+                        <td class="text-center font-bold text-emerald-600 bg-emerald-50/30">${sH}</td>
+                        <td class="text-center font-bold text-amber-600 bg-amber-50/30">${sS}</td>
+                        <td class="text-center font-bold text-blue-600 bg-blue-50/30">${sI}</td>
+                        <td class="text-center font-bold text-red-600 bg-red-50/30">${sA}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = rowsHtml;
+
+            } else {
+                // SEMESTER MODE
+                const sem = document.getElementById('rekap-absensi-semester').value;
+                const dailyData = appData.attendance[cls]?.daily || {};
+                
+                // Define Semester Range roughly
+                // Sem 1: July - December (Month 07 - 12)
+                // Sem 2: January - June (Month 01 - 06)
+                const targetMonths = sem === '1' ? ['07','08','09','10','11','12'] : ['01','02','03','04','05','06'];
+                
+                titleEl.textContent = `Rekapitulasi Semester ${sem} (Ringkasan)`;
+                
+                thead.innerHTML = `<tr>
+                    <th class="p-3 w-12 text-center">No</th>
+                    <th class="p-3 w-32">NIS</th>
+                    <th class="p-3">Nama Siswa</th>
+                    <th class="p-3 w-20 text-center bg-emerald-50 text-emerald-700">Hadir</th>
+                    <th class="p-3 w-20 text-center bg-amber-50 text-amber-700">Sakit</th>
+                    <th class="p-3 w-20 text-center bg-blue-50 text-blue-700">Izin</th>
+                    <th class="p-3 w-20 text-center bg-red-50 text-red-700">Alpa</th>
+                    <th class="p-3 w-24 text-center">Persentase</th>
+                </tr>`;
+
+                let rowsHtml = '';
+                students.forEach((s, idx) => {
+                    let sH=0, sS=0, sI=0, sA=0;
+                    
+                    // Iterate all recorded dates
+                    Object.keys(dailyData).forEach(dateStr => {
+                        const [y, m, d] = dateStr.split('-');
+                        if(targetMonths.includes(m)) {
+                            const st = dailyData[dateStr]?.[s.id];
+                            if(st){
+                                const val = st.toLowerCase();
+                                if(val.startsWith('h')) sH++; 
+                                else if(val.startsWith('s')) sS++; 
+                                else if(val.startsWith('i')) sI++; 
+                                else if(val.startsWith('a')) sA++;
+                            }
+                        }
+                    });
+
+                    grandH+=sH; grandS+=sS; grandI+=sI; grandA+=sA;
+                    const totalDays = sH+sS+sI+sA;
+                    const percentage = totalDays > 0 ? Math.round((sH / totalDays) * 100) : 0;
+                    let colorClass = percentage >= 90 ? 'text-emerald-600' : (percentage >= 75 ? 'text-amber-600' : 'text-red-600');
+
+                    rowsHtml += `<tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-center text-slate-500">${idx+1}</td>
+                        <td class="p-3 font-mono text-xs text-slate-500">${s.nis||'-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${s.name}</td>
+                        <td class="p-3 text-center font-bold bg-emerald-50/30">${sH}</td>
+                        <td class="p-3 text-center font-bold bg-amber-50/30">${sS}</td>
+                        <td class="p-3 text-center font-bold bg-blue-50/30">${sI}</td>
+                        <td class="p-3 text-center font-bold bg-red-50/30">${sA}</td>
+                        <td class="p-3 text-center font-bold ${colorClass}">${percentage}%</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = rowsHtml;
+            }
+
+            // Update Summary Cards
+            totalH.innerText = grandH;
+            totalS.innerText = grandS;
+            totalI.innerText = grandI;
+            totalA.innerText = grandA;
+        };
+
+        window.exportRekapAbsensiExcel = () => {
+             const cls = document.getElementById('rekap-absensi-class').value;
+             const mode = document.getElementById('rekap-absensi-mode').value;
+             const table = document.getElementById('table-rekap-absensi');
+             if(!cls) return alert('Pilih kelas');
+             XLSX.writeFile(XLSX.utils.table_to_book(table), `Absensi_${cls}_${mode}.xlsx`);
+        };
+
+        window.exportRekapAbsensiPDF = () => {
+            const cls = document.getElementById('rekap-absensi-class').value;
+            const mode = document.getElementById('rekap-absensi-mode').value;
+            if(!cls) return alert('Pilih kelas');
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF(mode==='monthly'?'l':'p'); // Landscape for monthly matrix
+            doc.text(`Rekapitulasi Absensi - ${cls} (${mode==='monthly'?'Bulanan':'Semester'})`, 14, 15);
+            doc.autoTable({ html: '#table-rekap-absensi', startY: 20, styles: { fontSize: mode==='monthly'?6:8 } });
+            doc.save(`Absensi_${cls}_${mode}.pdf`);
         };
 
         // --- IMPORT/EXPORT HELPERS (Robust Mobile Fix) ---
